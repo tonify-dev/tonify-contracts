@@ -158,24 +158,21 @@ describe('Ton Single Feed Man Tests', () => {
                         dataServiceId: 'redstone-avalanche-prod',
                         uniqueSignersCount: 1,
                         dataPackagesIds: ['USDT'],
-                        // historicalTimestamp: 1725272800000,
                     }),
                 ),
             },
         );
 
-        // console.log(res.events);
 
         const feedId = (await checker.getFeedId());
         const price = (await checker.getPrice());
         const timestamp = (await checker.getTimestamp());
-        // expectUsdtPrice((price!));
-        // expectUsdtPrice((price!));
+
         console.log(feedId);
 
         expect(feedId).toEqual(null);
-        // expect(price).toEqual(null);
-        // expect(timestamp).toEqual(null);
+        expect(price).toEqual(null);
+        expect(timestamp).toEqual(null);
     });
 
     async function writeAndReadPriceAndTimestamp(dataFeeds: string[] = ['USDT', 'BTC', 'AVAX', 'ETH']) {
