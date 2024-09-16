@@ -1,5 +1,5 @@
 import "@stdlib/deploy";
-import "./redstonte_oracle_consumer_base";
+import "../redstonte_oracle_consumer_base";
 message SetPrice {
     queryId: Int as uint64;
     data: Cell;
@@ -30,8 +30,9 @@ contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
         self.timestamp = timestamp;
     }
 
-    override fun onErrorReceived(queryId: Int) {
+    override fun onErrorReceived(queryId: Int, msg: Slice) {
         dump(queryId);
+        dump(msg);
     }
 
     get fun feedId(): Int? {

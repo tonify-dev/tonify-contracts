@@ -1,4 +1,5 @@
 const OP_REDSTONE_DATA_FETCHED: Int = 0x935fa9d1; //2c36fe0497717d21bb640dab03970ebf4952f582dbba462a76985802; ;; substr(keccak(RedStone_Data_Fetched), 8)
+const OP_REDSTONE_CHECK_AND_RETURN_PRICE: Int = 0x03df94aa;
 
 trait RedstoneOracleConsumerBase {
     oracle: Address;
@@ -6,7 +7,7 @@ trait RedstoneOracleConsumerBase {
 
     abstract fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int);
 
-    abstract fun onErrorReceived(queryId: Int);
+    abstract fun onErrorReceived(queryId: Int, error: Slice);
 
     virtual fun fetchPrice(queryId: Int, oracleData: Cell) {
         self.queryId = queryId;
@@ -17,6 +18,13 @@ trait RedstoneOracleConsumerBase {
         let op = msg.loadUint(32);
         if (op == OP_REDSTONE_DATA_FETCHED) {
             self.onPriceReceived(self.queryId!!, msg.loadUint(256), msg.loadUint(256), msg.loadUint(48));
+        }
+    }
+
+    bounced(msg: Slice){
+        let op = msg.loadUint(32);
+        if (op == OP_REDSTONE_CHECK_AND_RETURN_PRICE) {
+            self.onErrorReceived(self.queryId!!, msg);
         }
     }
 }
