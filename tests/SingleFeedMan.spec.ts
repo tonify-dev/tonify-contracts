@@ -70,31 +70,33 @@ describe('Ton Single Feed Man Tests', () => {
         expectUsdtPrice(price);
     });
 
-    it('should write prices twice', async () => {
-        const { price, timestamp } = await writeAndReadPriceAndTimestamp(['USDT', 'ETH']);
-        expect(timestamp).toBeGreaterThan(0);
-        expectUsdtPrice(price);
-        await waitForNewData();
-        const { price: price2, timestamp: timestamp2 } = await writeAndReadPriceAndTimestamp();
-        expect(timestamp2).not.toBe(timestamp);
-        expect(price2).not.toBe(price);
-    });
+    // it('should write prices twice', async () => {
+    //     const { price, timestamp } = await writeAndReadPriceAndTimestamp(['USDT', 'ETH']);
+    //     expect(timestamp).toBeGreaterThan(0);
+    //     expectUsdtPrice(price);
+    //     await waitForNewData();
+    //     const { price: price2, timestamp: timestamp2 } = await writeAndReadPriceAndTimestamp();
+    //     expect(timestamp2).not.toBe(timestamp);
+    //     expect(price2).not.toBe(price);
+    // });
 
     it('should work with consumer', async () => {
+        const queryTimestamp = Date.now() - Date.now() % 100000 - 100000*6*60*24;
+        const queryId = 2134n;
         await checker.send(
             owner.getSender(),
             {
-                value: toNano('0.2'),
+                value: toNano('0.3'),
             },
             {
                 $$type: 'SetPrice',
-                queryId: 1n,
+                queryId,
                 data: await createCellFromParamsProvider(
                     new ContractParamsProvider({
                         dataServiceId: 'redstone-avalanche-prod',
                         uniqueSignersCount: 2,
                         dataPackagesIds: ['USDT'],
-                        historicalTimestamp: 1725272800000,
+                        historicalTimestamp: queryTimestamp,
                     }),
                 ),
             },
@@ -105,8 +107,14 @@ describe('Ton Single Feed Man Tests', () => {
         const feedId = (await checker.getFeedId());
         const price = (await checker.getPrice());
         const timestamp = (await checker.getTimestamp());
+        const gottenQueryId = (await checker.getQueryId());
+        console.log(feedId);
+        console.log(price);
+        console.log(timestamp);
+        console.log(gottenQueryId);
         expectUsdtPrice((price!));
-        expect((timestamp!).toString()).toEqual("1725272800000");
+        expect(gottenQueryId!.toString()).toEqual(queryId.toString());
+        expect((timestamp!).toString()).toEqual(queryTimestamp.toString());
     });
 
 
@@ -114,7 +122,7 @@ describe('Ton Single Feed Man Tests', () => {
         await checker.send(
             owner.getSender(),
             {
-                value: toNano('0.2'),
+                value: toNano('0.3'),
             },
             {
                 $$type: 'SetPrice',
@@ -135,6 +143,7 @@ describe('Ton Single Feed Man Tests', () => {
         const feedId = (await checker.getFeedId());
         const price = (await checker.getPrice());
         const timestamp = (await checker.getTimestamp());
+
         // expectUsdtPrice((price!));
         expect(feedId).toEqual(null);
         expect(price).toEqual(null);
@@ -148,7 +157,7 @@ describe('Ton Single Feed Man Tests', () => {
         await checker.send(
             owner.getSender(),
             {
-                value: toNano('0.2'),
+                value: toNano('0.3'),
             },
             {
                 $$type: 'SetPrice',

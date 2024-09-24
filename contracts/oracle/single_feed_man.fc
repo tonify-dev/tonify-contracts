@@ -66,12 +66,19 @@ global int timestamp;
     }
 
     if (op == OP_REDSTONE_CHECK_AND_RETURN_PRICE) {
+        int _query_id = in_msg_body~load_uint(64);
+
         cell payload_cell = in_msg_body~load_ref();
+
         var (value, min_timestamp) = get_price(payload_cell);
-        builder content = in_msg_body.builder_with_preloaded_ref()
-                .store_uint(feed_id, DATA_FEED_ID_BITS)
-                .store_uint(value, MAX_VALUE_SIZE_BITS)
-                .store_uint(min_timestamp, TIMESTAMP_BITS);
+     
+        builder content = begin_cell()
+                .store_uint(_query_id, 64)
+                .store_ref(begin_cell()
+                    .store_uint(feed_id, DATA_FEED_ID_BITS)
+                    .store_uint(value, MAX_VALUE_SIZE_BITS)
+                    .store_uint(min_timestamp, TIMESTAMP_BITS)
+                    .end_cell());
 
         return cs~send_return_message(OP_REDSTONE_DATA_FETCHED, content);
     }

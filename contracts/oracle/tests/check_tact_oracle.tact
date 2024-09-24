@@ -11,7 +11,7 @@ contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
     //
     id: Int as uint32;
     oracle: Address;
-    queryId: Int?;
+    queryId: Int? as uint64;
     feedId: Int? as uint256;
     price: Int? as uint256;
     timestamp: Int? as uint64;
@@ -21,17 +21,17 @@ contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
     }
 
     receive(msg: SetPrice){
-        self.fetchPrice(msg.queryId, msg.data);
+        self.fetchPrice(msg.queryId, msg.data, context().value - ton("0.1"));
     }
 
     override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int) {
+        self.queryId = queryId;
         self.feedId = feedId;
         self.price = price;
         self.timestamp = timestamp;
     }
 
-    override fun onErrorReceived(queryId: Int, msg: Slice) {
-        dump(queryId);
+    override fun onOracleErrorReceived(msg: Slice) {
         dump(msg);
     }
 
@@ -41,6 +41,10 @@ contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
 
     get fun price(): Int? {
         return self.price;
+    }
+
+    get fun queryId(): Int? {
+        return self.queryId;
     }
 
     get fun balance(): Int? {
