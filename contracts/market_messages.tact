@@ -36,37 +36,6 @@ message CancelDeal {
     dealId: Int as uint32;
 }
 
-struct ContextCancelDealForDealReceived {
-    from: Address;
-}
-
-struct ContextTakeDealForDealReceived {
-    from: Address;
-    amount: Int as coins;
-    feedId: Int as uint32;
-    price: Int as uint128;
-    timestamp: Int as uint32;
-}
-
-struct ContextTakeDealForPriceReceived {
-    from: Address;
-    amount: Int as coins;
-    dealId: Int as uint32;
-}
-
-struct ContextProcessDealForPriceReceived {
-    from: Address;
-    feedId: Int as uint32;
-    price: Int as uint128;
-    timestamp: Int as uint32;
-}
-
-struct ContextProcessDealForDealReceived {
-    from: Address;
-    dealId: Int as uint32;
-}
-
-
 message ProcessDeal {
     queryId: Int as uint64;
     dealId: Int as uint32;
@@ -99,3 +68,71 @@ message CancelEvent {
     maker: Address;
     collateralAmountMaker: Int as coins;
 }
+
+message DealAcceptedEvent {
+    queryId: Int as uint64;
+    dealId: Int as uint32;
+    maker: Address;
+    collateralAmountMaker: Int as coins;
+}
+
+message DealCreatedEvent {
+    queryId: Int as uint64;
+    dealId: Int as uint32;
+    maker: Address;
+    collateralAmountMaker: Int as coins;
+}
+
+message DealCompletedEvent {
+    queryId: Int as uint64;
+    dealId: Int as uint32;
+    maker: Address;
+    collateralAmountMaker: Int as coins;
+}
+
+message DealExpiredEvent {
+    queryId: Int as uint64;
+    dealId: Int as uint32;
+    maker: Address;
+    collateralAmountMaker: Int as coins;
+}   
+
+
+// context
+
+struct ContextCancelDealForDealReceived {
+    from: Address;
+}
+
+struct ContextTakeDealForDealReceived {
+    from: Address;
+    amount: Int as coins;
+    feedId: Int as uint32;
+    price: Int as uint128;
+    timestamp: Int as uint32;
+}
+
+
+struct ContextProcessDealForDealReceived {
+    from: Address;
+    feedId: Int as uint32;
+    price: Int as uint128;
+    timestamp: Int as uint32;
+}
+
+struct ContextTakeDealForPriceReceived {
+    from: Address;
+    amount: Int as coins;
+    dealId: Int as uint32;
+}
+
+struct ContextProcessDealForPriceReceived {
+    from: Address;
+    dealId: Int as uint32;
+}
+
+struct ContextForGetOwner {
+    amount: Int as coins;
+}
+
+

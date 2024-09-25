@@ -12,7 +12,9 @@ const STORAGE_INIT_VALUE: Int = ton("0.1");
 const GAS_MIN_VALUE: Int = ton("0.05");
 const TO_TAKE_AMM: Int = ton("0.15");
 const GAS_TO_SEND_JETTON: Int = ton("0.01");
+const GAS_TO_FETCH_OWNER: Int = ton("0.01");
 
+const TIME_SLIPPAGE: Int = 60*5;
 /// inner opcodes
 const INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED: Int = 10;
 const INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED: Int = 20;
@@ -30,7 +32,8 @@ const DEAL_STATUS_EXPIRED: Int = 5;
 // return reasons 
 const SMALL_VALUE: Int = 1;
 const SMALL_TOKEN_AMOUNT: Int = 2;
-
+const ORACLE_PRICE_TOO_OLD: Int = 3;
+const MAKER_OUT_OF_RANGE: Int = 4;
 
 contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsumerBase {
     id: Int as uint32;
@@ -49,6 +52,10 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
     mapQueriesToContext: map<Int, Cell> = emptyMap();
     oracle: Address;
     feedId: Int as uint256;
+    operatorFeeSum: Int as coins = 0;
+    serviceFeeSum: Int as coins = 0;
+    operatorFeeAddress: Address;
+    serviceFeeAddress: Address;
 
 
     init(id: Int,
@@ -63,7 +70,9 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         operatorFee: Int,
         serviceFee: Int,
         oracle: Address,
-        feedId: Int){
+        feedId: Int,
+        operatorFeeAddress: Address,
+        serviceFeeAddress: Address){
         self.id = id;
         self.owner = owner;
         self.jettonWallet = jettonWallet;
@@ -76,6 +85,8 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         self.collection_content = collection_content;
         self.oracle = oracle;
         self.feedId = feedId;
+        self.operatorFeeAddress = operatorFeeAddress;
+        self.serviceFeeAddress = serviceFeeAddress;
     }
 
     receive(msg: TokenNotification) {
@@ -92,7 +103,7 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
             self.handleCreateDeal(msg.query_id, deal, value, msg.amount, msg.from);
         } else if (opcode == OP_CODE_TAKE_DEAL) {
             let deal: TakeDealData = TakeDealData.fromSlice(msg.forward_payload);
-            self.handleTakeDeal(msg.query_id, deal, ctx, msg.amount, msg.from);
+            self.handleTakeDeal(msg.query_id, deal, value, msg.amount, msg.from);
         }   
     }
 
@@ -102,7 +113,7 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         require(ctx.value >= GAS_MIN_VALUE, "Invalid value");
 
         let value: Int = self.msgValue(ctx.value);
-        let contextCancelDeal: Cell = beginCell().storeUint(INNER_OP_CODE_CANCEL_DEAL, 8).storeRef(ContextCancelDeal{from: ctx.sender}.toCell()).endCell();   
+        let contextCancelDeal: Cell = beginCell().storeUint(INNER_OP_CODE_CANCEL_DEAL_AFTER_DEAL_RECEIVED, 8).storeRef(ContextCancelDealForDealReceived{from: ctx.sender}.toCell()).endCell();   
         self.fetchDeal(msg.queryId, msg.dealId, value, contextCancelDeal);    
     }
 
@@ -140,8 +151,6 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
                 body: TakeDeal{
                     queryId: 0,
                     dealId: dealId,
-                    rateTaker: deal.rate,
-                    slippageTaker: deal.slippage,
                     oracleData: deal.oracleData!!
                 }.toCell()
             });
@@ -153,7 +162,6 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
             percent: deal.percent,
             periodOrderExpiration: deal.expiration,
             slippageMaker: deal.slippage,
-            slippageTaker: 0,
             collateralAmountMaker: collateralAmountMaker,
             dateOrderCreation: now(),
             dateOrderExpiration: now() + deal.expiration,
@@ -166,20 +174,27 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
             status: 0
         };
 
+        emit(DealCreatedEvent{
+            queryId: queryId,
+            dealId: dealId,
+            maker: from,
+            collateralAmountMaker: collateralAmountMaker
+        }.toCell());
+
         self.saveDeal(queryId, dealId, value, newDeal, from);
     }
 
-    fun handleTakeDeal(queryId: Int,takeDeal: TakeDealData, value: Int, amount: Int, from: Address) {
+    fun handleTakeDeal(queryId: Int, takeDeal: TakeDealData, value: Int, amount: Int, from: Address) {
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED, 8)
             .storeRef(ContextTakeDealForPriceReceived{
                 from: from,
                 amount: amount,
-                dealId: msg.dealId  
+                dealId: takeDeal.dealId  
             }.toCell())
             .endCell();
         
-        self.fetchPriceWithSaveContext(queryId, msg.oracleData, value, contextProcessDeal);
+        self.fetchPriceWithSaveContext(queryId, takeDeal.oracleData, value, contextProcessDeal);
     }
 
     // handlers of price received from oracle ------------------------------------------------------------
@@ -190,17 +205,17 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED, 8)
             .storeRef(ContextTakeDealForDealReceived{
-                from: contextTakeDealAfterPrice.sender,
+                from: contextTakeDealAfterPrice.from,
                 amount: contextTakeDealAfterPrice.amount,
                 feedId: feedId,
                 price: price,
                 timestamp: timestamp / 1000,
             }.toCell())
             .endCell();
-        self.fetchDeal(queryId, contextTakeDealAfterPrice.dealId, value, contextProcessDeal);
+        self.fetchDeal(queryId, contextTakeDealAfterPrice.dealId, self.msgValue(ctx.value), contextProcessDeal);
     }
 
-    fun processDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, dealId: Int, feedId: Int, price: Int, timestamp: Int) {
+    fun processDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int) {
         let contextProcessDealAfterPrice: ContextProcessDealForPriceReceived = ContextProcessDealForPriceReceived.fromCell(query);
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_PROCESS_DEAL_AFTER_DEAL_RECEIVED, 8)
@@ -211,7 +226,7 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
                 timestamp: timestamp / 1000
             }.toCell())
             .endCell();
-        self.fetchDeal(queryId, contextProcessDealAfterPrice.dealId, value, contextProcessDeal);    
+        self.fetchDeal(queryId, contextProcessDealAfterPrice.dealId, self.msgValue(ctx.value), contextProcessDeal);    
     }   
 
     // handlers of deal received from Deal contract ------------------------------------------------------
@@ -223,32 +238,36 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         require(deal.maker != contextTakeDealAfterDeal.from, "Taker shouldn't be maker");
         require(deal.status == DEAL_STATUS_CREATED, "Deal is not created");
         require(contextTakeDealAfterDeal.feedId == self.feedId, "Wrong feedId");
-        require(contextTakeDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE, "Price is too old"); //todo return tokens
+        if(!(contextTakeDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE)) { //todo return tokens
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, self.msgValue(ctx.value), ORACLE_PRICE_TOO_OLD);
+        }
 
         let collateralAmount: Int = (deal.percent * contextTakeDealAfterDeal.price) / COLLATERAL_DENOMINATOR; 
         require(contextTakeDealAfterDeal.amount >= collateralAmount, "Insufficient amount of deposit for the deal");
 
-        require(( contextTakeDealAfterDeal.price >
+        if(!(contextTakeDealAfterDeal.price >
                 (deal.rateMaker -
-                    (deal.rateMaker * deal.slippageMaker!) /
-                    COLLATERAL_DENOMINATOR)), "Deposit Out of range"); //todo return tokens
+                    (deal.rateMaker * deal.slippageMaker) /
+                    COLLATERAL_DENOMINATOR)) ) { //todo return tokens
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, self.msgValue(ctx.value), MAKER_OUT_OF_RANGE);
+        }
 
         let returnAmount: Int = deal.collateralAmountMaker - collateralAmount;
         if(returnAmount > 0) {
-        send(SendParameters{
-            to: self.jettonWallet,
-            value: GAS_TO_SEND_JETTON,
-            mode: 0,
-            bounce: true,
-            body: TokenTransfer{
-                amount: returnAmount,
-                query_id: queryId,  
-                recipient: deal.maker,
-                response_destination: null,
-                custom_payload: null,
-                forward_ton_amount: 0,
-                forward_payload: emptySlice(),
-                }.toCell()
+            send(SendParameters{
+                to: self.jettonWallet,
+                value: GAS_TO_SEND_JETTON,
+                mode: 0,
+                bounce: true,
+                body: TokenTransfer{
+                    amount: returnAmount,
+                    query_id: queryId,  
+                    recipient: deal.maker,
+                    response_destination: null,
+                    custom_payload: null,
+                    forward_ton_amount: 0,
+                    forward_payload: emptySlice(),
+                    }.toCell()
             }); 
         }
 
@@ -258,15 +277,20 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         deal.status = DEAL_STATUS_ACCEPTED;
 
         if (deal.isSeller) {
-            deal.buyerTokenId = self.mint(queryId, contextTakeDealAfterDeal.from, storageFee + gasConsumption, contextTakeDealAfterDeal.from);
-            deal.sellerTokenId = self.mint(queryId, deal.maker, storageFee + gasConsumption, deal.maker);
+            deal.buyerTokenId = self.mint(queryId, contextTakeDealAfterDeal.from, minTonsForStorage + gasConsumption, contextTakeDealAfterDeal.from);
+            deal.sellerTokenId = self.mint(queryId, deal.maker, minTonsForStorage + gasConsumption, deal.maker);
         } else {
-            deal.sellerTokenId = self.mint(queryId, contextTakeDealAfterDeal.from, storageFee + gasConsumption, contextTakeDealAfterDeal.from);
-            deal.buyerTokenId = self.mint(queryId, deal.maker, storageFee + gasConsumption, deal.maker);
+            deal.sellerTokenId = self.mint(queryId, contextTakeDealAfterDeal.from, minTonsForStorage + gasConsumption, contextTakeDealAfterDeal.from);
+            deal.buyerTokenId = self.mint(queryId, deal.maker, minTonsForStorage + gasConsumption, deal.maker);
         }
 
-        // Emit DealAccepted event
-        // self.emitDealAccepted(dealId);
+        emit(DealAcceptedEvent{
+            queryId: queryId,
+            dealId: dealId,
+            maker: deal.maker,
+            collateralAmountMaker: deal.collateralAmountMaker
+        }.toCell());
+
 
         self.saveDeal(queryId, dealId, ctx.value, deal, contextTakeDealAfterDeal.from);
     }
@@ -282,7 +306,72 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
     }       
 
     fun processDealAfterRecievedDeal(deal: DealData, query: Cell, ctx: Context, queryId: Int, dealId: Int) {
+        if (deal.status == DEAL_STATUS_CREATED && deal.dateOrderExpiration <= now()) {
+            self._cancelDeal(deal, deal.maker, ctx, queryId, DEAL_STATUS_EXPIRED, dealId);
+            emit(DealExpiredEvent{
+                queryId: queryId,
+                dealId: dealId,
+                maker: deal.maker,
+                collateralAmountMaker: deal.collateralAmountMaker
+            }.toCell());
+            return;
+        }  
+        let contextProcessDealAfterDeal: ContextProcessDealForDealReceived = ContextProcessDealForDealReceived.fromCell(query);
 
+
+        require(deal.status == DEAL_STATUS_ACCEPTED && deal.dateStop <= now(), "deal.dateStop <= now()");
+        require(contextProcessDealAfterDeal.feedId == self.feedId, "Wrong feedId");
+        require(contextProcessDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE, "Price is too old");
+
+        let price: Int = contextProcessDealAfterDeal.price;
+
+        let collateralAmount: Int = deal.collateralAmountMaker;
+        let payoutBuyer: Int = 0;
+        let payoutSeller: Int = 0;
+
+        if (contextProcessDealAfterDeal.price <= deal.rate - collateralAmount) {
+            payoutSeller = collateralAmount * 2;
+        } else if (contextProcessDealAfterDeal.price > deal.rate - collateralAmount && contextProcessDealAfterDeal.price < deal.rate + collateralAmount) {
+            payoutBuyer = contextProcessDealAfterDeal.price + collateralAmount - deal.rate;
+            payoutSeller = deal.rate + collateralAmount - contextProcessDealAfterDeal.price;
+        } else if (contextProcessDealAfterDeal.price >= deal.rate + collateralAmount) {
+            payoutBuyer = collateralAmount * 2;
+        }
+
+        let operatorFee: Int = 0;
+        let serviceFee: Int = 0;
+
+        if (payoutBuyer > 0) {
+            if (payoutBuyer > collateralAmount) {
+                operatorFee = ((payoutBuyer - collateralAmount) * self.operatorFee) / COLLATERAL_DENOMINATOR;
+                serviceFee = ((payoutBuyer - collateralAmount) * self.serviceFee) / COLLATERAL_DENOMINATOR;
+                payoutBuyer = payoutBuyer - operatorFee - serviceFee;
+            }
+            self.sendTokens(deal.buyerTokenId, payoutBuyer, queryId);
+        }
+
+        if (payoutSeller > 0) {
+            if (payoutSeller > collateralAmount) {
+                operatorFee = ((payoutSeller - collateralAmount) * self.operatorFee) / COLLATERAL_DENOMINATOR;
+                serviceFee = ((payoutSeller - collateralAmount) * self.serviceFee) / COLLATERAL_DENOMINATOR;
+                payoutSeller = payoutSeller - operatorFee - serviceFee;
+            }
+            self.sendTokens(deal.sellerTokenId, payoutSeller, queryId + 1);
+        }
+
+        self.operatorFeeSum += operatorFee;
+        self.serviceFeeSum += serviceFee;
+
+        deal.status = DEAL_STATUS_COMPLETED;
+
+        emit(DealCompletedEvent{
+            queryId: queryId,
+            dealId: dealId,
+            maker: deal.maker,
+            collateralAmountMaker: deal.collateralAmountMaker
+        }.toCell());
+
+        self.saveDeal(queryId, dealId, ctx.value, deal, ctx.sender);
     }
 
     // inner functions ---------------------------------------------------------------------------------
@@ -312,6 +401,41 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
 
     // utils functions ---------------------------------------------------------------------------------
 
+    fun sendTokens(tokenId: Int, amount: Int, queryId: Int) {
+        require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
+
+        let contextForGetOwner: ContextForGetOwner = ContextForGetOwner{
+            amount: amount,
+        };
+        self.mapQueriesToContext.set(queryId, contextForGetOwner.toCell());
+
+        self.fetchOwnerByIndex(queryId, tokenId, GAS_TO_FETCH_OWNER);
+    }       
+
+    receive(msg: ReportOwner) {
+        let ctx: Context = context();
+        let winit: StateInit = initOf NftItem( myAddress(), msg.index_id);
+
+        require(ctx.sender == contractAddress(winit), "ReportOwner must be from nft contract");
+        let contextForGetOwner: ContextForGetOwner = ContextForGetOwner.fromCell(self.mapQueriesToContext.get(msg.query_id)!!);
+        self.mapQueriesToContext.del(msg.query_id);
+        send(SendParameters{
+            to: self.jettonWallet,
+            value: self.msgValue(ctx.value),
+            mode:  0, 
+            bounce: true,
+            body: TokenTransfer{
+                amount: contextForGetOwner.amount,
+                query_id: msg.query_id,
+                recipient: msg.owner,
+                response_destination: null,
+                custom_payload: null,
+                forward_ton_amount: 0,
+                forward_payload: emptySlice(),
+            }.toCell()
+        });
+    }
+
     fun saveDeal(queryId: Int, dealId: Int, value: Int, deal: DealData, originalGasTo: Address) { 
         let winit: StateInit = initOf Deal(dealId, myAddress());
 
@@ -337,19 +461,16 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
 
     override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int) {
         let ctx: Context = context();
-        let winit: StateInit = initOf Deal(msg.id, myAddress());
 
-        require(ctx.sender == contractAddress(winit), "ReportData must be from Deal contract");
-        let deal: DealData = DealData.fromCell(msg.data);
-        let query: Slice = self.mapQueriesToContext.get(msg.queryId)!!.beginParse();
-        self.mapQueriesToContext.del(msg.queryId);
+        let query: Slice = self.mapQueriesToContext.get(queryId)!!.beginParse();
+        self.mapQueriesToContext.del(queryId);
 
         let opcode: Int = query.loadUint(8);
         if (opcode == INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED) { 
-            self.takeDealAfterRecievedPrice(query.loadRef(), ctx, msg.queryId, feedId, price, timestamp);
+            self.takeDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp);
         } else if (opcode == INNER_OP_CODE_PROCESS_DEAL_AFTER_DEAL_RECEIVED) {
-            self.processDealAfterRecievedPrice(query.loadRef(), ctx, msg.queryId, feedId, price, timestamp);
-        }   
+            self.processDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp);
+        }
     }
 
 
@@ -382,9 +503,9 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         let opcode: Int = query.loadUint(8);
         if (opcode == INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED) { 
             self.takeDealAfterRecievedDeal(deal, query.loadRef(), ctx, msg.queryId, msg.id);
-        } else if (opcode == INNER_OP_CODE_CANCEL_DEAL_AFRTER_DEAL_RECEIVED) {
+        } else if (opcode == INNER_OP_CODE_CANCEL_DEAL_AFTER_DEAL_RECEIVED) {
             self.cancelDealAfterRecievedDeal(deal, query.loadRef(), ctx, msg.queryId, msg.id);
-        } else if (opcode == INNER_OP_CODE_PROCESS_DEAL_AFRTER_DEAL_RECEIVED) {
+        } else if (opcode == INNER_OP_CODE_PROCESS_DEAL_AFTER_DEAL_RECEIVED) {
             self.processDealAfterRecievedDeal(deal, query.loadRef(), ctx, msg.queryId, msg.id);
         }   
     }
@@ -412,6 +533,20 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         let tonBalanceBeforeMsg: Int = myBalance() - value;
         let storageFee: Int = minTonsForStorage - min(tonBalanceBeforeMsg, minTonsForStorage);
         return value - (storageFee);
+    }
+
+    // on errors
+    override fun onOracleErrorReceived(queryId: Int, error: Slice) {
+        self.mapQueriesToContext.del(queryId);
+    }
+
+    override fun onBouncedGetOwner(queryId: Int) {
+        self.mapQueriesToContext.del(queryId);
+    }   
+
+    // bounced messages
+    bounced(msg: GetData) {
+        self.mapQueriesToContext.del(msg.queryId);
     }
 
     // getters -----------------------------------------------------------------------------------------

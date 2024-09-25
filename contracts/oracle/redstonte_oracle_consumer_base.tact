@@ -17,6 +17,7 @@ trait RedstoneOracleConsumerBase {
     receive(msg: Slice){
         let op = msg.loadUint(32);
         if (op == OP_REDSTONE_DATA_FETCHED) {
+            require(sender() == self.oracle, "only oracle can send this message");
             let queryId = msg.loadUint(64);
             let slice = msg.loadRef().beginParse();
             self.onPriceReceived(queryId, slice.loadUint(256), slice.loadUint(256), slice.loadUint(48));

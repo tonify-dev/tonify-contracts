@@ -16,14 +16,16 @@ trait NftCollection {
     //     emit(LogEventMintRecord{ minter: sender(), item_id: self.next_item_index, generate_number: nativeRandom() }.toCell());
     // }
 
+    abstract fun onBouncedGetOwner(queryId: Int);
+
     virtual fun mint(query_id: Int, new_owner: Address, msgValue: Int, response_destination: Address): Int {
         // require(self.next_item_index >= 0, "non-sequential NFTs");
         let nft_init: StateInit = self.getNftItemInit(self.next_item_index);
         send(SendParameters{
                 to: contractAddress(nft_init),
                 value: msgValue,
-                bounce: false,
-                mode: SendIgnoreErrors,
+                bounce: true,
+                mode: 0,
                 body: Transfer{
                     query_id: query_id,
                     new_owner: new_owner,
@@ -41,20 +43,24 @@ trait NftCollection {
     }
 
 
-    fun fetchOwnerByIndex(query_id: Int, item_index: Int) {
+    fun fetchOwnerByIndex(query_id: Int, item_index: Int, value: Int) {
         let initCode: StateInit = self.getNftItemInit(item_index);
          send(SendParameters{
                 to: contractAddress(initCode),
-                value: 0,
-                bounce: false,
-                mode: SendIgnoreErrors|SendRemainingValue,
+                value: value,
+                bounce: true,
+                mode: 0,
                 body: GetOwner{
                     query_id: query_id,
                 }.toCell(),
             }
         );
     }
+
     
+    bounced(msg: GetOwner) {
+        self.onBouncedGetOwner(msg.query_id);
+    }
 
     get fun get_collection_data(): CollectionData {
         let b: StringBuilder = beginString();
