@@ -7,7 +7,7 @@ import { SingleFeedManInitData } from '../src/single-feed-man/SingleFeedManInitD
 import { TonSingleFeedManContractAdapter } from '../src/single-feed-man/TonSingleFeedManContractAdapter';
 import { TonSingleFeedManContractDeployer } from '../src/single-feed-man/TonSingleFeedManContractDeployer';
 import { toBigInt } from '../src/ton-utils';
-import { createTestNetwork, extractSandboxLogs } from './helpers/sandbox_helpers';
+import { createTestNetwork } from './helpers/sandbox_helpers';
 import {
     SIGNERS,
     createCellFromParamsProvider,

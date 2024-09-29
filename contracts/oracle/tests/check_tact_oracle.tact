@@ -31,7 +31,8 @@ contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
         self.timestamp = timestamp;
     }
 
-    override fun onOracleErrorReceived(msg: Slice) {
+    override fun onOracleErrorReceived(queryId: Int, msg: Slice) {
+        self.queryId = queryId;
         dump(msg);
     }
 

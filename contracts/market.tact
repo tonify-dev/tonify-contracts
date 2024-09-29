@@ -7,6 +7,7 @@ import "./deal.tact";
 import "./oracle/redstonte_oracle_consumer_base.tact";
 const SLIPPAGE_DENOMINATOR: Int = pow(10, 36);
 const COLLATERAL_DENOMINATOR: Int = pow(10, 18);
+const FEE_DENOMINATOR: Int = pow(10, 9);
 const ZERO_ADDRESS: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
 const STORAGE_INIT_VALUE: Int = ton("0.1");
 const GAS_MIN_VALUE: Int = ton("0.05");
@@ -35,16 +36,16 @@ const SMALL_TOKEN_AMOUNT: Int = 2;
 const ORACLE_PRICE_TOO_OLD: Int = 3;
 const MAKER_OUT_OF_RANGE: Int = 4;
 
-contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsumerBase {
+contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     id: Int as uint32;
     owner: Address;
     amm: Address;
-    jettonWallet: Address;
-    factory: Address;
+    jettonWallet: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
     underlyingAssetName: String;
     duration: Int as uint32;
     operatorFee: Int as uint32;
     serviceFee: Int as uint32;
+    factory: Address;
     stopped: Bool = false;
     countDeal: Int as uint32 = 0;
     next_item_index: Int as uint32 = 0;
@@ -55,7 +56,6 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
     operatorFeeSum: Int as coins = 0;
     serviceFeeSum: Int as coins = 0;
     operatorFeeAddress: Address;
-    serviceFeeAddress: Address;
 
 
     init(id: Int,
@@ -63,7 +63,6 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         coin: Address,
         amm: Address,
         factory: Address,
-        jettonWallet: Address,
         underlyingAssetName: String,
         duration: Int,
         collection_content: Cell,
@@ -71,11 +70,9 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         serviceFee: Int,
         oracle: Address,
         feedId: Int,
-        operatorFeeAddress: Address,
-        serviceFeeAddress: Address){
+        operatorFeeAddress: Address){
         self.id = id;
         self.owner = owner;
-        self.jettonWallet = jettonWallet;
         self.amm = amm;
         self.factory = factory;
         self.underlyingAssetName = underlyingAssetName;
@@ -86,7 +83,70 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         self.oracle = oracle;
         self.feedId = feedId;
         self.operatorFeeAddress = operatorFeeAddress;
-        self.serviceFeeAddress = serviceFeeAddress;
+    }
+
+    receive(msg: InnerDeployMarket) {
+        let ctx: Context = context();
+        require(ctx.sender == self.factory, "Only factory can deploy");
+        self.jettonWallet = msg.jettonWallet;
+        send(SendParameters{
+            to: ctx.sender,
+            value: self.msgValue(ctx.value),
+            mode: SendIgnoreErrors,
+            bounce: false,
+            body: DeployOk{
+                queryId: msg.queryId,
+            }.toCell()
+        });
+    }
+
+    receive(msg: WithdrawServiceFee) {
+        self.requireOwner();
+        require(msg.amount > 0, "Amount must be greater than 0");
+        require(msg.amount <= self.serviceFeeSum, "Insufficient service fee");
+        let ctx: Context = context();
+        let value: Int = self.msgValue(ctx.value);
+        self.serviceFeeSum -= msg.amount;
+        send(SendParameters{
+            to: self.jettonWallet,
+            value: value,
+            mode: 0,
+            bounce: true,
+            body: TokenTransfer{
+                amount: msg.amount,
+                query_id: msg.queryId,
+                recipient: msg.to,
+                response_destination: null,
+                custom_payload: null,
+                forward_ton_amount: 0,
+                forward_payload: emptySlice(),
+            }.toCell()
+        });
+    }   
+
+    receive(msg: WithdrawOperatorFee) {
+        let ctx: Context = context();
+
+        require(ctx.sender == self.operatorFeeAddress, "Only operator fee address can withdraw operator fee");
+        require(msg.amount > 0, "Amount must be greater than 0");
+        require(msg.amount <= self.operatorFeeSum, "Insufficient operator fee");
+        let value: Int = self.msgValue(ctx.value);
+        self.operatorFeeSum -= msg.amount;
+        send(SendParameters{
+            to: self.jettonWallet,
+            value: value,
+            mode: 0,
+            bounce: true,
+            body: TokenTransfer{
+                amount: msg.amount,
+                query_id: msg.queryId,
+                recipient: msg.to,
+                response_destination: null,
+                custom_payload: null,
+                forward_ton_amount: 0,
+                forward_payload: emptySlice(),
+            }.toCell()
+        });
     }
 
     receive(msg: TokenNotification) {
@@ -97,9 +157,8 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
             self.returnTokens(msg.query_id, msg.amount, msg.from, value, SMALL_VALUE);
         }
         let opcode: Int = msg.forward_payload.loadUint(32);
-
         if(opcode == OP_CODE_CREATE_DEAL) {
-            let deal: CreateDealData = CreateDealData.fromSlice(msg.forward_payload);   
+            let deal: CreateDealData = CreateDealData.fromSlice(msg.forward_payload);
             self.handleCreateDeal(msg.query_id, deal, value, msg.amount, msg.from);
         } else if (opcode == OP_CODE_TAKE_DEAL) {
             let deal: TakeDealData = TakeDealData.fromSlice(msg.forward_payload);
@@ -140,7 +199,7 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
         }
 
         self.countDeal += 1;
-
+        dump(1211111);
         if (self.amm != ZERO_ADDRESS) {
             value -= TO_TAKE_AMM;
             send(SendParameters{
@@ -155,6 +214,7 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
                 }.toCell()
             });
         }
+        dump(222222);
 
         let newDeal: DealData = DealData{
             rate: 0,
@@ -173,6 +233,7 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
             isSeller: !deal.makerPosition,
             status: 0
         };
+        dump(333333);
 
         emit(DealCreatedEvent{
             queryId: queryId,
@@ -180,6 +241,8 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
             maker: from,
             collateralAmountMaker: collateralAmountMaker
         }.toCell());
+
+        dump(555555);
 
         self.saveDeal(queryId, dealId, value, newDeal, from);
     }
@@ -343,8 +406,8 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
 
         if (payoutBuyer > 0) {
             if (payoutBuyer > collateralAmount) {
-                operatorFee = ((payoutBuyer - collateralAmount) * self.operatorFee) / COLLATERAL_DENOMINATOR;
-                serviceFee = ((payoutBuyer - collateralAmount) * self.serviceFee) / COLLATERAL_DENOMINATOR;
+                operatorFee = ((payoutBuyer - collateralAmount) * self.operatorFee) / FEE_DENOMINATOR;
+                serviceFee = ((payoutBuyer - collateralAmount) * self.serviceFee) / FEE_DENOMINATOR;
                 payoutBuyer = payoutBuyer - operatorFee - serviceFee;
             }
             self.sendTokens(deal.buyerTokenId, payoutBuyer, queryId);
@@ -352,8 +415,8 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
 
         if (payoutSeller > 0) {
             if (payoutSeller > collateralAmount) {
-                operatorFee = ((payoutSeller - collateralAmount) * self.operatorFee) / COLLATERAL_DENOMINATOR;
-                serviceFee = ((payoutSeller - collateralAmount) * self.serviceFee) / COLLATERAL_DENOMINATOR;
+                operatorFee = ((payoutSeller - collateralAmount) * self.operatorFee) / FEE_DENOMINATOR;
+                serviceFee = ((payoutSeller - collateralAmount) * self.serviceFee) / FEE_DENOMINATOR;
                 payoutSeller = payoutSeller - operatorFee - serviceFee;
             }
             self.sendTokens(deal.sellerTokenId, payoutSeller, queryId + 1);
@@ -562,11 +625,7 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
     get fun jettonWallet(): Address {
         return self.jettonWallet;
     }
-
-    get fun factory(): Address {
-        return self.factory;
-    }
-
+    
     get fun underlyingAssetName(): String {
         return self.underlyingAssetName;
     }
@@ -581,5 +640,37 @@ contract Market with Deployable, Resumable, NftCollection, RedstoneOracleConsume
 
     get fun serviceFee(): Int {
         return self.serviceFee;
+    }
+
+    get fun countDeal(): Int {
+        return self.countDeal;
+    }
+
+    get fun next_item_index(): Int {
+        return self.next_item_index;
+    }
+
+    get fun collection_content(): Cell {
+        return self.collection_content;
+    }
+
+    get fun oracle(): Address {
+        return self.oracle;
+    }
+
+    get fun feedId(): Int {
+        return self.feedId;
+    }
+
+    get fun operatorFeeSum(): Int {
+        return self.operatorFeeSum;
+    }
+
+    get fun serviceFeeSum(): Int {
+        return self.serviceFeeSum;
+    }
+
+    get fun operatorFeeAddress(): Address {
+        return self.operatorFeeAddress;
     }
 }

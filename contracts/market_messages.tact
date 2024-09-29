@@ -22,6 +22,23 @@ message(0xdfd74530) CreateDeal {
     oracleData: Cell?;
 }
 
+message InnerDeployMarket {
+    queryId: Int as uint64;
+    jettonWallet: Address;
+}
+
+message WithdrawOperatorFee {
+    queryId: Int as uint64;
+    amount: Int as coins;
+    to: Address;
+}
+
+message WithdrawServiceFee {
+    queryId: Int as uint64;
+    amount: Int as coins;
+    to: Address;
+}   
+
 struct CreateDealData {
     makerPosition: Bool;
     rate: Int as uint128;
@@ -134,5 +151,4 @@ struct ContextProcessDealForPriceReceived {
 struct ContextForGetOwner {
     amount: Int as coins;
 }
-
 
