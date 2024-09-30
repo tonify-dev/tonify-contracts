@@ -145,6 +145,7 @@ contract JettonDefaultWallet
         require(self.balance >= 0, "Invalid balance");
         let init: StateInit = initOf JettonDefaultWallet(msg.recipient, self.master);
         let wallet_address: Address = contractAddress(init);
+        dump(1);
         send(SendParameters{
                 to: wallet_address,
                 value: 0,
@@ -166,6 +167,7 @@ contract JettonDefaultWallet
 
     receive(msg: TokenTransferInternal){
         // 0x178d4519
+        dump(1);
         let ctx: Context = context();
         if (ctx.sender != self.master) {
             let sinit: StateInit = initOf JettonDefaultWallet(msg.from, self.master);

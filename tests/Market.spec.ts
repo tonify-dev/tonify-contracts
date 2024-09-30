@@ -31,6 +31,7 @@ describe('Market', () => {
     let factory: SandboxContract<TreasuryContract>;
     let market: SandboxContract<Market>;
     let deal: SandboxContract<Deal>;
+    let marketBalance: bigint;
     const feedId = 34n;
     const serviceFee = toNano('0.01'); // 1%
     const operatorFee = toNano('0.01'); // 1%
@@ -227,6 +228,8 @@ describe('Market', () => {
             to: market.address,
             success: true,
         });
+        marketBalance = await market.getBalance();
+        expect(marketBalance).toEqual(toNano('0.1'));
 
         const dealData = loadDealData((await deal.getData())!.asSlice());
         expect(dealData.collateralAmountMaker).toEqual(getAmount(rate, percent, slippage));
@@ -255,7 +258,6 @@ describe('Market', () => {
                 needBounce: false,
             })).endCell(),
         })).asSlice();
-        
 
         const takeDealResult = await jettonWalletTaker.send(taker.getSender(), {
             value: toNano('0.9'),
@@ -268,8 +270,14 @@ describe('Market', () => {
             custom_payload: null,
             forward_ton_amount: toNano('0.8'),
             forward_payload: takeDealData,
-        }); 
+        });
 
-        console.log(takeDealResult.events);
+        expect(takeDealResult.transactions).not.toHaveTransaction({
+            success: false,
+            to: (a?: Address) => a?.toString() !== taker.address.toString(),
+        });
+        marketBalance = await market.getBalance();
+        expect(marketBalance).toEqual(toNano('0.1'));
+
     });
 });

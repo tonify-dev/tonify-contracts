@@ -34,7 +34,6 @@ contract OracleMock with Deployable {
     }
 
     receive(msg: CheckAndReturnPrice){
-            dump(1);
         require(!msg.needBounce, "Need bounce");
         let body =  beginCell().storeUint(OP_REDSTONE_DATA_FETCHED, 32).storeUint(msg.queryId, 64).storeRef(beginCell().storeUint(msg.feedId, 256).storeUint(msg.price, 256).storeUint(msg.timestamp, 48).endCell()).endCell();
         send(SendParameters{

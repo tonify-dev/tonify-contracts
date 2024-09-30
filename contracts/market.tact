@@ -9,10 +9,10 @@ const SLIPPAGE_DENOMINATOR: Int = pow(10, 17);
 const COLLATERAL_DENOMINATOR: Int = pow(10, 8);
 const FEE_DENOMINATOR: Int = pow(10, 9);
 const ZERO_ADDRESS: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
-const STORAGE_INIT_VALUE: Int = ton("0.5");
+const STORAGE_INIT_VALUE: Int = ton("0.1");
 const GAS_MIN_VALUE: Int = ton("0.05");
 const TO_TAKE_AMM: Int = ton("0.15");
-const GAS_TO_SEND_JETTON: Int = ton("0.01");
+const GAS_TO_SEND_JETTON: Int = ton("0.049");
 const GAS_TO_FETCH_OWNER: Int = ton("0.01");
 
 const TIME_SLIPPAGE: Int = 60*5;
@@ -194,7 +194,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
     
     fun handleCreateDeal(queryId: Int, deal: CreateDealData, amount: Int, from: Address) {
-        nativeReserve(STORAGE_INIT_VALUE , ReserveBounceIfActionFail);
         let dealId: Int = self.countDeal;
 
         let slippageAmount: Int = (deal.rate * deal.percent * deal.slippage) / SLIPPAGE_DENOMINATOR;
@@ -330,11 +329,11 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                     amount: returnAmount,
                     query_id: queryId,  
                     recipient: deal.maker,
-                    response_destination: null,
+                    response_destination: contextTakeDealAfterDeal.from,
                     custom_payload: null,
                     forward_ton_amount: 0,
                     forward_payload: emptySlice(),
-                    }.toCell()
+                }.toCell()
             }); 
         }
 
@@ -345,10 +344,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
         if (deal.isSeller) {
             deal.buyerTokenId = self.mint(queryId, contextTakeDealAfterDeal.from, minTonsForStorage + gasConsumption, contextTakeDealAfterDeal.from);
-            deal.sellerTokenId = self.mint(queryId, deal.maker, minTonsForStorage + gasConsumption, deal.maker);
+            deal.sellerTokenId = self.mint(queryId, deal.maker, minTonsForStorage + gasConsumption, contextTakeDealAfterDeal.from);
         } else {
             deal.sellerTokenId = self.mint(queryId, contextTakeDealAfterDeal.from, minTonsForStorage + gasConsumption, contextTakeDealAfterDeal.from);
-            deal.buyerTokenId = self.mint(queryId, deal.maker, minTonsForStorage + gasConsumption, deal.maker);
+            deal.buyerTokenId = self.mint(queryId, deal.maker, minTonsForStorage + gasConsumption, contextTakeDealAfterDeal.from);
         }
 
         emit(DealAcceptedEvent{
@@ -357,7 +356,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             maker: deal.maker,
             collateralAmountMaker: deal.collateralAmountMaker
         }.toCell());
-        dump(1);
 
         self.saveDeal(queryId, dealId, deal, contextTakeDealAfterDeal.from);
     }
@@ -455,7 +453,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 amount: deal.collateralAmountMaker,
                 query_id: queryId,
                 recipient: from,
-                response_destination: null,
+                response_destination: ctx.sender,
                 custom_payload: null,
                 forward_ton_amount: 0,
                 forward_payload: emptySlice(),
@@ -505,6 +503,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     fun saveDeal(queryId: Int, dealId: Int, deal: DealData, originalGasTo: Address) { 
         let winit: StateInit = initOf Deal(dealId, myAddress());
+        dump(contractAddress(winit));
         send(SendParameters{
             to: contractAddress(winit),
             value: 0,
@@ -528,7 +527,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int) {
         nativeReserve(STORAGE_INIT_VALUE, 0);
-        dump(1);
         let ctx: Context = context();
         let query: Slice = self.mapQueriesToContext.get(queryId)!!.beginParse();
         self.mapQueriesToContext.del(queryId);
@@ -561,20 +559,16 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
 
     receive(msg: ReportData) {
-        dump(1);
         nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         let winit: StateInit = initOf Deal(msg.id, myAddress());
-        dump(1);
         require(ctx.sender == contractAddress(winit), "ReportData must be from Deal contract");
         let deal: DealData = DealData.fromCell(msg.data);
         let query: Slice = self.mapQueriesToContext.get(msg.queryId)!!.beginParse();
         self.mapQueriesToContext.del(msg.queryId);
-        dump(1);
 
         let opcode: Int = query.loadUint(8);
         if (opcode == INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED) { 
-            dump(1);
             self.takeDealAfterRecievedDeal(deal, query.loadRef(), ctx, msg.queryId, msg.id);
         } else if (opcode == INNER_OP_CODE_CANCEL_DEAL_AFTER_DEAL_RECEIVED) {
             self.cancelDealAfterRecievedDeal(deal, query.loadRef(), ctx, msg.queryId, msg.id);
@@ -639,6 +633,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     get fun operatorFee(): Int {
         return self.operatorFee;
+    }
+    
+    get fun balance(): Int {
+        return myBalance();
     }
 
     get fun serviceFee(): Int {

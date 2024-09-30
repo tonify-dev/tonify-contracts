@@ -4,7 +4,7 @@
     "scripts": {
         "start": "blueprint run",
         "build": "blueprint build",
-        "build-market": "blueprint build Market 1>/dev/null",
+        "build-market": "blueprint build Market 1>/dev/null && blueprint build Deal 1>/dev/null",
         "build-oracle": "blueprint build CheckTactOracle 1>/dev/null",
         "test": "jest --verbose",
         "test-oracle": "npm run build-oracle && jest ./tests/SingleFeedMan.spec.ts --verbose",

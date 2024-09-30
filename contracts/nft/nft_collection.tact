@@ -25,7 +25,7 @@ trait NftCollection {
                 to: contractAddress(nft_init),
                 value: msgValue,
                 bounce: true,
-                mode: 0,
+                mode: SendPayGasSeparately,
                 body: Transfer{
                     query_id: query_id,
                     new_owner: new_owner,
