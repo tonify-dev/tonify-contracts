@@ -21,7 +21,7 @@ contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
     }
 
     receive(msg: SetPrice){
-        self.fetchPrice(msg.queryId, msg.data, context().value - ton("0.1"));
+        self.fetchPrice(msg.queryId, msg.data);
     }
 
     override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int) {

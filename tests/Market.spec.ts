@@ -1,10 +1,18 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { Address, beginCell, toNano } from '@ton/core';
-import { Market, storeCreateDeal } from '../wrappers/Market';
+import { loadDealData, Market, storeCreateDeal, storeTakeDeal } from '../wrappers/Market';
 import '@ton/test-utils';
 import { MyJetton } from '../wrappers/MyJetton';
 import { JettonDefaultWallet } from '../wrappers/JettonDefaultWallet';
-import { OracleMock } from '../wrappers/OracleMock';
+import { OracleMock, storeCheckAndReturnPrice, storeCheckAndReturnPriceForTest } from '../wrappers/OracleMock';
+import { Deal } from '../wrappers/Deal';
+
+const DEAL_STATUS_CREATED = 1n;
+const DEAL_STATUS_ACCEPTED = 2n;
+const DEAL_STATUS_CANCELLED = 3n;
+const DEAL_STATUS_COMPLETED = 4n;
+const DEAL_STATUS_EXPIRED = 5n;
+
 
 describe('Market', () => {
     let blockchain: Blockchain;
@@ -22,6 +30,7 @@ describe('Market', () => {
     let taker: SandboxContract<TreasuryContract>;
     let factory: SandboxContract<TreasuryContract>;
     let market: SandboxContract<Market>;
+    let deal: SandboxContract<Deal>;
     const feedId = 34n;
     const serviceFee = toNano('0.01'); // 1%
     const operatorFee = toNano('0.01'); // 1%
@@ -29,6 +38,20 @@ describe('Market', () => {
     const duration = 60n * 60n * 24n * 10n; // 10 days
     const underlyingAssetName = 'USDT';
     const ZERO_ADDRESS = Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ');
+    const SLIPPAGE_DENOMINATOR = 10n ** 17n;
+    const COLLATERAL_DENOMINATOR = 10n ** 8n;
+
+    function getAmount(rate: bigint, percent: bigint, slippage: bigint) : bigint {
+        return (rate * percent) / COLLATERAL_DENOMINATOR + (rate * percent * slippage) / SLIPPAGE_DENOMINATOR;
+    }
+
+    // function getPercentFromAmount(rate: bigint, amount: bigint, slippage: bigint) {
+    //     const baseAmount = (amount * SLIPPAGE_DENOMINATOR) / (SLIPPAGE_DENOMINATOR + slippage);
+    //     return (baseAmount * COLLATERAL_DENOMINATOR) / rate;
+    // }
+    // function getPercentFromAmount(rate: bigint, amount: bigint, slippage: bigint) {
+    //     return ((amount - (rate * slippage) / 10000n) * 100n) / rate;
+    // }
 
     beforeEach(async () => {
         blockchain = await Blockchain.create();
@@ -111,7 +134,7 @@ describe('Market', () => {
         const deployResult = await market.send(
             factory.getSender(),
             {
-                value: toNano('0.15'),
+                value: toNano('0.55'),
             },
             {
                 $$type: 'InnerDeployMarket',
@@ -134,7 +157,7 @@ describe('Market', () => {
     it('should deploy correctly', async () => {
         // Check all initial values using get methods of the market contract
         expect(await market.getOwner()).toEqualAddress(owner.address);
-        expect(await market.getAmm()).toEqualAddress(amm.address);
+        expect(await market.getAmm()).toEqualAddress(ZERO_ADDRESS);
         expect(await market.getJettonWallet()).toEqualAddress(jettonWallet.address);
         expect(await market.getUnderlyingAssetName()).toEqual(underlyingAssetName);
         expect(await market.getDuration()).toEqual(duration);
@@ -147,12 +170,14 @@ describe('Market', () => {
         expect(await market.getCountDeal()).toEqual(0n);
     });
 
+
+
     it('standard flow', async () => {
 
-        const rate = toNano('1');
-        const percent = toNano('1');
+        const rate = toNano('0.1');// 1 usd
+        const percent = toNano('1'); // 100%
         const expiration = 60n * 60n * 24n * 10n; // 10 days
-        const slippage = toNano('0.01') * toNano('1'); // 1%
+        const slippage = toNano('0.01');  // 1%
 
         const createDealData = beginCell().store(storeCreateDeal({
             $$type: 'CreateDeal',
@@ -169,16 +194,16 @@ describe('Market', () => {
             value: toNano('0.9'),
         }, {
             $$type: 'TokenTransfer',
-            amount: toNano('100000000'),
+            amount: getAmount(rate, percent, slippage),
             query_id: 0n,
             recipient: market.address,
             response_destination: null,
             custom_payload: null,
-            forward_ton_amount: toNano('0.7'),
+            forward_ton_amount: toNano('0.8'),
             forward_payload: createDealData,
         }); 
 
-
+        deal = blockchain.openContract(await Deal.fromInit(0n, market.address));
         expect(createDealResult.transactions).toHaveTransaction({
             from: maker.address,
             to: jettonWalletMaker.address,
@@ -197,5 +222,54 @@ describe('Market', () => {
             success: true,
         });
 
+        expect(createDealResult.transactions).toHaveTransaction({
+            from: jettonWallet.address,
+            to: market.address,
+            success: true,
+        });
+
+        const dealData = loadDealData((await deal.getData())!.asSlice());
+        expect(dealData.collateralAmountMaker).toEqual(getAmount(rate, percent, slippage));
+        expect(dealData.rateMaker).toEqual(rate);
+        expect(dealData.maker.toString()).toEqual(maker.address.toString());
+        expect(dealData.percent).toEqual(percent);
+        expect(dealData.slippageMaker).toEqual(slippage);
+        expect(dealData.status).toEqual(DEAL_STATUS_CREATED);
+        expect(dealData.rate).toEqual(0n);
+        expect(dealData.buyerTokenId).toEqual(0n);
+        expect(dealData.sellerTokenId).toEqual(0n);
+        expect(dealData.dateStart).toEqual(0n);
+        expect(dealData.dateStop).toEqual(0n);
+        expect(dealData.isSeller).toEqual(false);
+        expect(dealData.dateOrderExpiration - dealData.dateOrderCreation).toEqual(expiration);
+
+
+        const takeDealData = beginCell().store(storeTakeDeal({
+            $$type: 'TakeDeal',
+            dealId: 0n,
+            oracleData: beginCell().store(storeCheckAndReturnPriceForTest({
+                $$type: 'CheckAndReturnPriceForTest',
+                feedId: feedId,
+                price: rate,
+                timestamp: BigInt(Date.now()),
+                needBounce: false,
+            })).endCell(),
+        })).asSlice();
+        
+
+        const takeDealResult = await jettonWalletTaker.send(taker.getSender(), {
+            value: toNano('0.9'),
+        }, {
+            $$type: 'TokenTransfer',
+            amount: getAmount(rate, percent, slippage),
+            query_id: 0n,
+            recipient: market.address,
+            response_destination: null,
+            custom_payload: null,
+            forward_ton_amount: toNano('0.8'),
+            forward_payload: takeDealData,
+        }); 
+
+        console.log(takeDealResult.events);
     });
 });

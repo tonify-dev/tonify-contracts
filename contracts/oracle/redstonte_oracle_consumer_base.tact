@@ -8,10 +8,10 @@ trait RedstoneOracleConsumerBase {
 
     abstract fun onOracleErrorReceived(queryId: Int, error: Slice);
 
-    virtual fun fetchPrice(queryId: Int, oracleData: Cell, value: Int) {
+    virtual fun fetchPrice(queryId: Int, oracleData: Cell) {
         let slice = oracleData.beginParse();
         let _oracleData = beginCell().storeUint(slice.loadUint(32), 32).storeUint(queryId, 64).storeSlice(slice).storeRef(beginCell().endCell()).endCell();
-        send(SendParameters{to: self.oracle, value: value, mode: 0, body: _oracleData});
+        send(SendParameters{to: self.oracle, value: 0, mode: SendRemainingBalance, body: _oracleData});
     }
 
     receive(msg: Slice){

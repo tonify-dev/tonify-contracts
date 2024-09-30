@@ -2,13 +2,11 @@ const OP_CODE_CREATE_DEAL: Int = 0xdfd74530; // sha256("CreateDeal").slice(0, 8)
 const OP_CODE_TAKE_DEAL: Int = 0x38f0b8f5; // sha256("TakeDeal").slice(0, 8)    
 
 message(0x38f0b8f5) TakeDeal {
-    queryId: Int as uint64;
     dealId: Int as uint32;
     oracleData: Cell;
 }
 
 struct TakeDealData {
-    queryId: Int as uint64;
     dealId: Int as uint32;
     oracleData: Cell;
 }
@@ -63,7 +61,6 @@ struct DealData {
     rate: Int as coins;
     rateMaker: Int as coins;
     percent: Int as coins;
-    periodOrderExpiration: Int as uint32;
     slippageMaker: Int as coins;
     collateralAmountMaker: Int as coins;
     dateOrderCreation: Int as uint32;

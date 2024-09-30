@@ -5,32 +5,32 @@ import "./nft/nft_collection.tact";
 import "./jetton/jetton_messages.tact";
 import "./deal.tact";
 import "./oracle/redstonte_oracle_consumer_base.tact";
-const SLIPPAGE_DENOMINATOR: Int = pow(10, 36);
-const COLLATERAL_DENOMINATOR: Int = pow(10, 18);
+const SLIPPAGE_DENOMINATOR: Int = pow(10, 17);
+const COLLATERAL_DENOMINATOR: Int = pow(10, 8);
 const FEE_DENOMINATOR: Int = pow(10, 9);
 const ZERO_ADDRESS: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
-const STORAGE_INIT_VALUE: Int = ton("0.1");
+const STORAGE_INIT_VALUE: Int = ton("0.5");
 const GAS_MIN_VALUE: Int = ton("0.05");
 const TO_TAKE_AMM: Int = ton("0.15");
 const GAS_TO_SEND_JETTON: Int = ton("0.01");
 const GAS_TO_FETCH_OWNER: Int = ton("0.01");
 
 const TIME_SLIPPAGE: Int = 60*5;
-/// inner opcodes
+
 const INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED: Int = 10;
 const INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED: Int = 20;
 const INNER_OP_CODE_CANCEL_DEAL_AFTER_DEAL_RECEIVED: Int = 21;
 const INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED: Int = 12;
 const INNER_OP_CODE_PROCESS_DEAL_AFTER_DEAL_RECEIVED: Int = 22;
 
-// deal status
+
 const DEAL_STATUS_CREATED: Int = 1;
 const DEAL_STATUS_ACCEPTED: Int = 2;
 const DEAL_STATUS_CANCELLED: Int = 3;
 const DEAL_STATUS_COMPLETED: Int = 4;
 const DEAL_STATUS_EXPIRED: Int = 5;
 
-// return reasons 
+
 const SMALL_VALUE: Int = 1;
 const SMALL_TOKEN_AMOUNT: Int = 2;
 const ORACLE_PRICE_TOO_OLD: Int = 3;
@@ -86,13 +86,14 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
 
     receive(msg: InnerDeployMarket) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         require(ctx.sender == self.factory, "Only factory can deploy");
         self.jettonWallet = msg.jettonWallet;
         send(SendParameters{
             to: ctx.sender,
-            value: self.msgValue(ctx.value),
-            mode: SendIgnoreErrors,
+            value: 0,
+            mode: SendRemainingBalance,
             bounce: false,
             body: DeployOk{
                 queryId: msg.queryId,
@@ -101,16 +102,15 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
 
     receive(msg: WithdrawServiceFee) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         self.requireOwner();
         require(msg.amount > 0, "Amount must be greater than 0");
         require(msg.amount <= self.serviceFeeSum, "Insufficient service fee");
-        let ctx: Context = context();
-        let value: Int = self.msgValue(ctx.value);
         self.serviceFeeSum -= msg.amount;
         send(SendParameters{
             to: self.jettonWallet,
-            value: value,
-            mode: 0,
+            value: 0,
+            mode: SendRemainingBalance,
             bounce: true,
             body: TokenTransfer{
                 amount: msg.amount,
@@ -125,17 +125,17 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }   
 
     receive(msg: WithdrawOperatorFee) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
 
         require(ctx.sender == self.operatorFeeAddress, "Only operator fee address can withdraw operator fee");
         require(msg.amount > 0, "Amount must be greater than 0");
         require(msg.amount <= self.operatorFeeSum, "Insufficient operator fee");
-        let value: Int = self.msgValue(ctx.value);
         self.operatorFeeSum -= msg.amount;
         send(SendParameters{
             to: self.jettonWallet,
-            value: value,
-            mode: 0,
+            value: 0,
+            mode: SendRemainingBalance,
             bounce: true,
             body: TokenTransfer{
                 amount: msg.amount,
@@ -150,77 +150,78 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
 
     receive(msg: TokenNotification) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         require(ctx.sender == self.jettonWallet, "Transfer jetton must be from jetton wallet");
-        let value: Int = self.msgValue(ctx.value);
-        if(ctx.value >= GAS_MIN_VALUE) {
-            self.returnTokens(msg.query_id, msg.amount, msg.from, value, SMALL_VALUE);
+
+        if(ctx.value < GAS_MIN_VALUE) {
+            self.returnTokens(msg.query_id, msg.amount, msg.from, SMALL_VALUE);
+            return;
         }
         let opcode: Int = msg.forward_payload.loadUint(32);
+
+
         if(opcode == OP_CODE_CREATE_DEAL) {
             let deal: CreateDealData = CreateDealData.fromSlice(msg.forward_payload);
-            self.handleCreateDeal(msg.query_id, deal, value, msg.amount, msg.from);
+            self.handleCreateDeal(msg.query_id, deal, msg.amount, msg.from);
         } else if (opcode == OP_CODE_TAKE_DEAL) {
             let deal: TakeDealData = TakeDealData.fromSlice(msg.forward_payload);
-            self.handleTakeDeal(msg.query_id, deal, value, msg.amount, msg.from);
+            self.handleTakeDeal(msg.query_id, deal, msg.amount, msg.from);
         }   
     }
 
     receive(msg: CancelDeal) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         require(ctx.sender == self.jettonWallet, "Transfer jetton must be from jetton wallet");
         require(ctx.value >= GAS_MIN_VALUE, "Invalid value");
 
-        let value: Int = self.msgValue(ctx.value);
         let contextCancelDeal: Cell = beginCell().storeUint(INNER_OP_CODE_CANCEL_DEAL_AFTER_DEAL_RECEIVED, 8).storeRef(ContextCancelDealForDealReceived{from: ctx.sender}.toCell()).endCell();   
-        self.fetchDeal(msg.queryId, msg.dealId, value, contextCancelDeal);    
+        self.fetchDeal(msg.queryId, msg.dealId, contextCancelDeal);    
     }
 
     receive(msg: ProcessDeal) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         require(ctx.sender == self.jettonWallet, "Transfer jetton must be from jetton wallet");
         require(ctx.value >= GAS_MIN_VALUE, "Invalid value");
 
-        let value: Int = self.msgValue(ctx.value);
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED, 8)
             .storeRef(ContextProcessDealForPriceReceived{from: ctx.sender, dealId: msg.dealId}.toCell())
             .endCell();   
-        self.fetchPriceWithSaveContext(msg.queryId, msg.oracleData, value, contextProcessDeal);    
+        self.fetchPriceWithSaveContext(msg.queryId, msg.oracleData, contextProcessDeal);    
     }
-    // handlers of token received from jetton wallet ------------------------------------------------------
-    fun handleCreateDeal(queryId: Int,deal: CreateDealData, value: Int, amount: Int, from: Address) {
+    
+    fun handleCreateDeal(queryId: Int, deal: CreateDealData, amount: Int, from: Address) {
+        nativeReserve(STORAGE_INIT_VALUE , ReserveBounceIfActionFail);
         let dealId: Int = self.countDeal;
 
         let slippageAmount: Int = (deal.rate * deal.percent * deal.slippage) / SLIPPAGE_DENOMINATOR;
         let collateralAmountMaker: Int = (deal.rate * deal.percent) / COLLATERAL_DENOMINATOR + slippageAmount;
-        if(amount >= collateralAmountMaker) {
-            self.returnTokens(queryId, amount, from, value, SMALL_TOKEN_AMOUNT);
+        if(amount < collateralAmountMaker) {
+            self.returnTokens(queryId, amount, from, SMALL_TOKEN_AMOUNT);
+            return;
         }
 
         self.countDeal += 1;
-        dump(1211111);
         if (self.amm != ZERO_ADDRESS) {
-            value -= TO_TAKE_AMM;
             send(SendParameters{
                 to: self.amm,
                 value: TO_TAKE_AMM,
                 mode: SendIgnoreErrors,
                 bounce: true,
                 body: TakeDeal{
-                    queryId: 0,
                     dealId: dealId,
                     oracleData: deal.oracleData!!
                 }.toCell()
             });
         }
-        dump(222222);
 
         let newDeal: DealData = DealData{
             rate: 0,
             rateMaker: deal.rate,
             percent: deal.percent,
-            periodOrderExpiration: deal.expiration,
             slippageMaker: deal.slippage,
             collateralAmountMaker: collateralAmountMaker,
             dateOrderCreation: now(),
@@ -231,9 +232,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             sellerTokenId: 0,
             maker: from,
             isSeller: !deal.makerPosition,
-            status: 0
+            status: DEAL_STATUS_CREATED
         };
-        dump(333333);
 
         emit(DealCreatedEvent{
             queryId: queryId,
@@ -242,12 +242,11 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             collateralAmountMaker: collateralAmountMaker
         }.toCell());
 
-        dump(555555);
 
-        self.saveDeal(queryId, dealId, value, newDeal, from);
+        self.saveDeal(queryId, dealId, newDeal, from);
     }
 
-    fun handleTakeDeal(queryId: Int, takeDeal: TakeDealData, value: Int, amount: Int, from: Address) {
+    fun handleTakeDeal(queryId: Int, takeDeal: TakeDealData, amount: Int, from: Address) {
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED, 8)
             .storeRef(ContextTakeDealForPriceReceived{
@@ -257,14 +256,15 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             }.toCell())
             .endCell();
         
-        self.fetchPriceWithSaveContext(queryId, takeDeal.oracleData, value, contextProcessDeal);
+        self.fetchPriceWithSaveContext(queryId, takeDeal.oracleData, contextProcessDeal);
     }
 
-    // handlers of price received from oracle ------------------------------------------------------------
+    
 
 
     fun takeDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int) {
         let contextTakeDealAfterPrice: ContextTakeDealForPriceReceived = ContextTakeDealForPriceReceived.fromCell(query);
+        dump(1);
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED, 8)
             .storeRef(ContextTakeDealForDealReceived{
@@ -275,7 +275,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 timestamp: timestamp / 1000,
             }.toCell())
             .endCell();
-        self.fetchDeal(queryId, contextTakeDealAfterPrice.dealId, self.msgValue(ctx.value), contextProcessDeal);
+        self.fetchDeal(queryId, contextTakeDealAfterPrice.dealId, contextProcessDeal);
     }
 
     fun processDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int) {
@@ -289,20 +289,22 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 timestamp: timestamp / 1000
             }.toCell())
             .endCell();
-        self.fetchDeal(queryId, contextProcessDealAfterPrice.dealId, self.msgValue(ctx.value), contextProcessDeal);    
+        self.fetchDeal(queryId, contextProcessDealAfterPrice.dealId, contextProcessDeal);    
     }   
 
-    // handlers of deal received from Deal contract ------------------------------------------------------
+    
 
 
     fun takeDealAfterRecievedDeal(deal: DealData, query: Cell, ctx: Context, queryId: Int, dealId: Int) {
+        dump(1);
         let contextTakeDealAfterDeal: ContextTakeDealForDealReceived = ContextTakeDealForDealReceived.fromCell(query);
         
         require(deal.maker != contextTakeDealAfterDeal.from, "Taker shouldn't be maker");
         require(deal.status == DEAL_STATUS_CREATED, "Deal is not created");
         require(contextTakeDealAfterDeal.feedId == self.feedId, "Wrong feedId");
-        if(!(contextTakeDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE)) { //todo return tokens
-            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, self.msgValue(ctx.value), ORACLE_PRICE_TOO_OLD);
+        if(!(contextTakeDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE)) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, ORACLE_PRICE_TOO_OLD);
+            return;
         }
 
         let collateralAmount: Int = (deal.percent * contextTakeDealAfterDeal.price) / COLLATERAL_DENOMINATOR; 
@@ -311,11 +313,13 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         if(!(contextTakeDealAfterDeal.price >
                 (deal.rateMaker -
                     (deal.rateMaker * deal.slippageMaker) /
-                    COLLATERAL_DENOMINATOR)) ) { //todo return tokens
-            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, self.msgValue(ctx.value), MAKER_OUT_OF_RANGE);
+                    COLLATERAL_DENOMINATOR)) ) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, MAKER_OUT_OF_RANGE);
+            return;
         }
 
         let returnAmount: Int = deal.collateralAmountMaker - collateralAmount;
+        dump(returnAmount);
         if(returnAmount > 0) {
             send(SendParameters{
                 to: self.jettonWallet,
@@ -336,7 +340,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
         deal.rate = contextTakeDealAfterDeal.price;
         deal.dateStart = now();
-        deal.dateStop = now() + deal.periodOrderExpiration;
+        deal.dateStop = now() + self.duration;
         deal.status = DEAL_STATUS_ACCEPTED;
 
         if (deal.isSeller) {
@@ -353,9 +357,9 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             maker: deal.maker,
             collateralAmountMaker: deal.collateralAmountMaker
         }.toCell());
+        dump(1);
 
-
-        self.saveDeal(queryId, dealId, ctx.value, deal, contextTakeDealAfterDeal.from);
+        self.saveDeal(queryId, dealId, deal, contextTakeDealAfterDeal.from);
     }
 
     fun cancelDealAfterRecievedDeal(deal: DealData, query: Cell, ctx: Context, queryId: Int, dealId: Int) {
@@ -386,7 +390,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         require(contextProcessDealAfterDeal.feedId == self.feedId, "Wrong feedId");
         require(contextProcessDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE, "Price is too old");
 
-        let price: Int = contextProcessDealAfterDeal.price;
+        
 
         let collateralAmount: Int = deal.collateralAmountMaker;
         let payoutBuyer: Int = 0;
@@ -434,15 +438,14 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             collateralAmountMaker: deal.collateralAmountMaker
         }.toCell());
 
-        self.saveDeal(queryId, dealId, ctx.value, deal, ctx.sender);
+        self.saveDeal(queryId, dealId, deal, ctx.sender);
     }
 
-    // inner functions ---------------------------------------------------------------------------------
+    
 
     fun _cancelDeal(deal: DealData, from: Address, ctx: Context, queryId: Int, status: Int, dealId: Int) {
         require(deal.maker == from, "Only maker can cancel deal");
         require(deal.status == DEAL_STATUS_CREATED, "Deal is not created");
-        let value: Int = self.msgValue(ctx.value);
         send(SendParameters{
             to: self.jettonWallet,
             value: GAS_TO_SEND_JETTON,
@@ -459,10 +462,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             }.toCell()
         });
         deal.status = status;
-        self.saveDeal(queryId, dealId, value - GAS_TO_SEND_JETTON, deal, from);   
+        self.saveDeal(queryId, dealId, deal, from);   
     }
 
-    // utils functions ---------------------------------------------------------------------------------
+    
 
     fun sendTokens(tokenId: Int, amount: Int, queryId: Int) {
         require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
@@ -476,6 +479,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }       
 
     receive(msg: ReportOwner) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         let winit: StateInit = initOf NftItem( myAddress(), msg.index_id);
 
@@ -484,8 +488,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         self.mapQueriesToContext.del(msg.query_id);
         send(SendParameters{
             to: self.jettonWallet,
-            value: self.msgValue(ctx.value),
-            mode:  0, 
+            value: 0,
+            mode:  SendRemainingBalance, 
             bounce: true,
             body: TokenTransfer{
                 amount: contextForGetOwner.amount,
@@ -499,54 +503,56 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         });
     }
 
-    fun saveDeal(queryId: Int, dealId: Int, value: Int, deal: DealData, originalGasTo: Address) { 
+    fun saveDeal(queryId: Int, dealId: Int, deal: DealData, originalGasTo: Address) { 
         let winit: StateInit = initOf Deal(dealId, myAddress());
-
         send(SendParameters{
             to: contractAddress(winit),
-            value: value,
-            mode: 0,
-            bounce: true,
+            value: 0,
+            mode: SendRemainingBalance,
+            bounce: false,
             body: SaveData{
-                queryId: 0,
+                queryId: queryId,
                 originalGasTo: originalGasTo,
-                data: deal.toCell()
-            }.toCell()
+                data: deal.toCell(),
+            }.toCell(),
+            code: winit.code,
+            data: winit.data
         });
     }
 
-    fun fetchPriceWithSaveContext(queryId: Int, oracleData: Cell, value: Int, saveContext: Cell) {
+    fun fetchPriceWithSaveContext(queryId: Int, oracleData: Cell, saveContext: Cell) {
         require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
-
         self.mapQueriesToContext.set(queryId, saveContext);
-        self.fetchPrice(queryId, oracleData, value);
+        self.fetchPrice(queryId, oracleData);
     }
 
     override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
+        dump(1);
         let ctx: Context = context();
-
         let query: Slice = self.mapQueriesToContext.get(queryId)!!.beginParse();
         self.mapQueriesToContext.del(queryId);
 
         let opcode: Int = query.loadUint(8);
-        if (opcode == INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED) { 
+
+        if (opcode == INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED) { 
             self.takeDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp);
-        } else if (opcode == INNER_OP_CODE_PROCESS_DEAL_AFTER_DEAL_RECEIVED) {
+        } else if (opcode == INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED) {
             self.processDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp);
         }
     }
 
 
-    fun fetchDeal(queryId: Int, dealId: Int, value: Int, saveContext: Cell) { 
+    fun fetchDeal(queryId: Int, dealId: Int, saveContext: Cell) { 
         require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
 
         self.mapQueriesToContext.set(queryId, saveContext);
         let winit: StateInit = initOf Deal(dealId, myAddress());
-
+        dump(1);
         send(SendParameters{
             to: contractAddress(winit),
-            value: value,
-            mode: 0,
+            value: 0,
+            mode: SendRemainingBalance,
             bounce: true,
             body: GetData{
                 queryId: queryId, 
@@ -555,16 +561,20 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
 
     receive(msg: ReportData) {
+        dump(1);
+        nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         let winit: StateInit = initOf Deal(msg.id, myAddress());
-
+        dump(1);
         require(ctx.sender == contractAddress(winit), "ReportData must be from Deal contract");
         let deal: DealData = DealData.fromCell(msg.data);
         let query: Slice = self.mapQueriesToContext.get(msg.queryId)!!.beginParse();
         self.mapQueriesToContext.del(msg.queryId);
+        dump(1);
 
         let opcode: Int = query.loadUint(8);
         if (opcode == INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED) { 
+            dump(1);
             self.takeDealAfterRecievedDeal(deal, query.loadRef(), ctx, msg.queryId, msg.id);
         } else if (opcode == INNER_OP_CODE_CANCEL_DEAL_AFTER_DEAL_RECEIVED) {
             self.cancelDealAfterRecievedDeal(deal, query.loadRef(), ctx, msg.queryId, msg.id);
@@ -573,11 +583,11 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         }   
     }
  
-    fun returnTokens(queryId: Int, amount:Int, to: Address, value: Int, reason: Int) {
+    fun returnTokens(queryId: Int, amount:Int, to: Address, reason: Int) {
         send(SendParameters{
             to: self.jettonWallet,
-            value: value,
-            mode: 0,
+            value: 0,
+            mode: SendRemainingBalance,
             bounce: true,
             body: TokenTransfer{
                 amount: amount,
@@ -590,15 +600,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             }.toCell()
         });
     }
+
     
-
-    fun msgValue(value: Int): Int {
-        let tonBalanceBeforeMsg: Int = myBalance() - value;
-        let storageFee: Int = minTonsForStorage - min(tonBalanceBeforeMsg, minTonsForStorage);
-        return value - (storageFee);
-    }
-
-    // on errors
     override fun onOracleErrorReceived(queryId: Int, error: Slice) {
         self.mapQueriesToContext.del(queryId);
     }
@@ -607,12 +610,12 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         self.mapQueriesToContext.del(queryId);
     }   
 
-    // bounced messages
+    
     bounced(msg: GetData) {
         self.mapQueriesToContext.del(msg.queryId);
     }
 
-    // getters -----------------------------------------------------------------------------------------
+    
 
     get fun id(): Int {
         return self.id;
