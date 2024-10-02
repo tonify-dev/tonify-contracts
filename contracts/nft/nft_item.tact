@@ -1,7 +1,7 @@
 import "./nft_messges.tact";
 import "../jetton/jetton_messages.tact";
 
-const minTonsForStorage: Int = ton("0.02");
+const minTonsForStorage: Int = ton("0.01");
 const gasConsumption: Int = ton("0.02");
 
 contract NftItem {
@@ -25,13 +25,14 @@ contract NftItem {
         
         if (self.is_initialized == false) {  
             require(ctx.sender == self.collection_address, "initialized tx need from collection");
+            nativeReserve(minTonsForStorage, 0);
             self.is_initialized = true;
             self.owner = msg.new_owner;
             self.individual_content = msg.custom_payload;
             send(SendParameters{
                 to: msg.response_destination!!,
                 value: msgValue,
-                mode: SendPayGasSeparately,
+                mode: SendRemainingBalance,
                 body: Excesses { query_id: msg.query_id }.toCell()
             });
         } else {

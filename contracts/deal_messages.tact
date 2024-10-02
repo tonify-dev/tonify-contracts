@@ -6,7 +6,6 @@ message ReportData {
     id: Int as uint32;
     data: Cell;
 }
-
 message SaveData {
     queryId: Int as uint64;
     originalGasTo: Address;
