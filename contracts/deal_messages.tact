@@ -11,3 +11,7 @@ message SaveData {
     originalGasTo: Address;
     data: Cell;
 }
+message DeleteData {
+    queryId: Int as uint64;
+    originalGasTo: Address;
+}

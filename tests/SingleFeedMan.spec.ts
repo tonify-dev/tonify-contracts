@@ -19,7 +19,6 @@ import { CheckTactOracle } from '../wrappers/CheckTactOracle';
 import { SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { ContractParamsProvider } from '@redstone-finance/sdk';
 
-jest.setTimeout(40000);
 
 describe('Ton Single Feed Man Tests', () => {
     let singleFeedManCode: Cell;
@@ -83,10 +82,11 @@ describe('Ton Single Feed Man Tests', () => {
     it('should work with consumer', async () => {
         const queryTimestamp = Date.now() - Date.now() % 100000 - 100000*6*60*24;
         const queryId = 2134n;
-        await checker.send(
+        
+        const res = await checker.send(
             owner.getSender(),
             {
-                value: toNano('0.3'),
+                value: toNano('0.2'),
             },
             {
                 $$type: 'SetPrice',
@@ -102,7 +102,7 @@ describe('Ton Single Feed Man Tests', () => {
             },
         );
 
-        // console.log(res.events);
+        console.log(res.events);
 
         const feedId = (await checker.getFeedId());
         const price = (await checker.getPrice());

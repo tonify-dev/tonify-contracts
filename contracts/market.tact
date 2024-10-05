@@ -10,10 +10,10 @@ const COLLATERAL_DENOMINATOR: Int = pow(10, 8);
 const FEE_DENOMINATOR: Int = pow(10, 9);
 const ZERO_ADDRESS: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
 const STORAGE_INIT_VALUE: Int = ton("0.1");
-const GAS_MIN_VALUE: Int = ton("0.05");
 const TO_TAKE_AMM: Int = ton("0.15");
-const GAS_TO_SEND_JETTON: Int = ton("0.049");
+const GAS_TO_SEND_JETTON: Int = ton("0.048");
 const GAS_TO_FETCH_OWNER: Int = ton("0.02") + GAS_TO_SEND_JETTON;
+const GAS_MIN_VALUE: Int = ton("0.05") + GAS_TO_SEND_JETTON;
 
 const TIME_SLIPPAGE: Int = 60*5;
 
@@ -364,21 +364,23 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             maker: deal.maker,
             collateralAmountMaker: deal.collateralAmountMaker
         }.toCell()); 
-        self._cancelDeal(deal, ctx.sender, ctx, queryId, DEAL_STATUS_CANCELLED, dealId);
+        let contextCancelDealAfterDeal: ContextCancelDealForDealReceived = ContextCancelDealForDealReceived.fromCell(query);
+        require(deal.maker == contextCancelDealAfterDeal.from, "Only maker can cancel deal");
+        self._cancelDeal(deal, contextCancelDealAfterDeal.from, queryId, dealId);
     }       
 
     fun processDealAfterRecievedDeal(deal: DealData, query: Cell, ctx: Context, queryId: Int, dealId: Int) {
+        let contextProcessDealAfterDeal: ContextProcessDealForDealReceived = ContextProcessDealForDealReceived.fromCell(query);
         if (deal.status == DEAL_STATUS_CREATED && deal.dateOrderExpiration <= now()) {
-            self._cancelDeal(deal, deal.maker, ctx, queryId, DEAL_STATUS_EXPIRED, dealId);
             emit(DealExpiredEvent{
                 queryId: queryId,
                 dealId: dealId,
                 maker: deal.maker,
                 collateralAmountMaker: deal.collateralAmountMaker
             }.toCell());
+            self._cancelDeal(deal, contextProcessDealAfterDeal.from, queryId, dealId);
             return;
         }  
-        let contextProcessDealAfterDeal: ContextProcessDealForDealReceived = ContextProcessDealForDealReceived.fromCell(query);
 
 
         require(deal.status == DEAL_STATUS_ACCEPTED && deal.dateStop <= now(), "deal.dateStop <= now()");
@@ -424,22 +426,18 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         self.operatorFeeSum += operatorFee;
         self.serviceFeeSum += serviceFee;
 
-        deal.status = DEAL_STATUS_COMPLETED;
-
         emit(DealCompletedEvent{
             queryId: queryId,
             dealId: dealId,
             maker: deal.maker,
             collateralAmountMaker: deal.collateralAmountMaker
         }.toCell());
-
-        self.saveDeal(queryId, dealId, deal, contextProcessDealAfterDeal.from);
+        self.deleteDeal(queryId, dealId, contextProcessDealAfterDeal.from);   
     }
 
     
 
-    fun _cancelDeal(deal: DealData, from: Address, ctx: Context, queryId: Int, status: Int, dealId: Int) {
-        require(deal.maker == from, "Only maker can cancel deal");
+    fun _cancelDeal(deal: DealData, originalGasTo: Address, queryId: Int, dealId: Int) {
         require(deal.status == DEAL_STATUS_CREATED, "Deal is not created");
         send(SendParameters{
             to: self.jettonWallet,
@@ -449,15 +447,14 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             body: TokenTransfer{
                 amount: deal.collateralAmountMaker,
                 query_id: queryId,
-                recipient: from,
-                response_destination: from,
+                recipient: deal.maker,
+                response_destination: originalGasTo,
                 custom_payload: null,
                 forward_ton_amount: 0,
                 forward_payload: emptySlice(),
             }.toCell()
         });
-        deal.status = status;
-        self.saveDeal(queryId, dealId, deal, from);   
+        self.deleteDeal(queryId, dealId, originalGasTo);   
     }
 
     
@@ -511,6 +508,23 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 queryId: queryId,
                 originalGasTo: originalGasTo,
                 data: deal.toCell(),
+            }.toCell(),
+            code: winit.code,
+            data: winit.data
+        });
+    }
+
+    fun deleteDeal(queryId: Int, dealId: Int, originalGasTo: Address) { 
+        let winit: StateInit = initOf Deal(dealId, myAddress());
+
+        send(SendParameters{
+            to: contractAddress(winit),
+            value: 0,
+            mode: SendRemainingBalance,
+            bounce: false,
+            body: DeleteData{
+                queryId: queryId,
+                originalGasTo: originalGasTo,
             }.toCell(),
             code: winit.code,
             data: winit.data
