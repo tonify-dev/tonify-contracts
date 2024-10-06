@@ -196,6 +196,10 @@ describe('Market', () => {
         );
     });
 
+    afterEach(async () => {
+        expect((await market.getMapQueriesToContext()).size).toEqual(0);
+    });
+
     it('should deploy correctly', async () => {
         // Check all initial values using get methods of the market contract
         expect(await market.getOwner()).toEqualAddress(owner.address);
@@ -390,7 +394,6 @@ describe('Market', () => {
             );
             expect(createDealResult.externals.length).toEqual(0);
             expect(createDealResult.transactions).toHaveTransaction({
-                success: false,
                 to: market.address,
                 exitCode: 45223,
             });
@@ -408,6 +411,10 @@ describe('Market', () => {
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
             const cancelDealResult = await market.send(
                 taker.getSender(),
                 {
@@ -419,12 +426,10 @@ describe('Market', () => {
                     queryId: 0n,
                 },
             );
+
             expect(cancelDealResult.externals.length).toEqual(0);
-            expect(cancelDealResult.transactions).toHaveTransaction({
-                success: false,
-                to: market.address,
-                exitCode: 38435,
-            });
+            await verifyTransactions(cancelDealResult, taker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
         });
 
         it('revert if call with small value', async () => {
@@ -450,10 +455,544 @@ describe('Market', () => {
             );
             expect(cancelDealResult.externals.length).toEqual(0);
             expect(cancelDealResult.transactions).toHaveTransaction({
-                success: false,
                 to: market.address,
                 exitCode: 16059,
             });
+        });
+
+        it('return if bad id', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = (await createDeal(rate, percent, expiration, slippage, makerPosition)) + 1n;
+
+            const cancelDealResult = await market.send(
+                maker.getSender(),
+                {
+                    value: toNano('0.1'),
+                },
+                {
+                    $$type: 'CancelDeal',
+                    dealId: dealId,
+                    queryId: 0n,
+                },
+            );
+            expect(cancelDealResult.externals.length).toEqual(0);
+            await verifyDeletedDealData(dealId);
+        });
+    });
+
+    describe('negative test for take deal', () => {
+        it('revert if small value', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent),
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.07'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyTransactions(takeDealResult, maker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
+        });
+
+        it('revert if send small amount tokens', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent) - 1n,
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyTransactions(takeDealResult, taker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
+        });
+
+        it('revert if bad feed id', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId + 1n,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent),
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyTransactions(takeDealResult, taker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
+        });
+
+        it('return token if bad status', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(dealId, rate, percent);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent),
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyTransactions(takeDealResult, taker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
+        });
+
+        it('return token if call from maker', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletMaker.send(
+                maker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent),
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: maker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyTransactions(takeDealResult, taker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
+        });
+
+        it('return token if bad timestamp', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()) - 60n * 60n * 1000n,
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent),
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyTransactions(takeDealResult, taker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
+        });
+
+        it('return token if price out of range', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate * 2n,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent),
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyTransactions(takeDealResult, taker.address);
+            await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
+        });
+
+
+        it('return token if bounced oracle', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: true,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent),
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            expect(takeDealResult.transactions).toHaveTransaction({
+                to: oracle.address,
+                exitCode: 41502,
+            });
+
+        });
+
+        it('revert if bad id', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            const duration = 60n * 60n * 24n * 30n; // 30 days
+            const secondRate = toNano('0');
+            const dealId = (await createDeal(rate, percent, expiration, slippage, makerPosition)) + 1n;
+
+            const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
+            const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+
+            const tonBalanceBefore = await taker.getBalance();
+            const takeDealData = beginCell()
+                .store(
+                    storeTakeDeal({
+                        $$type: 'TakeDeal',
+                        dealId: dealId,
+                        oracleData: beginCell()
+                            .store(
+                                storeCheckAndReturnPriceForTest({
+                                    $$type: 'CheckAndReturnPriceForTest',
+                                    feedId: feedId,
+                                    price: rate,
+                                    timestamp: BigInt(Date.now()),
+                                    needBounce: false,
+                                }),
+                            )
+                            .endCell(),
+                    }),
+                )
+                .asSlice();
+
+            const takeDealResult = await jettonWalletTaker.send(
+                taker.getSender(),
+                {
+                    value: toNano('0.9'),
+                },
+                {
+                    $$type: 'TokenTransfer',
+                    amount: getAmountWithoutSlippage(rate, percent) - 1n,
+                    query_id: 0n,
+                    recipient: market.address,
+                    response_destination: taker.address,
+                    custom_payload: null,
+                    forward_ton_amount: toNano('0.8'),
+                    forward_payload: takeDealData,
+                },
+            );
+            expect(takeDealResult.externals.length).toEqual(0);
+            await verifyDeletedDealData(dealId);
         });
     });
 
@@ -627,9 +1166,7 @@ describe('Market', () => {
         const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
         const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
         const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
-        console.log(blockchain.now);
         blockchain.now = blockchain.now! + Number(expiration);
-        console.log(blockchain.now);
 
         const balanceOperatorBefore = await operator.getBalance();
         const dealDataAfterTake = loadDealData((await deal.getData())!.asSlice());

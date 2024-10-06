@@ -35,6 +35,10 @@ const SMALL_VALUE: Int = 1;
 const SMALL_TOKEN_AMOUNT: Int = 2;
 const ORACLE_PRICE_TOO_OLD: Int = 3;
 const MAKER_OUT_OF_RANGE: Int = 4;
+const SMALL_AMOUNT: Int = 5;
+const BAD_FEED_ID: Int = 6;
+const BAD_STATUS: Int = 7;
+const TRANSACTION_FROM_MAKER: Int = 8;
 
 contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     id: Int as uint32;
@@ -295,21 +299,33 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     fun takeDealAfterRecievedDeal(deal: DealData, query: Cell, ctx: Context, queryId: Int, dealId: Int) {
         let contextTakeDealAfterDeal: ContextTakeDealForDealReceived = ContextTakeDealForDealReceived.fromCell(query);
         
-        require(deal.maker != contextTakeDealAfterDeal.from, "Taker shouldn't be maker");
-        require(deal.status == DEAL_STATUS_CREATED, "Deal is not created");
-        require(contextTakeDealAfterDeal.feedId == self.feedId, "Wrong feedId");
-        if(!(contextTakeDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE)) {
+        if (deal.maker == contextTakeDealAfterDeal.from) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, TRANSACTION_FROM_MAKER);
+            return;
+        }
+        if (deal.status != DEAL_STATUS_CREATED) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, BAD_STATUS);
+            return;
+        }
+        if (contextTakeDealAfterDeal.feedId != self.feedId) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, BAD_FEED_ID);
+            return;
+        }
+        if (contextTakeDealAfterDeal.timestamp < now() - TIME_SLIPPAGE) {
             self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, ORACLE_PRICE_TOO_OLD);
             return;
         }
 
         let collateralAmount: Int = (deal.percent * contextTakeDealAfterDeal.price) / COLLATERAL_DENOMINATOR; 
-        require(contextTakeDealAfterDeal.amount >= collateralAmount, "Insufficient amount of deposit for the deal");
+        if (contextTakeDealAfterDeal.amount < collateralAmount) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, SMALL_AMOUNT);
+            return;
+        }
 
-        if(!(contextTakeDealAfterDeal.price >
+        if (contextTakeDealAfterDeal.price <=
                 (deal.rateMaker -
                     (deal.rateMaker * deal.slippageMaker) /
-                    COLLATERAL_DENOMINATOR)) ) {
+                    COLLATERAL_DENOMINATOR)) {
             self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, MAKER_OUT_OF_RANGE);
             return;
         }
@@ -358,14 +374,16 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
 
     fun cancelDealAfterRecievedDeal(deal: DealData, query: Cell, ctx: Context, queryId: Int, dealId: Int) {
+        let contextCancelDealAfterDeal: ContextCancelDealForDealReceived = ContextCancelDealForDealReceived.fromCell(query);
+        if (deal.maker != contextCancelDealAfterDeal.from) {
+            return;
+        }
         emit(CancelEvent{
             queryId: queryId,
             dealId: dealId,
             maker: deal.maker,
             collateralAmountMaker: deal.collateralAmountMaker
         }.toCell()); 
-        let contextCancelDealAfterDeal: ContextCancelDealForDealReceived = ContextCancelDealForDealReceived.fromCell(query);
-        require(deal.maker == contextCancelDealAfterDeal.from, "Only maker can cancel deal");
         self._cancelDeal(deal, contextCancelDealAfterDeal.from, queryId, dealId);
     }       
 
@@ -382,12 +400,15 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             return;
         }  
 
-
-        require(deal.status == DEAL_STATUS_ACCEPTED && deal.dateStop <= now(), "deal.dateStop <= now()");
-        require(contextProcessDealAfterDeal.feedId == self.feedId, "Wrong feedId");
-        require(contextProcessDealAfterDeal.timestamp >= now() - TIME_SLIPPAGE, "Price is too old");
-
-        
+        if (!(deal.status == DEAL_STATUS_ACCEPTED && deal.dateStop <= now())) {
+            return;
+        }
+        if (contextProcessDealAfterDeal.feedId != self.feedId) {
+            return;
+        }
+        if (contextProcessDealAfterDeal.timestamp < now() - TIME_SLIPPAGE) {
+            return;
+        }
 
         let collateralAmount: Int = deal.collateralAmountMaker;
         let payoutBuyer: Int = 0;
@@ -684,5 +705,9 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     get fun operatorFeeAddress(): Address {
         return self.operatorFeeAddress;
+    }
+    
+    get fun mapQueriesToContext(): map<Int, Cell> {
+        return self.mapQueriesToContext;
     }
 }
