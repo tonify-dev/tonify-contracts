@@ -165,7 +165,6 @@ describe('Market', () => {
             await JettonDefaultWallet.fromInit(operator.address, jettonMaster.address),
         );
 
-
         const deployResult = await market.send(
             factory.getSender(),
             {
@@ -239,6 +238,8 @@ describe('Market', () => {
 
     afterEach(async () => {
         expect((await market.getMapQueriesToContext()).size).toEqual(0);
+        marketBalance = await market.getBalance();
+        expect(Number.parseFloat(fromNano(marketBalance))).toBeGreaterThanOrEqual(0.09);
     });
 
     it('should deploy correctly', async () => {
@@ -263,7 +264,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.15'); // 1.5 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -277,7 +278,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.15'); // 1.5 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -301,7 +302,7 @@ describe('Market', () => {
                     to: owner.address,
                 },
             );
-            await verifyTransactions(withdrawFeeResult,owner.address);
+            await verifyTransactions(withdrawFeeResult, owner.address);
 
             const withdrawOperatorFeeResult = await market.send(
                 operatorFeeAddress.getSender(),
@@ -315,8 +316,8 @@ describe('Market', () => {
                     to: operator.address,
                 },
             );
-            await verifyTransactions(withdrawOperatorFeeResult,operator.address);
-            
+            await verifyTransactions(withdrawOperatorFeeResult, operator.address);
+
             const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
             const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
@@ -325,14 +326,13 @@ describe('Market', () => {
             expect(balanceMarketAfter).toEqual(balanceMarketBefore - feeOwner - feeOperator);
         });
 
-
         it('standard flow - maker short', async () => {
             const rate = toNano('0.2'); // 2 usd
             const percent = toNano('0.5'); // 50%
             const expiration = 60n * 60n * 24n * 5n; // 5 days
             const slippage = toNano('0.02'); // 2%
             const makerPosition = false;
-            
+
             const secondRate = toNano('0.15'); // 1.5 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -346,7 +346,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 15n; // 15 days
             const slippage = toNano('0.05'); // 5%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.04'); // 0.4 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -360,7 +360,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 7n; // 7 days
             const slippage = toNano('0.03'); // 3%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.4'); // 4 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -374,7 +374,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 3n; // 3 days
             const slippage = toNano('0.015'); // 1.5%
             const makerPosition = false;
-            
+
             const secondRate = toNano('0.2'); // 2 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -382,14 +382,13 @@ describe('Market', () => {
             await proceedDeal(id, rate, duration, secondRate, makerPosition);
         });
 
-
         it('standard flow - higher percent', async () => {
             const rate = toNano('0.05'); // 0.5 usd
             const percent = toNano('1.75'); // 175%
             const expiration = 60n * 60n * 24n * 15n; // 15 days
             const slippage = toNano('0.05'); // 5%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.04'); // 0.4 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -403,7 +402,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -416,10 +415,160 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await proceedDealAfterExpiration(id, rate, secondRate, expiration);
+        });
+
+        it('Som big flow', async () => {
+            let rate = toNano('0.1'); // 1 usd
+            let percent = toNano('1'); // 100%
+            let expiration = 60n * 60n * 24n * 10n; // 10 days
+            let slippage = toNano('0.01'); // 1%
+            let makerPosition = true;
+
+            let secondRate = toNano('0.15'); // 1.5 usd
+
+            let id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            console.log(id)
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+
+            rate = toNano('0.1'); // 1 usd
+            percent = toNano('1'); // 100%
+            expiration = 60n * 60n * 24n * 10n; // 10 days
+            slippage = toNano('0.01'); // 1%
+            makerPosition = true;
+
+            secondRate = toNano('0.15'); // 1.5 usd
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            console.log(id)
+            console.log('------------------------')
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+            const feeOwner = await market.getServiceFeeSum();
+            const feeOperator = await market.getOperatorFeeSum();
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+            const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
+
+            const withdrawFeeResult = await market.send(
+                owner.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawServiceFee',
+                    queryId: 0n,
+                    amount: feeOwner,
+                    to: owner.address,
+                },
+            );
+            await verifyTransactions(withdrawFeeResult, owner.address);
+
+            const withdrawOperatorFeeResult = await market.send(
+                operatorFeeAddress.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawOperatorFee',
+                    queryId: 0n,
+                    amount: feeOperator,
+                    to: operator.address,
+                },
+            );
+            await verifyTransactions(withdrawOperatorFeeResult, operator.address);
+
+            const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
+            const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
+            expect(balanceOperatorAfter).toEqual(balanceOperatorBefore + feeOperator);
+            expect(balanceOwnerAfter).toEqual(balanceOwnerBefore + feeOwner);
+            expect(balanceMarketAfter).toEqual(balanceMarketBefore - feeOwner - feeOperator);
+
+            rate = toNano('0.2'); // 2 usd
+            percent = toNano('0.5'); // 50%
+            expiration = 60n * 60n * 24n * 5n; // 5 days
+            slippage = toNano('0.02'); // 2%
+            makerPosition = false;
+
+            secondRate = toNano('0.15'); // 1.5 usd
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+
+            rate = toNano('0.05'); // 0.5 usd
+            percent = toNano('0.75'); // 75%
+            expiration = 60n * 60n * 24n * 15n; // 15 days
+            slippage = toNano('0.05'); // 5%
+            makerPosition = true;
+
+            secondRate = toNano('0.04'); // 0.4 usd
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+
+            rate = toNano('0.3'); // 3 usd
+            percent = toNano('0.8'); // 80%
+            expiration = 60n * 60n * 24n * 7n; // 7 days
+            slippage = toNano('0.03'); // 3%
+            makerPosition = true;
+
+            secondRate = toNano('0.4'); // 4 usd
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+            rate = toNano('0.25'); // 2.5 usd
+            percent = toNano('0.6'); // 60%
+            expiration = 60n * 60n * 24n * 3n; // 3 days
+            slippage = toNano('0.015'); // 1.5%
+            makerPosition = false;
+
+            secondRate = toNano('0.2'); // 2 usd
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+
+            rate = toNano('0.05'); // 0.5 usd
+            percent = toNano('1.75'); // 175%
+            expiration = 60n * 60n * 24n * 15n; // 15 days
+            slippage = toNano('0.05'); // 5%
+            makerPosition = true;
+
+            secondRate = toNano('0.04'); // 0.4 usd
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+
+            rate = toNano('0.1'); // 1 usd
+            percent = toNano('1'); // 100%
+            expiration = 60n * 60n * 24n * 10n; // 10 days
+            slippage = toNano('0.01'); // 1%
+            makerPosition = true;
+
+            secondRate = toNano('0');
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await cancelDeal(id, rate, percent, secondRate);
+
+            rate = toNano('0.1'); // 1 usd
+            percent = toNano('1'); // 100%
+            expiration = 60n * 60n * 24n * 10n; // 10 days
+            slippage = toNano('0.01'); // 1%
+            makerPosition = true;
+
+            secondRate = toNano('0');
+
+            id = await createDeal(rate, percent, expiration, slippage, makerPosition);
             await proceedDealAfterExpiration(id, rate, secondRate, expiration);
         });
     });
@@ -431,7 +580,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const createDealData = beginCell()
@@ -480,7 +629,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const createDealData = beginCell()
@@ -529,7 +678,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const createDealData = beginCell()
@@ -574,7 +723,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -605,7 +754,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -633,7 +782,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = (await createDeal(rate, percent, expiration, slippage, makerPosition)) + 1n;
 
@@ -660,7 +809,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -680,7 +829,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: false,
                                 }),
                             )
@@ -701,7 +850,7 @@ describe('Market', () => {
                     recipient: market.address,
                     response_destination: taker.address,
                     custom_payload: null,
-                    forward_ton_amount: toNano('0.07'),
+                    forward_ton_amount: toNano('0.08'),
                     forward_payload: takeDealData,
                 },
             );
@@ -716,7 +865,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -736,7 +885,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: false,
                                 }),
                             )
@@ -772,7 +921,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -792,7 +941,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId + 1n,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: false,
                                 }),
                             )
@@ -828,7 +977,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
             await takeDeal(dealId, rate, percent);
@@ -849,7 +998,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: false,
                                 }),
                             )
@@ -885,7 +1034,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -905,7 +1054,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: false,
                                 }),
                             )
@@ -941,7 +1090,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -961,7 +1110,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()) - 60n * 60n * 1000n,
+                                    timestamp: BigInt(blockchain.now! * 1000) - 60n * 60n * 1000n,
                                     needBounce: false,
                                 }),
                             )
@@ -997,7 +1146,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -1017,7 +1166,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate * 2n,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: false,
                                 }),
                             )
@@ -1053,7 +1202,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
 
@@ -1073,7 +1222,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: true,
                                 }),
                             )
@@ -1111,7 +1260,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
             const dealId = (await createDeal(rate, percent, expiration, slippage, makerPosition)) + 1n;
 
@@ -1131,7 +1280,7 @@ describe('Market', () => {
                                     $$type: 'CheckAndReturnPriceForTest',
                                     feedId: feedId,
                                     price: rate,
-                                    timestamp: BigInt(Date.now()),
+                                    timestamp: BigInt(blockchain.now! * 1000),
                                     needBounce: false,
                                 }),
                             )
@@ -1168,7 +1317,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -1197,7 +1346,7 @@ describe('Market', () => {
                                 $$type: 'CheckAndReturnPriceForTest',
                                 feedId: feedId,
                                 price: secondRate,
-                                timestamp: BigInt(Date.now()) + duration * 1000n,
+                                timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                                 needBounce: false,
                             }),
                         )
@@ -1209,18 +1358,15 @@ describe('Market', () => {
                 to: market.address,
                 exitCode: 16059,
             });
-            
-           
         });
 
         it('return if bad timestamp of oracle', async () => {
-
             const rate = toNano('0.1'); // 1 usd
             const percent = toNano('1'); // 100%
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -1249,7 +1395,7 @@ describe('Market', () => {
                                 $$type: 'CheckAndReturnPriceForTest',
                                 feedId: feedId,
                                 price: secondRate,
-                                timestamp: BigInt(Date.now()),
+                                timestamp: BigInt(blockchain.now! * 1000)- 1000n*60n*20n,
                                 needBounce: false,
                             }),
                         )
@@ -1262,13 +1408,12 @@ describe('Market', () => {
         });
 
         it('return if bad feedId', async () => {
-
             const rate = toNano('0.1'); // 1 usd
             const percent = toNano('1'); // 100%
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -1297,7 +1442,7 @@ describe('Market', () => {
                                 $$type: 'CheckAndReturnPriceForTest',
                                 feedId: feedId + 2n,
                                 price: secondRate,
-                                timestamp: BigInt(Date.now()) + duration * 1000n,
+                                timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                                 needBounce: false,
                             }),
                         )
@@ -1315,7 +1460,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -1341,9 +1486,9 @@ describe('Market', () => {
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
-                                feedId: feedId ,
+                                feedId: feedId,
                                 price: secondRate,
-                                timestamp: BigInt(Date.now()) + duration * 1000n,
+                                timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                                 needBounce: false,
                             }),
                         )
@@ -1361,7 +1506,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -1385,9 +1530,9 @@ describe('Market', () => {
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
-                                feedId: feedId ,
+                                feedId: feedId,
                                 price: secondRate,
-                                timestamp: BigInt(Date.now()) + duration * 1000n,
+                                timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                                 needBounce: false,
                             }),
                         )
@@ -1399,14 +1544,13 @@ describe('Market', () => {
             await verifyBalancesAfterReturnToken(balanceMakerBefore, balanceTakerBefore, balanceMarketBefore);
         });
 
-
         it('return if bad dealId', async () => {
             const rate = toNano('0.1'); // 1 usd
             const percent = toNano('1'); // 100%
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             let dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -1434,9 +1578,9 @@ describe('Market', () => {
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
-                                feedId: feedId ,
+                                feedId: feedId,
                                 price: secondRate,
-                                timestamp: BigInt(Date.now()) + duration * 1000n,
+                                timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                                 needBounce: false,
                             }),
                         )
@@ -1454,7 +1598,7 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0');
 
             const dealId = await createDeal(rate, percent, expiration, slippage, makerPosition);
@@ -1483,7 +1627,7 @@ describe('Market', () => {
                                 $$type: 'CheckAndReturnPriceForTest',
                                 feedId: feedId,
                                 price: secondRate,
-                                timestamp: BigInt(Date.now()) + duration * 1000n,
+                                timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                                 needBounce: true,
                             }),
                         )
@@ -1498,16 +1642,15 @@ describe('Market', () => {
         });
     });
     describe('negative test for withdraw fee', () => {
-
         it('should not withdraw service fee if call not owner', async () => {
             const rate = toNano('0.1'); // 1 usd
             const percent = toNano('1'); // 100%
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.15'); // 1.5 usd
-    
+
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
             await takeDeal(id, rate, percent);
             await proceedDeal(id, rate, duration, secondRate, makerPosition);
@@ -1516,7 +1659,7 @@ describe('Market', () => {
             const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
             const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
-    
+
             const withdrawFeeResult = await market.send(
                 operator.getSender(),
                 {
@@ -1533,9 +1676,8 @@ describe('Market', () => {
             expect(withdrawFeeResult.transactions).toHaveTransaction({
                 to: market.address,
                 exitCode: 132,
-            })
+            });
 
-            
             const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
             const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
@@ -1544,18 +1686,15 @@ describe('Market', () => {
             expect(balanceMarketAfter).toEqual(balanceMarketBefore);
         });
 
-
-       
-        
         it('should not withdraw operator fee if call not operator', async () => {
             const rate = toNano('0.1'); // 1 usd
             const percent = toNano('1'); // 100%
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.15'); // 1.5 usd
-    
+
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
             await takeDeal(id, rate, percent);
             await proceedDeal(id, rate, duration, secondRate, makerPosition);
@@ -1564,7 +1703,7 @@ describe('Market', () => {
             const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
             const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
-    
+
             const withdrawFeeResult = await market.send(
                 operator.getSender(),
                 {
@@ -1581,9 +1720,8 @@ describe('Market', () => {
             expect(withdrawFeeResult.transactions).toHaveTransaction({
                 to: market.address,
                 exitCode: 51559,
-            })
+            });
 
-            
             const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
             const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
@@ -1591,16 +1729,16 @@ describe('Market', () => {
             expect(balanceOwnerAfter).toEqual(balanceOwnerBefore);
             expect(balanceMarketAfter).toEqual(balanceMarketBefore);
         });
-        
+
         it('should not withdraw operator fee if big amount ', async () => {
             const rate = toNano('0.1'); // 1 usd
             const percent = toNano('1'); // 100%
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.15'); // 1.5 usd
-    
+
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
             await takeDeal(id, rate, percent);
             await proceedDeal(id, rate, duration, secondRate, makerPosition);
@@ -1609,7 +1747,7 @@ describe('Market', () => {
             const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
             const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
-    
+
             const withdrawFeeResult = await market.send(
                 operatorFeeAddress.getSender(),
                 {
@@ -1626,9 +1764,8 @@ describe('Market', () => {
             expect(withdrawFeeResult.transactions).toHaveTransaction({
                 to: market.address,
                 exitCode: 59867,
-            })
+            });
 
-            
             const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
             const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
@@ -1643,9 +1780,9 @@ describe('Market', () => {
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
-            
+
             const secondRate = toNano('0.15'); // 1.5 usd
-    
+
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
             await takeDeal(id, rate, percent);
             await proceedDeal(id, rate, duration, secondRate, makerPosition);
@@ -1654,7 +1791,7 @@ describe('Market', () => {
             const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
             const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
-    
+
             const withdrawFeeResult = await market.send(
                 owner.getSender(),
                 {
@@ -1671,9 +1808,8 @@ describe('Market', () => {
             expect(withdrawFeeResult.transactions).toHaveTransaction({
                 to: market.address,
                 exitCode: 44278,
-            })
+            });
 
-            
             const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
             const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
             const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
@@ -1682,7 +1818,6 @@ describe('Market', () => {
             expect(balanceMarketAfter).toEqual(balanceMarketBefore);
         });
     });
-
 
     async function createDeal(
         rate: bigint,
@@ -1763,7 +1898,7 @@ describe('Market', () => {
                                 $$type: 'CheckAndReturnPriceForTest',
                                 feedId: feedId,
                                 price: rate,
-                                timestamp: BigInt(Date.now()),
+                                timestamp: BigInt(blockchain.now! * 1000),
                                 needBounce: false,
                             }),
                         )
@@ -1790,7 +1925,6 @@ describe('Market', () => {
         );
         const tonBalanceAfter = await taker.getBalance();
         console.log('User fee :' + fromNano(tonBalanceAfter - tonBalanceBefore));
-
         await verifyDeal(takeDealResult, 'take', {
             balanceMakerBefore,
             balanceTakerBefore,
@@ -1801,7 +1935,13 @@ describe('Market', () => {
         });
     }
 
-    async function proceedDeal(dealId: bigint, rate: bigint, duration: bigint, secondRate: bigint, makerPosition: boolean) {
+    async function proceedDeal(
+        dealId: bigint,
+        rate: bigint,
+        duration: bigint,
+        secondRate: bigint,
+        makerPosition: boolean,
+    ) {
         const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
         const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
         const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
@@ -1826,7 +1966,7 @@ describe('Market', () => {
                             $$type: 'CheckAndReturnPriceForTest',
                             feedId: feedId,
                             price: secondRate,
-                            timestamp: BigInt(Date.now()) + duration * 1000n,
+                            timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                             needBounce: false,
                         }),
                     )
@@ -1875,7 +2015,7 @@ describe('Market', () => {
                             $$type: 'CheckAndReturnPriceForTest',
                             feedId: feedId,
                             price: secondRate,
-                            timestamp: BigInt(Date.now()) + duration * 1000n,
+                            timestamp: BigInt(blockchain.now! * 1000) + duration * 1000n,
                             needBounce: false,
                         }),
                     )
@@ -2015,11 +2155,11 @@ describe('Market', () => {
     async function verifyDealDataAfterTake(dealId: bigint, rate: bigint, percent: bigint) {
         let deal = await blockchain.openContract(await Deal.fromInit(dealId, market.address));
         const dealDataAfterTake = loadDealData((await deal.getData())!.asSlice());
+        expect(dealDataAfterTake.status).toEqual(DEAL_STATUS_ACCEPTED);
         expect(dealDataAfterTake.collateralAmountMaker).toEqual(getAmountWithoutSlippage(rate, percent));
         expect(dealDataAfterTake.rateMaker).toEqual(rate);
         expect(dealDataAfterTake.maker!.toString()).toEqual(maker.address.toString());
         expect(dealDataAfterTake.percent).toEqual(percent);
-        expect(dealDataAfterTake.status).toEqual(DEAL_STATUS_ACCEPTED);
         expect(dealDataAfterTake.rate).toEqual(rate);
         expect(dealDataAfterTake.buyerTokenId).not.toEqual(dealDataAfterTake.sellerTokenId);
         expect(dealDataAfterTake.dateStop! - dealDataAfterTake.dateStart!).toEqual(duration);
