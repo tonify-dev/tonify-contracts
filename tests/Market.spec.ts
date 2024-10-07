@@ -1497,6 +1497,192 @@ describe('Market', () => {
             });
         });
     });
+    describe('negative test for withdraw fee', () => {
+
+        it('should not withdraw service fee if call not owner', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.15'); // 1.5 usd
+    
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+            const feeOwner = await market.getServiceFeeSum();
+            const feeOperator = await market.getOperatorFeeSum();
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+            const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
+    
+            const withdrawFeeResult = await market.send(
+                operator.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawServiceFee',
+                    queryId: 0n,
+                    amount: feeOwner,
+                    to: owner.address,
+                },
+            );
+
+            expect(withdrawFeeResult.transactions).toHaveTransaction({
+                to: market.address,
+                exitCode: 132,
+            })
+
+            
+            const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
+            const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
+            expect(balanceOperatorAfter).toEqual(balanceOperatorBefore);
+            expect(balanceOwnerAfter).toEqual(balanceOwnerBefore);
+            expect(balanceMarketAfter).toEqual(balanceMarketBefore);
+        });
+
+
+       
+        
+        it('should not withdraw operator fee if call not operator', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.15'); // 1.5 usd
+    
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+            const feeOwner = await market.getServiceFeeSum();
+            const feeOperator = await market.getOperatorFeeSum();
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+            const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
+    
+            const withdrawFeeResult = await market.send(
+                operator.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawOperatorFee',
+                    queryId: 0n,
+                    amount: feeOperator,
+                    to: owner.address,
+                },
+            );
+
+            expect(withdrawFeeResult.transactions).toHaveTransaction({
+                to: market.address,
+                exitCode: 51559,
+            })
+
+            
+            const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
+            const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
+            expect(balanceOperatorAfter).toEqual(balanceOperatorBefore);
+            expect(balanceOwnerAfter).toEqual(balanceOwnerBefore);
+            expect(balanceMarketAfter).toEqual(balanceMarketBefore);
+        });
+        
+        it('should not withdraw operator fee if big amount ', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.15'); // 1.5 usd
+    
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+            const feeOwner = await market.getServiceFeeSum();
+            const feeOperator = await market.getOperatorFeeSum();
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+            const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
+    
+            const withdrawFeeResult = await market.send(
+                operatorFeeAddress.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawOperatorFee',
+                    queryId: 0n,
+                    amount: feeOperator + 1n,
+                    to: owner.address,
+                },
+            );
+
+            expect(withdrawFeeResult.transactions).toHaveTransaction({
+                to: market.address,
+                exitCode: 59867,
+            })
+
+            
+            const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
+            const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
+            expect(balanceOperatorAfter).toEqual(balanceOperatorBefore);
+            expect(balanceOwnerAfter).toEqual(balanceOwnerBefore);
+            expect(balanceMarketAfter).toEqual(balanceMarketBefore);
+        });
+
+        it('should not withdraw service fee if big amount ', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.15'); // 1.5 usd
+    
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+            const feeOwner = await market.getServiceFeeSum();
+            const feeOperator = await market.getOperatorFeeSum();
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+            const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
+    
+            const withdrawFeeResult = await market.send(
+                owner.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawServiceFee',
+                    queryId: 0n,
+                    amount: feeOwner + 1n,
+                    to: owner.address,
+                },
+            );
+
+            expect(withdrawFeeResult.transactions).toHaveTransaction({
+                to: market.address,
+                exitCode: 44278,
+            })
+
+            
+            const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
+            const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
+            expect(balanceOperatorAfter).toEqual(balanceOperatorBefore);
+            expect(balanceOwnerAfter).toEqual(balanceOwnerBefore);
+            expect(balanceMarketAfter).toEqual(balanceMarketBefore);
+        });
+    });
+
 
     async function createDeal(
         rate: bigint,
