@@ -25,6 +25,8 @@ describe('Market', () => {
     let jettonWallet: SandboxContract<JettonDefaultWallet>;
     let jettonWalletTaker: SandboxContract<JettonDefaultWallet>;
     let jettonWalletMaker: SandboxContract<JettonDefaultWallet>;
+    let jettonWalletOwner: SandboxContract<JettonDefaultWallet>;
+    let jettonWalletOperator: SandboxContract<JettonDefaultWallet>;
     let oracle: SandboxContract<OracleMock>;
     let maker: SandboxContract<TreasuryContract>;
     let taker: SandboxContract<TreasuryContract>;
@@ -156,6 +158,13 @@ describe('Market', () => {
         jettonWalletMaker = blockchain.openContract(
             await JettonDefaultWallet.fromInit(maker.address, jettonMaster.address),
         );
+        jettonWalletOwner = blockchain.openContract(
+            await JettonDefaultWallet.fromInit(owner.address, jettonMaster.address),
+        );
+        jettonWalletOperator = blockchain.openContract(
+            await JettonDefaultWallet.fromInit(operator.address, jettonMaster.address),
+        );
+
 
         const deployResult = await market.send(
             factory.getSender(),
@@ -194,6 +203,38 @@ describe('Market', () => {
                 forward_payload: beginCell().asSlice(),
             },
         );
+        await jettonWalletMaker.send(
+            maker.getSender(),
+            {
+                value: toNano('0.6'),
+            },
+            {
+                $$type: 'TokenTransfer',
+                amount: 1n,
+                query_id: 0n,
+                recipient: owner.address,
+                response_destination: maker.address,
+                custom_payload: null,
+                forward_ton_amount: 0n,
+                forward_payload: beginCell().asSlice(),
+            },
+        );
+        await jettonWalletMaker.send(
+            maker.getSender(),
+            {
+                value: toNano('0.6'),
+            },
+            {
+                $$type: 'TokenTransfer',
+                amount: 1n,
+                query_id: 0n,
+                recipient: operator.address,
+                response_destination: maker.address,
+                custom_payload: null,
+                forward_ton_amount: 0n,
+                forward_payload: beginCell().asSlice(),
+            },
+        );
     });
 
     afterEach(async () => {
@@ -216,18 +257,144 @@ describe('Market', () => {
         expect(await market.getCountDeal()).toEqual(0n);
     });
     describe('positive test', () => {
-        it('standard flow', async () => {
+        it('standard flow - maker long', async () => {
             const rate = toNano('0.1'); // 1 usd
             const percent = toNano('1'); // 100%
             const expiration = 60n * 60n * 24n * 10n; // 10 days
             const slippage = toNano('0.01'); // 1%
             const makerPosition = true;
             
-            const secondRate = toNano('0');
+            const secondRate = toNano('0.15'); // 1.5 usd
 
             const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
             await takeDeal(id, rate, percent);
-            await proceedDeal(id, rate, duration, secondRate);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+        });
+
+        it('standard flow, withdraw fee', async () => {
+            const rate = toNano('0.1'); // 1 usd
+            const percent = toNano('1'); // 100%
+            const expiration = 60n * 60n * 24n * 10n; // 10 days
+            const slippage = toNano('0.01'); // 1%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.15'); // 1.5 usd
+
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+            const feeOwner = await market.getServiceFeeSum();
+            const feeOperator = await market.getOperatorFeeSum();
+            const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
+            const balanceOwnerBefore = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceOperatorBefore = (await jettonWalletOperator.getGetWalletData()).balance;
+
+            const withdrawFeeResult = await market.send(
+                owner.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawServiceFee',
+                    queryId: 0n,
+                    amount: feeOwner,
+                    to: owner.address,
+                },
+            );
+            await verifyTransactions(withdrawFeeResult,owner.address);
+
+            const withdrawOperatorFeeResult = await market.send(
+                operatorFeeAddress.getSender(),
+                {
+                    value: toNano('1.5'),
+                },
+                {
+                    $$type: 'WithdrawOperatorFee',
+                    queryId: 0n,
+                    amount: feeOperator,
+                    to: operator.address,
+                },
+            );
+            await verifyTransactions(withdrawOperatorFeeResult,operator.address);
+            
+            const balanceOperatorAfter = (await jettonWalletOperator.getGetWalletData()).balance;
+            const balanceOwnerAfter = (await jettonWalletOwner.getGetWalletData()).balance;
+            const balanceMarketAfter = (await jettonWallet.getGetWalletData()).balance;
+            expect(balanceOperatorAfter).toEqual(balanceOperatorBefore + feeOperator);
+            expect(balanceOwnerAfter).toEqual(balanceOwnerBefore + feeOwner);
+            expect(balanceMarketAfter).toEqual(balanceMarketBefore - feeOwner - feeOperator);
+        });
+
+
+        it('standard flow - maker short', async () => {
+            const rate = toNano('0.2'); // 2 usd
+            const percent = toNano('0.5'); // 50%
+            const expiration = 60n * 60n * 24n * 5n; // 5 days
+            const slippage = toNano('0.02'); // 2%
+            const makerPosition = false;
+            
+            const secondRate = toNano('0.15'); // 1.5 usd
+
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+        });
+
+        it('standard flow - higher slippage', async () => {
+            const rate = toNano('0.05'); // 0.5 usd
+            const percent = toNano('0.75'); // 75%
+            const expiration = 60n * 60n * 24n * 15n; // 15 days
+            const slippage = toNano('0.05'); // 5%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.04'); // 0.4 usd
+
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+        });
+
+        it('standard flow - price increase', async () => {
+            const rate = toNano('0.3'); // 3 usd
+            const percent = toNano('0.8'); // 80%
+            const expiration = 60n * 60n * 24n * 7n; // 7 days
+            const slippage = toNano('0.03'); // 3%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.4'); // 4 usd
+
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+        });
+
+        it('standard flow - price decrease', async () => {
+            const rate = toNano('0.25'); // 2.5 usd
+            const percent = toNano('0.6'); // 60%
+            const expiration = 60n * 60n * 24n * 3n; // 3 days
+            const slippage = toNano('0.015'); // 1.5%
+            const makerPosition = false;
+            
+            const secondRate = toNano('0.2'); // 2 usd
+
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
+        });
+
+
+        it('standard flow - higher percent', async () => {
+            const rate = toNano('0.05'); // 0.5 usd
+            const percent = toNano('1.75'); // 175%
+            const expiration = 60n * 60n * 24n * 15n; // 15 days
+            const slippage = toNano('0.05'); // 5%
+            const makerPosition = true;
+            
+            const secondRate = toNano('0.04'); // 0.4 usd
+
+            const id = await createDeal(rate, percent, expiration, slippage, makerPosition);
+            await takeDeal(id, rate, percent);
+            await proceedDeal(id, rate, duration, secondRate, makerPosition);
         });
 
         it('cancel flow', async () => {
@@ -1448,13 +1615,11 @@ describe('Market', () => {
         });
     }
 
-    async function proceedDeal(dealId: bigint, rate: bigint, duration: bigint, secondRate: bigint) {
+    async function proceedDeal(dealId: bigint, rate: bigint, duration: bigint, secondRate: bigint, makerPosition: boolean) {
         const balanceMakerBefore = (await jettonWalletMaker.getGetWalletData()).balance;
         const balanceTakerBefore = (await jettonWalletTaker.getGetWalletData()).balance;
         const balanceMarketBefore = (await jettonWallet.getGetWalletData()).balance;
-        console.log(blockchain.now);
         blockchain.now = blockchain.now! + Number(duration);
-        console.log(blockchain.now);
 
         const balanceOperatorBefore = await operator.getBalance();
         const dealDataAfterTake = loadDealData((await deal.getData())!.asSlice());
@@ -1494,6 +1659,8 @@ describe('Market', () => {
             secondRate,
             dealId,
             collateralAmountMaker,
+            makerPosition,
+            isSeller: !makerPosition,
         });
     }
 
@@ -1550,7 +1717,6 @@ describe('Market', () => {
         const tonBalanceBefore = await maker.getBalance();
         const dealData = loadDealData((await deal.getData())!.asSlice());
         const collateralAmountMaker = dealData.collateralAmountMaker!;
-        console.log(maker.address.toString());
         const cancelDealResult = await market.send(
             maker.getSender(),
             {
@@ -1669,8 +1835,7 @@ describe('Market', () => {
         expect(dealDataAfterTake.percent).toEqual(percent);
         expect(dealDataAfterTake.status).toEqual(DEAL_STATUS_ACCEPTED);
         expect(dealDataAfterTake.rate).toEqual(rate);
-        expect(dealDataAfterTake.buyerTokenId).toEqual(1n);
-        expect(dealDataAfterTake.sellerTokenId).toEqual(0n);
+        expect(dealDataAfterTake.buyerTokenId).not.toEqual(dealDataAfterTake.sellerTokenId);
         expect(dealDataAfterTake.dateStop! - dealDataAfterTake.dateStart!).toEqual(duration);
     }
 
@@ -1765,7 +1930,6 @@ describe('Market', () => {
 
             let makerProfit = rateDifference > 0 ? (rateDifference * feePercentage) / toNano('1') : rateDifference;
             let takerProfit = -(rateDifference < 0 ? (rateDifference * feePercentage) / toNano('1') : rateDifference);
-            console.log(makerProfit, takerProfit);
             expect(balanceMakerAfter).toEqual(balanceMakerBefore + makerProfit + collateralAmountMaker);
 
             expect(balanceTakerAfter).toEqual(balanceTakerBefore + takerProfit + collateralAmountMaker);
