@@ -397,7 +397,7 @@ describe('Market', () => {
                 forward_payload: takeDealData,
             },
         );
-        console.log('takeDealResult', takeDealResult.transactions);
+        // console.log('takeDealResult', takeDealResult.transactions);
         // console.log('takeDealResult', takeDealResult.events);
         const tonBalanceAfter = await taker.getBalance();
         console.log('User fee :' + fromNano(tonBalanceAfter - tonBalanceBefore));

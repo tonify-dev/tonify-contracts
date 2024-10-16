@@ -4,10 +4,12 @@ const OP_CODE_TAKE_DEAL: Int = 0x38f0b8f5; // sha256("TakeDeal").slice(0, 8)
 message(0x38f0b8f5) TakeDeal {
     dealId: Int as uint32;
     oracleData: Cell;
+    oracleData2: Cell;
 }
 struct TakeDealData {
     dealId: Int as uint32;
     oracleData: Cell;
+    oracleData2: Cell;
 }
 message(0xdfd74530) CreateDeal {
     makerPosition: Bool;
@@ -16,6 +18,7 @@ message(0xdfd74530) CreateDeal {
     expiration: Int as uint32;
     slippage: Int as coins;
     oracleData: Cell?;
+    oracleData2: Cell?;
 }
 message InnerDeployMarket {
     queryId: Int as uint64;
@@ -39,6 +42,7 @@ struct CreateDealData {
     expiration: Int as uint32;
     slippage: Int as coins;
     oracleData: Cell?;
+    oracleData2: Cell?;
 }
 message CancelDeal {
     queryId: Int as uint64;
@@ -48,6 +52,7 @@ message ProcessDeal {
     queryId: Int as uint64;
     dealId: Int as uint32;
     oracleData: Cell;
+    oracleData2: Cell;
 }
 struct DealData {
     status: Int as uint8;
@@ -109,6 +114,9 @@ struct ContextTakeDealForDealReceived {
     feedId: Int as uint32;
     price: Int as uint128;
     timestamp: Int as uint32;
+    feedId2: Int as uint32;
+    price2: Int as uint128;
+    timestamp2: Int as uint32;
 }
 
 struct ContextProcessDealForDealReceived {
@@ -116,6 +124,9 @@ struct ContextProcessDealForDealReceived {
     feedId: Int as uint32;
     price: Int as uint128;
     timestamp: Int as uint32;
+    feedId2: Int as uint32;
+    price2: Int as uint128;
+    timestamp2: Int as uint32;
 }
 struct ContextTakeDealForPriceReceived {
     from: Address;

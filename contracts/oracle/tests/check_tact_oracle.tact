@@ -3,6 +3,7 @@ import "../redstonte_oracle_consumer_base";
 message SetPrice {
     queryId: Int as uint64;
     data: Cell;
+    data_2: Cell;
 }
 
 contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
@@ -21,10 +22,10 @@ contract CheckTactOracle with Deployable, RedstoneOracleConsumerBase {
     }
 
     receive(msg: SetPrice){
-        self.fetchPrice(msg.queryId, msg.data);
+        self.fetchPrice(msg.queryId, msg.data, msg.data_2);
     }
 
-    override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int) {
+    override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int, feedId_2: Int, price_2: Int, timestamp_2: Int) {
         self.queryId = queryId;
         self.feedId = feedId;
         self.price = price;

@@ -9,10 +9,13 @@ export class SingleFeedManInitData implements TonInitData {
   constructor(
     private feedId: string,
     private signerCountThreshold: number,
-    private signers: string[]
+    private signers: string[],
+    private secondFeedId: string = 'USDC',
   ) {}
 
   toCell(): Cell {
+    console.log(BigInt(hexlify(toUtf8Bytes(this.secondFeedId))))
+    console.log(BigInt(hexlify(toUtf8Bytes(this.feedId))))
     return beginCell()
       .storeUint(
         BigInt(hexlify(toUtf8Bytes(this.feedId))),
@@ -22,6 +25,10 @@ export class SingleFeedManInitData implements TonInitData {
       .storeUint(0, consts.DEFAULT_NUM_VALUE_BS * 8)
       .storeUint(0, consts.TIMESTAMP_BS * 8)
       .storeRef(serializeTuple(createTupleItems(this.signers)))
+      .storeRef(beginCell().storeUint(
+        BigInt(hexlify(toUtf8Bytes(this.secondFeedId))),
+        consts.DATA_FEED_ID_BS * 8
+      ).endCell())
       .endCell();
   }
 }

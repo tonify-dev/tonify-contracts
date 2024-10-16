@@ -99,6 +99,14 @@ describe('Ton Single Feed Man Tests', () => {
                         historicalTimestamp: queryTimestamp,
                     }),
                 ),
+                data_2: await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['USDC'],
+                        historicalTimestamp: queryTimestamp,
+                    }),
+                ),
             },
         );
 
@@ -119,6 +127,8 @@ describe('Ton Single Feed Man Tests', () => {
 
 
     it('should not work with bad feedId', async () => {
+        const queryTimestamp = Date.now() - Date.now() % 100000 - 100000*6*60*24;
+
         await checker.send(
             owner.getSender(),
             {
@@ -132,7 +142,15 @@ describe('Ton Single Feed Man Tests', () => {
                         dataServiceId: 'redstone-avalanche-prod',
                         uniqueSignersCount: 2,
                         dataPackagesIds: ['ETH'],
-                        historicalTimestamp: 1725272800000,
+                        historicalTimestamp: queryTimestamp,
+                    }),
+                ),
+                data_2: await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['USDC'],
+                        historicalTimestamp: queryTimestamp,
                     }),
                 ),
             },
@@ -167,6 +185,13 @@ describe('Ton Single Feed Man Tests', () => {
                         dataServiceId: 'redstone-avalanche-prod',
                         uniqueSignersCount: 1,
                         dataPackagesIds: ['USDT'],
+                    }),
+                ),
+                data_2: await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 1,
+                        dataPackagesIds: ['USDC'],
                     }),
                 ),
             },

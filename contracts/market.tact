@@ -192,7 +192,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             .storeUint(INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED, 8)
             .storeRef(ContextProcessDealForPriceReceived{from: ctx.sender, dealId: msg.dealId}.toCell())
             .endCell();   
-        self.fetchPriceWithSaveContext(msg.queryId, msg.oracleData, contextProcessDeal);    
+        self.fetchPriceWithSaveContext(msg.queryId, msg.oracleData, msg.oracleData2, contextProcessDeal);    
     }
     
     fun handleCreateDeal(queryId: Int, deal: CreateDealData, amount: Int, from: Address) {
@@ -215,7 +215,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 bounce: true,
                 body: TakeDeal{
                     dealId: dealId,
-                    oracleData: deal.oracleData!!
+                    oracleData: deal.oracleData!!,
+                    oracleData2: deal.oracleData2!!
                 }.toCell()
             });
         }
@@ -258,13 +259,13 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             }.toCell())
             .endCell();
         
-        self.fetchPriceWithSaveContext(queryId, takeDeal.oracleData, contextProcessDeal);
+        self.fetchPriceWithSaveContext(queryId, takeDeal.oracleData, takeDeal.oracleData2, contextProcessDeal);
     }
 
     
 
 
-    fun takeDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int) {
+    fun takeDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int, feedId2: Int, price2: Int, timestamp2: Int) {
         let contextTakeDealAfterPrice: ContextTakeDealForPriceReceived = ContextTakeDealForPriceReceived.fromCell(query);
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED, 8)
@@ -274,12 +275,15 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 feedId: feedId,
                 price: price,
                 timestamp: timestamp / 1000,
+                feedId2: feedId2,
+                price2: price2,
+                timestamp2: timestamp2 / 1000,
             }.toCell())
             .endCell();
         self.fetchDeal(queryId, contextTakeDealAfterPrice.dealId, contextProcessDeal);
     }
 
-    fun processDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int) {
+    fun processDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int, feedId2: Int, price2: Int, timestamp2: Int) {
         let contextProcessDealAfterPrice: ContextProcessDealForPriceReceived = ContextProcessDealForPriceReceived.fromCell(query);
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_PROCESS_DEAL_AFTER_DEAL_RECEIVED, 8)
@@ -287,7 +291,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 from: contextProcessDealAfterPrice.from,
                 feedId: feedId,
                 price: price,
-                timestamp: timestamp / 1000
+                timestamp: timestamp / 1000,
+                feedId2: feedId2,
+                price2: price2,
+                timestamp2: timestamp2 / 1000,
             }.toCell())
             .endCell();
         self.fetchDeal(queryId, contextProcessDealAfterPrice.dealId, contextProcessDeal);    
@@ -552,13 +559,13 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         });
     }
 
-    fun fetchPriceWithSaveContext(queryId: Int, oracleData: Cell, saveContext: Cell) {
+    fun fetchPriceWithSaveContext(queryId: Int, oracleData: Cell, oracleData2: Cell, saveContext: Cell) {
         require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
         self.mapQueriesToContext.set(queryId, saveContext);
-        self.fetchPrice(queryId, oracleData);
+        self.fetchPrice(queryId, oracleData, oracleData2);
     }
 
-    override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int) {
+    override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int, feedId2: Int, price2: Int, timestamp2: Int) {
         nativeReserve(STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
         let query: Slice = self.mapQueriesToContext.get(queryId)!!.beginParse();
@@ -567,9 +574,9 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         let opcode: Int = query.loadUint(8);
 
         if (opcode == INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED) { 
-            self.takeDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp);
+            self.takeDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp, feedId2, price2, timestamp2);
         } else if (opcode == INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED) {
-            self.processDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp);
+            self.processDealAfterRecievedPrice(query.loadRef(), ctx, queryId, feedId, price, timestamp, feedId2, price2, timestamp2);
         }
     }
 

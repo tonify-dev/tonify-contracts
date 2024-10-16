@@ -12,6 +12,7 @@
 ;; =============== storage =============================
 
 global int feed_id;
+global int feed_id_2;
 global int signer_count_threshold;
 global cell signers;
 global int price;
@@ -25,6 +26,8 @@ global int timestamp;
     price = ds~load_uint(MAX_VALUE_SIZE_BITS);
     timestamp = ds~load_uint(TIMESTAMP_BITS);
     signers = ds~load_ref();
+    var feed_id_2_cell = ds~load_ref().begin_parse();
+    feed_id_2 = feed_id_2_cell~load_uint(DATA_FEED_ID_BITS);
 }
 
 () save_data() impure inline {
@@ -34,12 +37,14 @@ global int timestamp;
     .store_uint(price, MAX_VALUE_SIZE_BITS)
     .store_uint(timestamp, TIMESTAMP_BITS)
     .store_ref(signers)
+    .store_ref(begin_cell().store_uint(feed_id_2, DATA_FEED_ID_BITS).end_cell())
     .end_cell());
 }
 
 ;; =============== write =============================
 
 (int, int) get_price(cell) impure;
+(int, int) get_price_2(cell) impure;
 
 () write_price(cell payload_cell) impure {
     var (value, min_timestamp) = get_price(payload_cell);
@@ -69,15 +74,22 @@ global int timestamp;
         int _query_id = in_msg_body~load_uint(64);
 
         cell payload_cell = in_msg_body~load_ref();
+        cell payload_cell_2 = in_msg_body~load_ref();
 
         var (value, min_timestamp) = get_price(payload_cell);
-     
+        var (value_2, min_timestamp_2) = get_price_2(payload_cell_2);
+
         builder content = begin_cell()
                 .store_uint(_query_id, 64)
                 .store_ref(begin_cell()
                     .store_uint(feed_id, DATA_FEED_ID_BITS)
                     .store_uint(value, MAX_VALUE_SIZE_BITS)
                     .store_uint(min_timestamp, TIMESTAMP_BITS)
+                    .end_cell())
+                .store_ref(begin_cell()
+                    .store_uint(feed_id_2, DATA_FEED_ID_BITS)
+                    .store_uint(value_2, MAX_VALUE_SIZE_BITS)
+                    .store_uint(min_timestamp_2, TIMESTAMP_BITS)
                     .end_cell());
 
         return cs~send_return_message(OP_REDSTONE_DATA_FETCHED, content);
@@ -113,6 +125,22 @@ global int timestamp;
         now());
 
    
+
+    throw_unless(ERR_MISSING_DATA, values.tlen() == 1);
+    price = values.at(0);
+
+    return (price, min_timestamp);
+}
+
+(int, int) get_price_2(cell payload) method_id {
+    load_data();
+
+    (tuple values, int min_timestamp) = process_payload(
+        payload,
+        tuple_from_value(feed_id_2),
+        tuple_deserialize_integers(signers),
+        signer_count_threshold,
+        now());
 
     throw_unless(ERR_MISSING_DATA, values.tlen() == 1);
     price = values.at(0);
