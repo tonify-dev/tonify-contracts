@@ -8,7 +8,8 @@
         "build-oracle": "blueprint build CheckTactOracle 1>/dev/null",
         "test": "jest --verbose",
         "test-oracle": "npm run build-oracle && jest ./tests/SingleFeedMan.spec.ts --verbose",
-        "test-market": "npm run build-market && jest ./tests/Market.spec.ts --verbose"
+        "test-market": "npm run build-market && jest ./tests/Market.spec.ts --verbose",
+        "test-market-integration": "npm run build-market && jest ./tests/MarketIntegration.spec.ts --verbose"
     },
     "devDependencies": {
         "@orbs-network/ton-access": "^2.3.3",

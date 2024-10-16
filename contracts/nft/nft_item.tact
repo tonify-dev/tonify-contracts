@@ -95,7 +95,7 @@ contract NftItem {
         send(SendParameters {
             to: ctx.sender,
             value: 0,
-            mode: SendRemainingValue,  
+            mode: SendRemainingBalance,  
             bounce: true,
             body: ReportOwner{
                 query_id: msg.query_id,
