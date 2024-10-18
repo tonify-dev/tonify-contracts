@@ -56,7 +56,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     collection_content: Cell;
     mapQueriesToContext: map<Int, Cell> = emptyMap();
     oracle: Address;
-    feedId: Int as uint256;
+    feedIdAsset: Int as uint256;
+    feedIdToken: Int as uint256;
     operatorFeeSum: Int as coins = 0;
     serviceFeeSum: Int as coins = 0;
     operatorFeeAddress: Address;
@@ -73,8 +74,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         operatorFee: Int,
         serviceFee: Int,
         oracle: Address,
-        feedId: Int,
+        feedIdAsset: Int,
+        feedIdToken: Int,
         operatorFeeAddress: Address){
+        require(sender() == factory, "Only factory can deploy");
         self.id = id;
         self.owner = owner;
         self.amm = amm;
@@ -85,17 +88,16 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         self.serviceFee = serviceFee;
         self.collection_content = collection_content;
         self.oracle = oracle;
-        self.feedId = feedId;
+        self.feedIdAsset = feedIdAsset;
+        self.feedIdToken = feedIdToken;
         self.operatorFeeAddress = operatorFeeAddress;
     }
 
     receive(msg: InnerDeployMarket) {
         nativeReserve(STORAGE_INIT_VALUE, 0);
-        let ctx: Context = context();
-        require(ctx.sender == self.factory, "Only factory can deploy");
         self.jettonWallet = msg.jettonWallet;
         send(SendParameters{
-            to: ctx.sender,
+            to: msg.originalGasTo,
             value: 0,
             mode: SendRemainingBalance,
             bounce: false,
@@ -262,9 +264,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         self.fetchPriceWithSaveContext(queryId, takeDeal.oracleData, takeDeal.oracleData2, contextProcessDeal);
     }
 
-    
-
-
     fun takeDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int, feedId2: Int, price2: Int, timestamp2: Int) {
         let contextTakeDealAfterPrice: ContextTakeDealForPriceReceived = ContextTakeDealForPriceReceived.fromCell(query);
         let contextProcessDeal: Cell = beginCell()
@@ -314,7 +313,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, BAD_STATUS);
             return;
         }
-        if (contextTakeDealAfterDeal.feedId != self.feedId) {
+        if (contextTakeDealAfterDeal.feedId != self.feedIdAsset || contextTakeDealAfterDeal.feedId2 != self.feedIdToken) {
             self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, BAD_FEED_ID);
             return;
         }
@@ -410,10 +409,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         if (!(deal.status == DEAL_STATUS_ACCEPTED && deal.dateStop <= now())) {
             return;
         }
-        if (contextProcessDealAfterDeal.feedId != self.feedId) {
+        if (contextProcessDealAfterDeal.feedId != self.feedIdAsset || contextProcessDealAfterDeal.feedId2 != self.feedIdToken) {
             return;
         }
-        if (contextProcessDealAfterDeal.timestamp < now() - TIME_SLIPPAGE) {
+        if (contextProcessDealAfterDeal.timestamp < deal.dateStop - TIME_SLIPPAGE || contextProcessDealAfterDeal.timestamp >= deal.dateStop) {
             return;
         }
 
@@ -421,14 +420,27 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         let payoutBuyer: Int = 0;
         let payoutSeller: Int = 0;
 
-        if (contextProcessDealAfterDeal.price <= deal.rate - collateralAmount) {
-            payoutSeller = collateralAmount * 2;
-        } else if (contextProcessDealAfterDeal.price > deal.rate - collateralAmount && contextProcessDealAfterDeal.price < deal.rate + collateralAmount) {
-            payoutBuyer = contextProcessDealAfterDeal.price + collateralAmount - deal.rate;
-            payoutSeller = deal.rate + collateralAmount - contextProcessDealAfterDeal.price;
-        } else if (contextProcessDealAfterDeal.price >= deal.rate + collateralAmount) {
-            payoutBuyer = collateralAmount * 2;
+        let delta = (deal.rate - contextProcessDealAfterDeal.price) * contextProcessDealAfterDeal.price2 / COLLATERAL_DENOMINATOR;
+
+        if(abs(delta) >= collateralAmount) {
+            if (delta > 0) {
+                payoutSeller = collateralAmount * 2;
+            } else {
+                payoutBuyer = collateralAmount * 2;
+            }
+        } else {
+            payoutSeller = collateralAmount + delta;
+            payoutBuyer = collateralAmount - delta;
         }
+
+        // if (contextProcessDealAfterDeal.price <= deal.rate - collateralAmount) {
+        //     payoutSeller = collateralAmount * 2;
+        // } else if (contextProcessDealAfterDeal.price > deal.rate - collateralAmount && contextProcessDealAfterDeal.price < deal.rate + collateralAmount) {
+        //     payoutBuyer = contextProcessDealAfterDeal.price + collateralAmount - deal.rate;
+        //     payoutSeller = deal.rate + collateralAmount - contextProcessDealAfterDeal.price;
+        // } else if (contextProcessDealAfterDeal.price >= deal.rate + collateralAmount) {
+        //     payoutBuyer = collateralAmount * 2;
+        // }
 
         let operatorFee: Int = 0;
         let serviceFee: Int = 0;
@@ -698,8 +710,12 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         return self.oracle;
     }
 
-    get fun feedId(): Int {
-        return self.feedId;
+    get fun feedIdAsset(): Int {
+        return self.feedIdAsset;
+    }
+
+    get fun feedIdToken(): Int {
+        return self.feedIdToken;
     }
 
     get fun operatorFeeSum(): Int {

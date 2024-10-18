@@ -23,6 +23,7 @@ message(0xdfd74530) CreateDeal {
 message InnerDeployMarket {
     queryId: Int as uint64;
     jettonWallet: Address;
+    originalGasTo: Address;
 }
 message WithdrawOperatorFee {
     queryId: Int as uint64;

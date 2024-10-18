@@ -34,7 +34,8 @@ describe('Market', () => {
     let market: SandboxContract<Market>;
     let deal: SandboxContract<Deal>;
     let marketBalance: bigint;
-    const feedId = 34n;
+    const feedIdAsset = 34n;
+    const feedIdToken = 35n;
     const serviceFee = toNano('0.01'); // 1%
     const operatorFee = toNano('0.01'); // 1%
     const content = beginCell().endCell();
@@ -253,7 +254,8 @@ describe('Market', () => {
         expect(await market.getOperatorFee()).toEqual(operatorFee);
         expect(await market.getServiceFee()).toEqual(serviceFee);
         expect(await market.getOracle()).toEqualAddress(oracle.address);
-        expect(await market.getFeedId()).toEqual(feedId);
+        expect(await market.getFeedIdAsset()).toEqual(feedIdAsset);
+        expect(await market.getFeedIdToken()).toEqual(feedIdToken);
         expect(await market.getOperatorFeeAddress()).toEqualAddress(operatorFeeAddress.address);
         expect(await market.getCountDeal()).toEqual(0n);
     });
