@@ -388,10 +388,13 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         if (contextProcessDealAfterDeal.feedId != self.feedIdAsset || contextProcessDealAfterDeal.feedId2 != self.feedIdToken) {
             return;
         }
-        if (contextProcessDealAfterDeal.timestamp < deal.dateStop - TIME_SLIPPAGE || contextProcessDealAfterDeal.timestamp >= deal.dateStop) {
+        if (contextProcessDealAfterDeal.timestamp < deal.dateStop - TIME_SLIPPAGE || contextProcessDealAfterDeal.timestamp > deal.dateStop) {
             return;
         }
-
+        if (contextProcessDealAfterDeal.timestamp2 < deal.dateStop - TIME_SLIPPAGE || contextProcessDealAfterDeal.timestamp2 > deal.dateStop) {
+            dump(2);    
+            return;
+        }
         let collateralAmount: Int = deal.collateralAmountMaker;
         let payoutBuyer: Int = 0;
         let payoutSeller: Int = 0;
@@ -408,15 +411,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             payoutSeller = collateralAmount + delta;
             payoutBuyer = collateralAmount - delta;
         }
-
-        // if (contextProcessDealAfterDeal.price <= deal.rate - collateralAmount) {
-        //     payoutSeller = collateralAmount * 2;
-        // } else if (contextProcessDealAfterDeal.price > deal.rate - collateralAmount && contextProcessDealAfterDeal.price < deal.rate + collateralAmount) {
-        //     payoutBuyer = contextProcessDealAfterDeal.price + collateralAmount - deal.rate;
-        //     payoutSeller = deal.rate + collateralAmount - contextProcessDealAfterDeal.price;
-        // } else if (contextProcessDealAfterDeal.price >= deal.rate + collateralAmount) {
-        //     payoutBuyer = collateralAmount * 2;
-        // }
 
         let operatorFee: Int = 0;
         let serviceFee: Int = 0;

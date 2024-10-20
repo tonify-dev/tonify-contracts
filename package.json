@@ -8,7 +8,7 @@
         "build-oracle": "blueprint build CheckTactOracle 1>/dev/null",
         "build-factory": "blueprint build Factory 1>/dev/null && npm run build-market",
         "test": "jest --verbose",
-        "test-oracle": "npm run build-oracle && jest ./tests/SingnpleFeedMan.spec.ts --verbose",
+        "test-oracle": "npm run build-oracle && jest ./tests/SingleFeedMan.spec.ts --verbose",
         "test-market": "npm run build-market && jest ./tests/Market.spec.ts --verbose",
         "test-market-integration": "npm run build-market && jest ./tests/MarketIntegration.spec.ts --verbose",
         "test-factory": "npm run build-factory && jest ./tests/Factory.spec.ts --verbose"
