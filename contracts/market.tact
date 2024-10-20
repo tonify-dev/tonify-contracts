@@ -5,41 +5,7 @@ import "./nft/nft_collection.tact";
 import "./jetton/jetton_messages.tact";
 import "./deal.tact";
 import "./oracle/redstonte_oracle_consumer_base.tact";
-const SLIPPAGE_DENOMINATOR: Int = pow(10, 17);
-const COLLATERAL_DENOMINATOR: Int = pow(10, 8);
-const FEE_DENOMINATOR: Int = pow(10, 9);
-const ZERO_ADDRESS: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
-const STORAGE_INIT_VALUE: Int = ton("0.1");
-const TO_TAKE_AMM: Int = ton("0.15");
-const GAS_TO_SEND_JETTON: Int = ton("0.048");
-const GAS_TO_FETCH_OWNER: Int = ton("0.02") + GAS_TO_SEND_JETTON;
-const GAS_MIN_VALUE: Int = ton("0.05") + GAS_TO_SEND_JETTON;
-
-const TIME_SLIPPAGE: Int = 60*5;
-
-const INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED: Int = 10;
-const INNER_OP_CODE_TAKE_DEAL_AFTER_DEAL_RECEIVED: Int = 20;
-const INNER_OP_CODE_CANCEL_DEAL_AFTER_DEAL_RECEIVED: Int = 21;
-const INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED: Int = 12;
-const INNER_OP_CODE_PROCESS_DEAL_AFTER_DEAL_RECEIVED: Int = 22;
-
-
-const DEAL_STATUS_CREATED: Int = 1;
-const DEAL_STATUS_ACCEPTED: Int = 2;
-const DEAL_STATUS_CANCELLED: Int = 3;
-const DEAL_STATUS_COMPLETED: Int = 4;
-const DEAL_STATUS_EXPIRED: Int = 5;
-
-
-const SMALL_VALUE: Int = 1;
-const SMALL_TOKEN_AMOUNT: Int = 2;
-const ORACLE_PRICE_TOO_OLD: Int = 3;
-const MAKER_OUT_OF_RANGE: Int = 4;
-const SMALL_AMOUNT: Int = 5;
-const BAD_FEED_ID: Int = 6;
-const BAD_STATUS: Int = 7;
-const TRANSACTION_FROM_MAKER: Int = 8;
-
+import "./imports/constants.tact";
 contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     id: Int as uint32;
     owner: Address;
@@ -200,8 +166,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     fun handleCreateDeal(queryId: Int, deal: CreateDealData, amount: Int, from: Address) {
         let dealId: Int = self.countDeal;
 
-        let slippageAmount: Int = (deal.rate * deal.percent * deal.slippage) / SLIPPAGE_DENOMINATOR;
-        let collateralAmountMaker: Int = (deal.rate * deal.percent) / COLLATERAL_DENOMINATOR + slippageAmount;
+        let slippageAmount: Int = (deal.rateAsset * deal.rateToken * deal.percent * deal.slippage) / SLIPPAGE_DENOMINATOR;
+        let collateralAmountMaker: Int = (deal.rateAsset * deal.rateToken * deal.percent) / COLLATERAL_DENOMINATOR + slippageAmount;
        
         if(amount < collateralAmountMaker) {
             self.returnTokens(queryId, amount, from, SMALL_TOKEN_AMOUNT);
@@ -215,8 +181,11 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                 value: TO_TAKE_AMM,
                 mode: SendIgnoreErrors,
                 bounce: true,
-                body: TakeDeal{
+                body: TakeDealAmm{
                     dealId: dealId,
+                    queryId: queryId,
+                    amount: collateralAmountMaker,
+                    originalGasTo: from,
                     oracleData: deal.oracleData!!,
                     oracleData2: deal.oracleData2!!
                 }.toCell()
@@ -225,7 +194,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
         let newDeal: DealData = DealData{
             rate: 0,
-            rateMaker: deal.rate,
+            rateMaker: deal.rateAsset,
             percent: deal.percent,
             slippageMaker: deal.slippage,
             collateralAmountMaker: collateralAmountMaker,
@@ -246,7 +215,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             maker: from,
             collateralAmountMaker: collateralAmountMaker
         }.toCell());
-
 
         self.saveDeal(queryId, dealId, newDeal, from);
     }
@@ -322,21 +290,29 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             return;
         }
 
-        let collateralAmount: Int = (deal.percent * contextTakeDealAfterDeal.price) / COLLATERAL_DENOMINATOR; 
+        let collateralAmount: Int = (deal.percent * contextTakeDealAfterDeal.price * contextTakeDealAfterDeal.price2) / COLLATERAL_DENOMINATOR; 
         if (contextTakeDealAfterDeal.amount < collateralAmount) {
             self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, SMALL_AMOUNT);
             return;
         }
 
-        if (contextTakeDealAfterDeal.price <=
+        if ((contextTakeDealAfterDeal.price <=
                 (deal.rateMaker -
                     (deal.rateMaker * deal.slippageMaker) /
-                    COLLATERAL_DENOMINATOR)) {
+                    RATE_DENOMINATOR)) &&
+            (contextTakeDealAfterDeal.price >=
+                (deal.rateMaker +
+                    (deal.rateMaker * deal.slippageMaker) /
+                    RATE_DENOMINATOR))) {
             self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, MAKER_OUT_OF_RANGE);
             return;
         }
 
         let returnAmount: Int = deal.collateralAmountMaker - collateralAmount;
+        if(returnAmount < 0) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, SMALL_AMOUNT_OF_MAKER);
+            return;
+        }
         if(returnAmount > 0) {
             send(SendParameters{
                 to: self.jettonWallet,
@@ -420,7 +396,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         let payoutBuyer: Int = 0;
         let payoutSeller: Int = 0;
 
-        let delta = (deal.rate - contextProcessDealAfterDeal.price) * contextProcessDealAfterDeal.price2 / COLLATERAL_DENOMINATOR;
+        let delta = (deal.rate - contextProcessDealAfterDeal.price) * contextProcessDealAfterDeal.price2 / RATE_DENOMINATOR;
 
         if(abs(delta) >= collateralAmount) {
             if (delta > 0) {
@@ -475,8 +451,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         self.deleteDeal(queryId, dealId, contextProcessDealAfterDeal.from);   
     }
 
-    
-
     fun _cancelDeal(deal: DealData, originalGasTo: Address, queryId: Int, dealId: Int) {
         require(deal.status == DEAL_STATUS_CREATED, "Deal is not created");
         send(SendParameters{
@@ -496,8 +470,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         });
         self.deleteDeal(queryId, dealId, originalGasTo);   
     }
-
-    
 
     fun sendTokens(tokenId: Int, amount: Int, queryId: Int, originalGasTo: Address) {
         require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
@@ -592,7 +564,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         }
     }
 
-
     fun fetchDeal(queryId: Int, dealId: Int, saveContext: Cell) { 
         require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
 
@@ -645,7 +616,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             }.toCell()
         });
     }
-
     
     override fun onOracleErrorReceived(queryId: Int, error: Slice) {
         self.mapQueriesToContext.del(queryId);
@@ -654,13 +624,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     override fun onBouncedGetOwner(queryId: Int) {
         self.mapQueriesToContext.del(queryId);
     }   
-
     
     bounced(msg: GetData) {
         self.mapQueriesToContext.del(msg.queryId);
     }
-
-    
 
     get fun id(): Int {
         return self.id;
@@ -708,6 +675,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     get fun oracle(): Address {
         return self.oracle;
+    }
+
+    get fun factory(): Address {
+        return self.factory;
     }
 
     get fun feedIdAsset(): Int {

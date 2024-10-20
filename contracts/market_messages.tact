@@ -13,7 +13,8 @@ struct TakeDealData {
 }
 message(0xdfd74530) CreateDeal {
     makerPosition: Bool;
-    rate: Int as coins;
+    rateAsset: Int as coins;
+    rateToken: Int as coins;
     percent: Int as coins;
     expiration: Int as uint32;
     slippage: Int as coins;
@@ -38,7 +39,8 @@ message WithdrawServiceFee {
 
 struct CreateDealData {
     makerPosition: Bool;
-    rate: Int as coins;
+    rateAsset: Int as coins;
+    rateToken: Int as coins;
     percent: Int as coins;
     expiration: Int as uint32;
     slippage: Int as coins;
@@ -141,4 +143,13 @@ struct ContextProcessDealForPriceReceived {
 struct ContextForGetOwner {
     amount: Int as coins;
     originalGasTo: Address;
+}
+
+message TakeDealAmm {
+    queryId: Int as uint64;
+    dealId: Int as uint32;
+    amount: Int as coins;
+    originalGasTo: Address;
+    oracleData: Cell;
+    oracleData2: Cell;
 }
