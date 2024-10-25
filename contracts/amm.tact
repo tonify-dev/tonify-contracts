@@ -1,5 +1,6 @@
 import "@stdlib/deploy";
 import "./market_messages.tact";
+import "./jetton/jetton_messages.tact";
 import "./imports/constants.tact";
 
 message InnerDeployAmm {
@@ -11,15 +12,20 @@ message InnerDeployAmm {
 
 contract Amm {
     id: Int as uint32;
-    market: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
-    jettonWallet: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ");
+    factory: Address;
+    market: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"); // ZERO_ADDRESS
+    jettonWallet: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"); // ZERO_ADDRESS
 
-    init(id: Int) {
+    init(id: Int, factory: Address) {
         self.id = id;
+        self.factory = factory;
     }
 
     receive(msg: InnerDeployAmm) {
+        require(sender() == self.factory, "Only factory can call this function");
         nativeReserve(STORAGE_INIT_VALUE, 0);
+        require(self.market == ZERO_ADDRESS, "Market already set");
+        require(self.jettonWallet == ZERO_ADDRESS, "Jetton wallet already set");
         self.jettonWallet = msg.jettonWallet;
         self.market = msg.market;   
         send(SendParameters{
@@ -36,7 +42,6 @@ contract Amm {
     receive(msg: TakeDealAmm) {
         nativeReserve(STORAGE_INIT_VALUE, 0);
         require(sender() == self.market, "Only market can call this function");
-
         send(SendParameters{
             to: self.jettonWallet,
             value: 0,
@@ -48,11 +53,14 @@ contract Amm {
                 query_id: msg.queryId,
                 response_destination: msg.originalGasTo,
                 custom_payload: null,
-                forward_ton_amount: 0,
-                forward_payload: TakeDeal{
-                    dealId: msg.dealId,
-                    oracleData: msg.oracleData,
-                    oracleData2: msg.oracleData2,
+                forward_ton_amount: TO_TAKE_TO_MARKET,
+                forward_payload: TakeDealWithOriginalGasTo{
+                    data: TakeDealDataWithOriginalGasTo{
+                        dealId: msg.dealId,
+                        oracleData: msg.oracleData,
+                        oracleData2: msg.oracleData2,
+                        originalGasTo: msg.originalGasTo,
+                    }.toCell(),
                 }.toCell().beginParse(),
             }.toCell(),
         });

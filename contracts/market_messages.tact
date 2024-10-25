@@ -1,5 +1,6 @@
 const OP_CODE_CREATE_DEAL: Int = 0xdfd74530; // sha256("CreateDeal").slice(0, 8)
 const OP_CODE_TAKE_DEAL: Int = 0x38f0b8f5; // sha256("TakeDeal").slice(0, 8)
+const OP_CODE_TAKE_DEAL_WITH_ORIGINAL_GAS_TO: Int = 0x78d830b2; // sha256("TakeDealWithOriginalGasTo").slice(0, 8)
 
 message(0x38f0b8f5) TakeDeal {
     dealId: Int as uint32;
@@ -8,6 +9,15 @@ message(0x38f0b8f5) TakeDeal {
 }
 struct TakeDealData {
     dealId: Int as uint32;
+    oracleData: Cell;
+    oracleData2: Cell;
+}
+message(0x78d830b2) TakeDealWithOriginalGasTo {
+    data: Cell;
+}
+struct TakeDealDataWithOriginalGasTo {
+    dealId: Int as uint32;
+    originalGasTo: Address;
     oracleData: Cell;
     oracleData2: Cell;
 }
@@ -114,6 +124,7 @@ struct ContextCancelDealForDealReceived {
 struct ContextTakeDealForDealReceived {
     from: Address;
     amount: Int as coins;
+    originalGasTo: Address;
     feedId: Int as uint32;
     price: Int as uint128;
     timestamp: Int as uint32;
@@ -135,6 +146,7 @@ struct ContextTakeDealForPriceReceived {
     from: Address;
     amount: Int as coins;
     dealId: Int as uint32;
+    originalGasTo: Address;
 }
 struct ContextProcessDealForPriceReceived {
     from: Address;

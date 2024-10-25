@@ -399,7 +399,7 @@ describe('Market', () => {
                 recipient: market.address,
                 response_destination: taker.address,
                 custom_payload: null,
-                forward_ton_amount: toNano('0.27'),
+                forward_ton_amount: toNano('0.24'),
                 forward_payload: takeDealData,
             },
         );
