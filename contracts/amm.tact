@@ -1,4 +1,5 @@
 import "@stdlib/deploy";
+import "@stdlib/ownable";
 import "./market_messages.tact";
 import "./jetton/jetton_messages.tact";
 import "./imports/constants.tact";
@@ -9,16 +10,23 @@ message InnerDeployAmm {
     originalGasTo: Address;
     market: Address;
 }
+message WithdrawToken {
+    queryId: Int as uint64;
+    amount: Int as coins;
+    originalGasTo: Address;
+}
 
-contract Amm {
+contract Amm with OwnableTransferable {
     id: Int as uint32;
     factory: Address;
+    owner: Address;
     market: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"); // ZERO_ADDRESS
     jettonWallet: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"); // ZERO_ADDRESS
 
-    init(id: Int, factory: Address) {
+    init(id: Int, factory: Address, owner: Address) {
         self.id = id;
         self.factory = factory;
+        self.owner = owner;
     }
 
     receive(msg: InnerDeployAmm) {
@@ -66,6 +74,25 @@ contract Amm {
         });
     }
 
+    receive(msg: WithdrawToken) {
+        self.requireOwner();
+        nativeReserve(STORAGE_INIT_VALUE, 0);
+        send(SendParameters{
+            to: self.jettonWallet,
+            value: 0,
+            mode: SendRemainingBalance,
+            bounce: true,
+            body: TokenTransfer{
+                amount: msg.amount,
+                recipient: sender(),
+                query_id: msg.queryId,
+                response_destination: msg.originalGasTo,
+                custom_payload: null,
+                forward_ton_amount: 0,
+                forward_payload: emptySlice(),
+            }.toCell(),
+        });
+    }
     get fun id(): Int {
         return self.id;
     }

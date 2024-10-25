@@ -1,6 +1,6 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { toNano, Address, Cell } from '@ton/core';
-import { Factory, loadMarketDeployedEvent } from '../wrappers/Factory';
+import { Factory, loadMarketDeployedEvent, loadMarketDeployedEventWithAmm } from '../wrappers/Factory';
 import '@ton/test-utils';
 import { Market } from '../wrappers/Market';
 
@@ -60,7 +60,6 @@ describe('Factory', () => {
                 id: 1n,
                 owner: owner.address,
                 coin: coin.address,
-                amm: amm.address,
                 jettonWallet: jettonWallet.address,
                 underlyingAssetName: 'TEST',
                 duration: 86400n,
@@ -92,7 +91,73 @@ describe('Factory', () => {
         const marketAddress = event.marketAddress;
         const market = await blockchain.openContract(Market.fromAddress(marketAddress));
         expect(await market.getOwner()).toEqualAddress(owner.address);
-        expect(await market.getAmm()).toEqualAddress(amm.address);
+        expect(await market.getAmm()).toEqualAddress(Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ'));
+        expect(await market.getJettonWallet()).toEqualAddress(jettonWallet.address);
+        expect(await market.getUnderlyingAssetName()).toEqual('TEST');
+        expect(await market.getDuration()).toEqual(86400n);
+        expect(await market.getCollectionContent()).toEqualCell(Cell.EMPTY);
+        expect(await market.getOperatorFee()).toEqual(toNano('0.01'));
+        expect(await market.getServiceFee()).toEqual(toNano('0.005'));
+        expect(await market.getOracle()).toEqualAddress(oracle.address);
+        expect(await market.getFeedIdAsset()).toEqual(1n);
+        expect(await market.getFeedIdToken()).toEqual(2n);
+        expect(await market.getOperatorFeeAddress()).toEqualAddress(operatorFeeAddress.address);
+        expect(await market.getCountDeal()).toEqual(0n);
+    });
+
+    it('should deploy a new market with amm', async () => {
+        const sender = await blockchain.treasury('sender');
+        const owner = await blockchain.treasury('owner');
+        const coin = await blockchain.treasury('coin');
+        const jettonWallet = await blockchain.treasury('jettonWallet');
+        const jettonWalletAmm = await blockchain.treasury('jettonWalletAmm');
+        const oracle = await blockchain.treasury('oracle');
+        const operatorFeeAddress = await blockchain.treasury('operatorFeeAddress');
+
+        const deployMarketResult = await factory.send(
+            sender.getSender(),
+            {
+                value: toNano('10'),
+            },
+            {
+                $$type: 'DeployTokenMarketWithAmm',
+                queryId: 1n,
+                id: 1n,
+                owner: owner.address,
+                coin: coin.address,
+                jettonWallet: jettonWallet.address,
+                jettonWalletAmm: jettonWalletAmm.address,
+                underlyingAssetName: 'TEST',
+                duration: 86400n,
+                collection_content: Cell.EMPTY,
+                operatorFee: toNano('0.01'),
+                serviceFee: toNano('0.005'),
+                oracle: oracle.address,
+                feedIdAsset: 1n,
+                feedIdToken: 2n,
+                operatorFeeAddress: operatorFeeAddress.address,
+                originalGasTo: sender.address,
+            }
+        );
+
+        expect(deployMarketResult.transactions).not.toHaveTransaction({
+            success: false,
+        });
+        const event = loadMarketDeployedEventWithAmm(deployMarketResult.externals[0].body.asSlice());
+        // Check for MarketDeployedEvent
+        expect(event).toBeDefined();
+        if (event) {
+            const { marketAddress, id, owner: eventOwner } = event;
+            expect(marketAddress).toBeDefined();
+            expect(id).toBe(1n);
+            expect(eventOwner.equals(owner.address)).toBe(true);
+        }
+
+        // Check that a new contract was actually deployed
+        const marketAddress = event.marketAddress;
+        const market = await blockchain.openContract(Market.fromAddress(marketAddress));
+        expect(await market.getOwner()).toEqualAddress(owner.address);
+        expect(await market.getAmm()).not.toEqualAddress(Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ'));
         expect(await market.getJettonWallet()).toEqualAddress(jettonWallet.address);
         expect(await market.getUnderlyingAssetName()).toEqual('TEST');
         expect(await market.getDuration()).toEqual(86400n);

@@ -67,7 +67,7 @@ describe('Amm', () => {
         taker = await blockchain.treasury('taker');
         maker = await blockchain.treasury('maker');
         factory = await blockchain.treasury('factory');
-        amm = blockchain.openContract(await Amm.fromInit(0n, factory.address));
+        amm = blockchain.openContract(await Amm.fromInit(0n, factory.address, owner.address));
         operator = await blockchain.treasury('operator');
         jettonMaster = blockchain.openContract(
             await MyJetton.fromInit(owner.address, beginCell().endCell(), toNano('1000000000')),

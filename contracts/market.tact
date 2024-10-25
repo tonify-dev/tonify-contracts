@@ -226,7 +226,6 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
     }
 
     fun handleTakeDeal(queryId: Int, takeDeal: TakeDealData, amount: Int, from: Address, originalGasTo: Address) {
-        // dump(1);
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_TAKE_DEAL_AFTER_PRICE_RECEIVED, 8)
             .storeRef(ContextTakeDealForPriceReceived{

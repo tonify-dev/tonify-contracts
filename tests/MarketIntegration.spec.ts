@@ -399,11 +399,11 @@ describe('Market', () => {
                 recipient: market.address,
                 response_destination: taker.address,
                 custom_payload: null,
-                forward_ton_amount: toNano('0.24'),
+                forward_ton_amount: toNano('0.29'),
                 forward_payload: takeDealData,
             },
         );
-        // console.log('takeDealResult', takeDealResult.transactions);
+        console.log('takeDealResult', takeDealResult.transactions);
         // console.log('takeDealResult', takeDealResult.events);
         const tonBalanceAfter = await taker.getBalance();
         console.log('User fee :' + fromNano(tonBalanceAfter - tonBalanceBefore));
@@ -416,6 +416,7 @@ describe('Market', () => {
             percent,
             dealId,
         });
+        console.log('takeDealResult', takeDealResult.events);
     }
 
     async function proceedDeal(
