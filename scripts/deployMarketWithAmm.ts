@@ -8,7 +8,6 @@ import { calculateJettonDefaultWalletAddress } from './uitls/calculateJettonWall
 
 const jettonMasterAddress = Address.parse('EQAEjTwIDPZDLkPMbzUB5Pdu3BIbKYVdzgSp9wG3VHJL-rWw');
 const oracleAddress = Address.parse('EQD1HG-Y_20MGKGZc_fi-hB_9iIGLJvNf4JVZGXTWG93sRmI');
-const ammAddress = Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ'); //zero address
 const feedAssetId = 4543560n; // ETH
 const feedTokenId = 1431520340n; // USDT
 const id = 1n;
@@ -25,25 +24,28 @@ export async function run(provider: NetworkProvider) {
     const owner = provider.sender().address!;
 
     const factory = provider.open(await Factory.fromAddress(Address.parse(factoryAddress)));
-
-    const market = provider.open(
-        await Market.fromInit(
-            id,
-            owner,
-            coin,
-            ammAddress,
-            factory.address,
-            underlyingAssetName,
-            duration,
-            content,
-            operatorFee,
-            serviceFee,
-            oracleAddress,
-            feedAssetId,
-            feedTokenId,
-            operatorFeeAddress,
-        ),
+    const amm = await Amm.fromInit(
+        BigInt(Math.floor(Math.random() * 10000)),
+        Address.parse(factoryAddress),
+        owner,
     );
+    const jettonDefaultWalletAddressAmm = await calculateJettonDefaultWalletAddress(jettonMasterAddress, amm.address);
+    const market = provider.open(await Market.fromInit(
+        id,
+        owner,
+        coin,
+        amm.address,
+        factory.address,
+        underlyingAssetName,
+        duration,
+        content,
+        operatorFee,
+        serviceFee,
+        oracleAddress,
+        feedAssetId,
+        feedTokenId,
+        operatorFeeAddress,
+    ));
     const jettonDefaultWalletAddressMarket = await calculateJettonDefaultWalletAddress(
         jettonMasterAddress,
         market.address,
@@ -52,15 +54,16 @@ export async function run(provider: NetworkProvider) {
     await factory.send(
         provider.sender(),
         {
-            value: toNano('0.25'),
+            value: toNano('0.45'),
         },
         {
-            $$type: 'DeployTokenMarket',
+            $$type: 'DeployTokenMarketWithAmm',
             queryId: 0n,
             id,
             owner,
             coin,
             jettonWallet: jettonDefaultWalletAddressMarket,
+            jettonWalletAmm: jettonDefaultWalletAddressAmm,
             underlyingAssetName,
             duration,
             collection_content: content,
@@ -74,6 +77,7 @@ export async function run(provider: NetworkProvider) {
         },
     );
 
+    await provider.waitForDeploy(amm.address);
     await provider.waitForDeploy(market.address);
 
     console.log('ID', await market.getId());

@@ -1,22 +1,19 @@
-import { toNano } from '@ton/core';
-import { MyJeton } from '../wrappers/MyJetton';
+import { beginCell, toNano } from '@ton/core';
+import { MyJetton } from '../wrappers/MyJetton';
 import { NetworkProvider } from '@ton/blueprint';
 
 export async function run(provider: NetworkProvider) {
-    const myJeton = provider.open(await MyJeton.fromInit());
+    const myJetton = provider.open(await MyJetton.fromInit(provider.sender().address!, beginCell().endCell(), toNano(1000000000000)));
 
-    await myJeton.send(
+    await myJetton.send(
         provider.sender(),
         {
-            value: toNano('0.05'),
+            value: toNano('0.15'),
         },
-        {
-            $$type: 'Deploy',
-            queryId: 0n,
-        }
+        "Mint: 100"
     );
 
-    await provider.waitForDeploy(myJeton.address);
+    await provider.waitForDeploy(myJetton.address);
 
-    // run methods on `myJeton`
+    // run methods on `myJetton`
 }

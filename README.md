@@ -24,3 +24,10 @@
 ### Add a new contract
 
 `npx blueprint create ContractName` or `yarn blueprint create ContractName`
+
+# Addresses
+
+-   Factory: EQDs3GAEZOCLVE45ZkwBG_PbqpZne2qBJzEqN4LhmQOHNSxd
+-   Market: kQBjGdvmWcMgIyZMVau2pbBqgR3Pjkb5sbxUzeH2bb5SZlBv
+-   Market with Amm: kQA0APUqKE9Hd15SV0_nuHlUtGrj17SAsaDTSKOnBmK0ypT5
+-   Amm: kQAxgJCvtxM7weVG-pqd1Q7Dmh9eNQucBaG-STq-5XXYzkaE

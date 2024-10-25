@@ -15,3 +15,4 @@ dist
 # VIM
 Session.vim
 examle-for-ai
+.env

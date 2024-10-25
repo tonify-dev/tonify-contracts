@@ -14,8 +14,8 @@ export class SingleFeedManInitData implements TonInitData {
   ) {}
 
   toCell(): Cell {
-    console.log(BigInt(hexlify(toUtf8Bytes(this.secondFeedId))))
     console.log(BigInt(hexlify(toUtf8Bytes(this.feedId))))
+    console.log(BigInt(hexlify(toUtf8Bytes(this.secondFeedId))))
     return beginCell()
       .storeUint(
         BigInt(hexlify(toUtf8Bytes(this.feedId))),
