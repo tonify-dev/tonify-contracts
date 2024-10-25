@@ -65,8 +65,8 @@ contract Amm with OwnableTransferable {
                 forward_payload: TakeDealWithOriginalGasTo{
                     data: TakeDealDataWithOriginalGasTo{
                         dealId: msg.dealId,
-                        oracleData: msg.oracleData,
-                        oracleData2: msg.oracleData2,
+                        oracleAssetData: msg.oracleAssetData,
+                        oracleTokenData: msg.oracleTokenData,
                         originalGasTo: msg.originalGasTo,
                     }.toCell(),
                 }.toCell().beginParse(),

@@ -142,8 +142,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             let deal: TakeDealDataWithOriginalGasTo = TakeDealDataWithOriginalGasTo.fromSlice(msg.forward_payload.loadRef().beginParse());
             self.handleTakeDeal(msg.query_id, TakeDealData{
                 dealId: deal.dealId,
-                oracleData: deal.oracleData,
-                oracleData2: deal.oracleData2,
+                oracleAssetData: deal.oracleAssetData,
+                oracleTokenData: deal.oracleTokenData,
             }, msg.amount, msg.from, deal.originalGasTo);
         }
     }
@@ -166,7 +166,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             .storeUint(INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED, 8)
             .storeRef(ContextProcessDealForPriceReceived{from: ctx.sender, dealId: msg.dealId}.toCell())
             .endCell();   
-        self.fetchPriceWithSaveContext(msg.queryId, msg.oracleData, msg.oracleData2, contextProcessDeal);    
+        self.fetchPriceWithSaveContext(msg.queryId, msg.oracleAssetData, msg.oracleTokenData, contextProcessDeal);    
     }
     
     fun handleCreateDeal(queryId: Int, deal: CreateDealData, amount: Int, from: Address) {
@@ -192,8 +192,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
                     queryId: queryId,
                     amount: collateralAmountMaker,
                     originalGasTo: from,
-                    oracleData: deal.oracleData!!,
-                    oracleData2: deal.oracleData2!!
+                    oracleAssetData: deal.oracleAssetData!!,
+                    oracleTokenData: deal.oracleTokenData!!
                 }.toCell()
             });
         }
@@ -236,7 +236,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             }.toCell())
             .endCell();
         
-        self.fetchPriceWithSaveContext(queryId, takeDeal.oracleData, takeDeal.oracleData2, contextProcessDeal);
+        self.fetchPriceWithSaveContext(queryId, takeDeal.oracleAssetData, takeDeal.oracleTokenData, contextProcessDeal);
     }
 
     fun takeDealAfterRecievedPrice(query: Cell, ctx: Context, queryId: Int, feedId: Int, price: Int, timestamp: Int, feedId2: Int, price2: Int, timestamp2: Int) {
@@ -544,10 +544,10 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         });
     }
 
-    fun fetchPriceWithSaveContext(queryId: Int, oracleData: Cell, oracleData2: Cell, saveContext: Cell) {
+    fun fetchPriceWithSaveContext(queryId: Int, oracleAssetData: Cell, oracleTokenData: Cell, saveContext: Cell) {
         require(self.mapQueriesToContext.get(queryId) == null, "QueryId already exists");
         self.mapQueriesToContext.set(queryId, saveContext);
-        self.fetchPrice(queryId, oracleData, oracleData2);
+        self.fetchPrice(queryId, oracleAssetData, oracleTokenData);
     }
 
     override fun onPriceReceived(queryId: Int, feedId: Int, price: Int, timestamp: Int, feedId2: Int, price2: Int, timestamp2: Int) {

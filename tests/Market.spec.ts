@@ -623,8 +623,8 @@ describe('Market', () => {
                         percent: percent,
                         expiration: expiration, 
                         slippage: slippage,
-                        oracleData: null,
-                        oracleData2: null,
+                        oracleAssetData: null,
+                        oracleTokenData: null,
                     }),
                 )
                 .asSlice();
@@ -675,8 +675,8 @@ describe('Market', () => {
                         percent: percent,
                         expiration: expiration,
                         slippage: slippage,
-                        oracleData: null,
-                        oracleData2: null,
+                        oracleAssetData: null,
+                        oracleTokenData: null,
                     }),
                 )
                 .asSlice();
@@ -727,8 +727,8 @@ describe('Market', () => {
                         percent: percent,
                         expiration: expiration,
                         slippage: slippage,
-                        oracleData: null,
-                        oracleData2: null,
+                        oracleAssetData: null,
+                        oracleTokenData: null,
                     }),
                 )
                 .asSlice();
@@ -869,7 +869,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -880,7 +880,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -938,7 +938,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -949,7 +949,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1007,7 +1007,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1018,7 +1018,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1077,7 +1077,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1088,7 +1088,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1146,7 +1146,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1157,7 +1157,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1215,7 +1215,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1226,7 +1226,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1284,7 +1284,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1295,7 +1295,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1353,7 +1353,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1364,7 +1364,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1424,7 +1424,7 @@ describe('Market', () => {
                     storeTakeDeal({
                         $$type: 'TakeDeal',
                         dealId: dealId,
-                        oracleData: beginCell()
+                        oracleAssetData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1435,7 +1435,7 @@ describe('Market', () => {
                                 }),
                             )
                             .endCell(),
-                        oracleData2: beginCell()
+                        oracleTokenData: beginCell()
                             .store(
                                 storeCheckAndReturnPriceForTest({
                                     $$type: 'CheckAndReturnPriceForTest',
@@ -1503,7 +1503,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1514,7 +1514,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell()
+                    oracleTokenData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1564,7 +1564,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1575,7 +1575,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell()
+                    oracleTokenData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1623,7 +1623,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1634,7 +1634,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell()
+                    oracleTokenData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1683,7 +1683,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1694,7 +1694,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell()
+                    oracleTokenData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1742,7 +1742,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId: dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1753,7 +1753,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell().store(storeCheckAndReturnPriceForTest({
+                    oracleTokenData: beginCell().store(storeCheckAndReturnPriceForTest({
                         $$type: 'CheckAndReturnPriceForTest',
                         feedId: feedIdToken,
                         price: secondRateToken,
@@ -1795,7 +1795,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId: dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1806,7 +1806,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell().store(storeCheckAndReturnPriceForTest({
+                    oracleTokenData: beginCell().store(storeCheckAndReturnPriceForTest({
                         $$type: 'CheckAndReturnPriceForTest',
                         feedId: feedIdToken,
                         price: secondRateToken,
@@ -1852,7 +1852,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId: dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1864,7 +1864,7 @@ describe('Market', () => {
                         )
                         .endCell(),
 
-                    oracleData2: beginCell().store(storeCheckAndReturnPriceForTest({
+                    oracleTokenData: beginCell().store(storeCheckAndReturnPriceForTest({
                         $$type: 'CheckAndReturnPriceForTest',
                         feedId: feedIdToken,
                         price: secondRateToken,
@@ -1909,7 +1909,7 @@ describe('Market', () => {
                     $$type: 'ProcessDeal',
                     dealId,
                     queryId: 0n,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -1920,7 +1920,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell()
+                    oracleTokenData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -2144,8 +2144,8 @@ describe('Market', () => {
                     percent: percent,
                     expiration: expiration,
                     slippage: slippage,
-                    oracleData: null,
-                    oracleData2: null,
+                    oracleAssetData: null,
+                    oracleTokenData: null,
                 }),
             )
             .asSlice();
@@ -2203,7 +2203,7 @@ describe('Market', () => {
                 storeTakeDeal({
                     $$type: 'TakeDeal',
                     dealId: dealId,
-                    oracleData: beginCell()
+                    oracleAssetData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -2214,7 +2214,7 @@ describe('Market', () => {
                             }),
                         )
                         .endCell(),
-                    oracleData2: beginCell()
+                    oracleTokenData: beginCell()
                         .store(
                             storeCheckAndReturnPriceForTest({
                                 $$type: 'CheckAndReturnPriceForTest',
@@ -2285,7 +2285,7 @@ describe('Market', () => {
                 $$type: 'ProcessDeal',
                 dealId,
                 queryId: 0n,
-                oracleData: beginCell()
+                oracleAssetData: beginCell()
                     .store(
                         storeCheckAndReturnPriceForTest({
                             $$type: 'CheckAndReturnPriceForTest',
@@ -2296,7 +2296,7 @@ describe('Market', () => {
                         }),
                     )
                     .endCell(),
-                oracleData2: beginCell()
+                oracleTokenData: beginCell()
                     .store(
                         storeCheckAndReturnPriceForTest({
                             $$type: 'CheckAndReturnPriceForTest',
@@ -2347,7 +2347,7 @@ describe('Market', () => {
                 $$type: 'ProcessDeal',
                 dealId,
                 queryId: 0n,
-                oracleData: beginCell()
+                oracleAssetData: beginCell()
                     .store(
                         storeCheckAndReturnPriceForTest({
                             $$type: 'CheckAndReturnPriceForTest',
@@ -2358,7 +2358,7 @@ describe('Market', () => {
                         }),
                     )
                     .endCell(),
-                oracleData2: beginCell()
+                oracleTokenData: beginCell()
                     .store(
                         storeCheckAndReturnPriceForTest({
                             $$type: 'CheckAndReturnPriceForTest',

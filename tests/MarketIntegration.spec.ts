@@ -308,8 +308,8 @@ describe('Market', () => {
                     percent: percent,
                     expiration: expiration,
                     slippage: slippage,
-                    oracleData: null,
-                    oracleData2: null,
+                    oracleAssetData: null,
+                    oracleTokenData: null,
                 }),
             )
             .asSlice();
@@ -367,7 +367,7 @@ describe('Market', () => {
                 storeTakeDeal({
                     $$type: 'TakeDeal',
                     dealId: dealId,
-                    oracleData: await createCellFromParamsProvider(
+                    oracleAssetData: await createCellFromParamsProvider(
                         new ContractParamsProvider({
                             dataServiceId: 'redstone-avalanche-prod',
                             uniqueSignersCount: 2,
@@ -375,7 +375,7 @@ describe('Market', () => {
                             historicalTimestamp: Math.floor((blockchain.now! * 1000) / 10000) * 10000,
                         }),
                     ),
-                    oracleData2: await createCellFromParamsProvider(
+                    oracleTokenData: await createCellFromParamsProvider(
                         new ContractParamsProvider({
                             dataServiceId: 'redstone-avalanche-prod',
                             uniqueSignersCount: 2,
@@ -446,7 +446,7 @@ describe('Market', () => {
                 $$type: 'ProcessDeal',
                 dealId,
                 queryId: 0n,
-                oracleData:  await createCellFromParamsProvider(
+                oracleAssetData:  await createCellFromParamsProvider(
                     new ContractParamsProvider({
                         dataServiceId: 'redstone-avalanche-prod',
                         uniqueSignersCount: 2,
@@ -454,7 +454,7 @@ describe('Market', () => {
                         historicalTimestamp: Number(dateStop / 10n * 1000n * 10n),
                     }),
                 ),
-                oracleData2: await createCellFromParamsProvider(
+                oracleTokenData: await createCellFromParamsProvider(
                     new ContractParamsProvider({
                         dataServiceId: 'redstone-avalanche-prod',
                         uniqueSignersCount: 2,

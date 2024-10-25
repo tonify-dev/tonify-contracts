@@ -310,7 +310,7 @@ describe('Amm', () => {
                 percent: percent,
                 expiration: expiration,
                 slippage: slippage,
-                oracleData: beginCell()
+                oracleAssetData: beginCell()
                 .store(
                     storeCheckAndReturnPriceForTest({
                         $$type: 'CheckAndReturnPriceForTest',
@@ -321,7 +321,7 @@ describe('Amm', () => {
                     }),
                 )
                 .endCell(),
-                oracleData2: beginCell()
+                oracleTokenData: beginCell()
                 .store(
                     storeCheckAndReturnPriceForTest({
                         $$type: 'CheckAndReturnPriceForTest',

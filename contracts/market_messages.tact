@@ -4,13 +4,13 @@ const OP_CODE_TAKE_DEAL_WITH_ORIGINAL_GAS_TO: Int = 0x78d830b2; // sha256("TakeD
 
 message(0x38f0b8f5) TakeDeal {
     dealId: Int as uint32;
-    oracleData: Cell;
-    oracleData2: Cell;
+    oracleAssetData: Cell;
+    oracleTokenData: Cell;
 }
 struct TakeDealData {
     dealId: Int as uint32;
-    oracleData: Cell;
-    oracleData2: Cell;
+    oracleAssetData: Cell;
+    oracleTokenData: Cell;
 }
 message(0x78d830b2) TakeDealWithOriginalGasTo {
     data: Cell;
@@ -18,8 +18,8 @@ message(0x78d830b2) TakeDealWithOriginalGasTo {
 struct TakeDealDataWithOriginalGasTo {
     dealId: Int as uint32;
     originalGasTo: Address;
-    oracleData: Cell;
-    oracleData2: Cell;
+    oracleAssetData: Cell;
+    oracleTokenData: Cell;
 }
 message(0xdfd74530) CreateDeal {
     makerPosition: Bool;
@@ -28,8 +28,8 @@ message(0xdfd74530) CreateDeal {
     percent: Int as coins;
     expiration: Int as uint32;
     slippage: Int as coins;
-    oracleData: Cell?;
-    oracleData2: Cell?;
+    oracleAssetData: Cell?;
+    oracleTokenData: Cell?;
 }
 message InnerDeployMarket {
     queryId: Int as uint64;
@@ -54,8 +54,8 @@ struct CreateDealData {
     percent: Int as coins;
     expiration: Int as uint32;
     slippage: Int as coins;
-    oracleData: Cell?;
-    oracleData2: Cell?;
+    oracleAssetData: Cell?;
+    oracleTokenData: Cell?;
 }
 message CancelDeal {
     queryId: Int as uint64;
@@ -64,8 +64,8 @@ message CancelDeal {
 message ProcessDeal {
     queryId: Int as uint64;
     dealId: Int as uint32;
-    oracleData: Cell;
-    oracleData2: Cell;
+    oracleAssetData: Cell;
+    oracleTokenData: Cell;
 }
 struct DealData {
     status: Int as uint8;
@@ -162,6 +162,6 @@ message TakeDealAmm {
     dealId: Int as uint32;
     amount: Int as coins;
     originalGasTo: Address;
-    oracleData: Cell;
-    oracleData2: Cell;
+    oracleAssetData: Cell;
+    oracleTokenData: Cell;
 }
