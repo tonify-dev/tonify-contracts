@@ -1,0 +1,2 @@
+;; String "dump(msg)"
+slice __gen_slice_string_2251f9d2ce7d38ffa667d48793ce502c78467e4a5574fde1d7d055f141ccb15b() asm "B{b5ee9c7241010101000b00001264756d70286d73672901dbc6db} B>boc <s PUSHSLICE";

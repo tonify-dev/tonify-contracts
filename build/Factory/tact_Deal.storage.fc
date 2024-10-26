@@ -1,0 +1,122 @@
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body(slice $to, int $value, int $mode, int $bounce, cell $body) inline {
+    return ($bounce, $to, $value, $mode, $body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce(slice $to, int $value, int $mode, int $bounce) inline {
+    return ($bounce, $to, $value, $mode, null(), null(), null());
+}
+
+;;
+;; Type: GetData
+;; Header: 0xe601f8e5
+;; TLB: get_data#e601f8e5 queryId:uint64 = GetData
+;;
+
+(slice, ((int))) $GetData$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3858888933);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+;;
+;; Type: ReportData
+;; Header: 0xb687ab17
+;; TLB: report_data#b687ab17 queryId:uint64 id:uint32 data:^cell = ReportData
+;;
+
+builder $ReportData$_store(builder build_0, (int, int, cell) v) inline {
+    var (v'queryId, v'id, v'data) = v;
+    build_0 = store_uint(build_0, 3062344471, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'id, 32);
+    build_0 = build_0.store_ref(v'data);
+    return build_0;
+}
+
+cell $ReportData$_store_cell((int, int, cell) v) inline {
+    return $ReportData$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, cell)) $ReportData$_constructor_queryId_id_data(int $queryId, int $id, cell $data) inline {
+    return ($queryId, $id, $data);
+}
+
+;;
+;; Type: SaveData
+;; Header: 0xafe93535
+;; TLB: save_data#afe93535 queryId:uint64 originalGasTo:address data:^cell = SaveData
+;;
+
+(slice, ((int, slice, cell))) $SaveData$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2951296309);
+    var v'queryId = sc_0~load_uint(64);
+    var v'originalGasTo = sc_0~__tact_load_address();
+    var v'data = sc_0~load_ref();
+    return (sc_0, (v'queryId, v'originalGasTo, v'data));
+}
+
+;;
+;; Type: DeleteData
+;; Header: 0xb8a3aa14
+;; TLB: delete_data#b8a3aa14 queryId:uint64 originalGasTo:address = DeleteData
+;;
+
+(slice, ((int, slice))) $DeleteData$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3097733652);
+    var v'queryId = sc_0~load_uint(64);
+    var v'originalGasTo = sc_0~__tact_load_address();
+    return (sc_0, (v'queryId, v'originalGasTo));
+}
+
+;;
+;; Type: Deal
+;;
+
+builder $Deal$_store(builder build_0, (int, slice, cell) v) inline {
+    var (v'id, v'owner, v'data) = v;
+    build_0 = build_0.store_uint(v'id, 32);
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = ~ null?(v'data) ? build_0.store_int(true, 1).store_ref(v'data) : build_0.store_int(false, 1);
+    return build_0;
+}
+
+(slice, ((int, slice, cell))) $Deal$_load(slice sc_0) inline {
+    var v'id = sc_0~load_uint(32);
+    var v'owner = sc_0~__tact_load_address();
+    var v'data = sc_0~load_int(1) ? sc_0~load_ref() : null();
+    return (sc_0, (v'id, v'owner, v'data));
+}
+
+(slice, ((int, slice))) $Deal$init$_load(slice sc_0) inline {
+    var v'id = sc_0~load_int(257);
+    var v'owner = sc_0~__tact_load_address();
+    return (sc_0, (v'id, v'owner));
+}
+
+(int, slice, cell) $Deal$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$Deal$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        (int $id, slice $owner) = $sc~$Deal$init$_load();
+        $sc.end_parse();
+        return $Deal$_contract_init($id, $owner);
+    }
+}
+
+() $Deal$_contract_store((int, slice, cell) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $Deal$_store(b, v);
+    set_data(b.end_cell());
+}

@@ -1,0 +1,997 @@
+;;
+;; Type: StateInit
+;; TLB: _ code:^cell data:^cell = StateInit
+;;
+
+((cell, cell)) $StateInit$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (cell vvv'code, cell vvv'data) = __tact_tuple_destroy_2(v);
+    return (vvv'code, vvv'data);
+}
+
+(cell, cell) $StateInit$_to_external(((cell, cell)) v) inline {
+    var (v'code, v'data) = v; 
+    return (v'code, v'data);
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body(slice $to, int $value, int $mode, int $bounce, cell $body) inline {
+    return ($bounce, $to, $value, $mode, $body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body_code_data(slice $to, int $value, int $mode, int $bounce, cell $body, cell $code, cell $data) inline {
+    return ($bounce, $to, $value, $mode, $body, $code, $data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_body(slice $to, int $value, int $mode, cell $body) inline {
+    return (true, $to, $value, $mode, $body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_bounce_mode_body_code_data(slice $to, int $value, int $bounce, int $mode, cell $body, cell $code, cell $data) inline {
+    return ($bounce, $to, $value, $mode, $body, $code, $data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_bounce_mode_body(slice $to, int $value, int $bounce, int $mode, cell $body) inline {
+    return ($bounce, $to, $value, $mode, $body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int $bounce, slice $to, int $value, int $mode, cell $body, cell $code, cell $data) inline {
+    return ($bounce, $to, $value, $mode, $body, $code, $data);
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v) inline {
+    return $DeployOk$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: TakeDealData
+;; TLB: _ dealId:uint32 oracleAssetData:^cell oracleTokenData:^cell = TakeDealData
+;;
+
+(slice, ((int, cell, cell))) $TakeDealData$_load(slice sc_0) inline {
+    var v'dealId = sc_0~load_uint(32);
+    var v'oracleAssetData = sc_0~load_ref();
+    var v'oracleTokenData = sc_0~load_ref();
+    return (sc_0, (v'dealId, v'oracleAssetData, v'oracleTokenData));
+}
+
+((int, cell, cell)) $TakeDealData$_load_not_mut(slice sc_0) inline {
+    var r = sc_0~$TakeDealData$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((int, cell, cell)) $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData(int $dealId, cell $oracleAssetData, cell $oracleTokenData) inline {
+    return ($dealId, $oracleAssetData, $oracleTokenData);
+}
+
+;;
+;; Type: TakeDealDataWithOriginalGasTo
+;; TLB: _ dealId:uint32 originalGasTo:address oracleAssetData:^cell oracleTokenData:^cell = TakeDealDataWithOriginalGasTo
+;;
+
+(slice, ((int, slice, cell, cell))) $TakeDealDataWithOriginalGasTo$_load(slice sc_0) inline {
+    var v'dealId = sc_0~load_uint(32);
+    var v'originalGasTo = sc_0~__tact_load_address();
+    var v'oracleAssetData = sc_0~load_ref();
+    var v'oracleTokenData = sc_0~load_ref();
+    return (sc_0, (v'dealId, v'originalGasTo, v'oracleAssetData, v'oracleTokenData));
+}
+
+((int, slice, cell, cell)) $TakeDealDataWithOriginalGasTo$_load_not_mut(slice sc_0) inline {
+    var r = sc_0~$TakeDealDataWithOriginalGasTo$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+;;
+;; Type: InnerDeployMarket
+;; Header: 0x690d7fe0
+;; TLB: inner_deploy_market#690d7fe0 queryId:uint64 jettonWallet:address originalGasTo:address = InnerDeployMarket
+;;
+
+(slice, ((int, slice, slice))) $InnerDeployMarket$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 1762492384);
+    var v'queryId = sc_0~load_uint(64);
+    var v'jettonWallet = sc_0~__tact_load_address();
+    var v'originalGasTo = sc_0~__tact_load_address();
+    return (sc_0, (v'queryId, v'jettonWallet, v'originalGasTo));
+}
+
+;;
+;; Type: WithdrawOperatorFee
+;; Header: 0xd3212f13
+;; TLB: withdraw_operator_fee#d3212f13 queryId:uint64 amount:coins to:address = WithdrawOperatorFee
+;;
+
+(slice, ((int, int, slice))) $WithdrawOperatorFee$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3542167315);
+    var v'queryId = sc_0~load_uint(64);
+    var v'amount = sc_0~load_coins();
+    var v'to = sc_0~__tact_load_address();
+    return (sc_0, (v'queryId, v'amount, v'to));
+}
+
+;;
+;; Type: WithdrawServiceFee
+;; Header: 0xe90cd09b
+;; TLB: withdraw_service_fee#e90cd09b queryId:uint64 amount:coins to:address = WithdrawServiceFee
+;;
+
+(slice, ((int, int, slice))) $WithdrawServiceFee$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3909931163);
+    var v'queryId = sc_0~load_uint(64);
+    var v'amount = sc_0~load_coins();
+    var v'to = sc_0~__tact_load_address();
+    return (sc_0, (v'queryId, v'amount, v'to));
+}
+
+;;
+;; Type: CreateDealData
+;; TLB: _ makerPosition:bool rateAsset:coins rateToken:coins percent:coins expiration:uint32 slippage:coins oracleAssetData:Maybe ^cell oracleTokenData:Maybe ^cell = CreateDealData
+;;
+
+(slice, ((int, int, int, int, int, int, cell, cell))) $CreateDealData$_load(slice sc_0) inline_ref {
+    var v'makerPosition = sc_0~load_int(1);
+    var v'rateAsset = sc_0~load_coins();
+    var v'rateToken = sc_0~load_coins();
+    var v'percent = sc_0~load_coins();
+    var v'expiration = sc_0~load_uint(32);
+    var v'slippage = sc_0~load_coins();
+    var v'oracleAssetData = sc_0~load_int(1) ? sc_0~load_ref() : null();
+    var v'oracleTokenData = sc_0~load_int(1) ? sc_0~load_ref() : null();
+    return (sc_0, (v'makerPosition, v'rateAsset, v'rateToken, v'percent, v'expiration, v'slippage, v'oracleAssetData, v'oracleTokenData));
+}
+
+((int, int, int, int, int, int, cell, cell)) $CreateDealData$_load_not_mut(slice sc_0) inline_ref {
+    var r = sc_0~$CreateDealData$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+;;
+;; Type: CancelDeal
+;; Header: 0x812763fe
+;; TLB: cancel_deal#812763fe queryId:uint64 dealId:uint32 = CancelDeal
+;;
+
+(slice, ((int, int))) $CancelDeal$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2166842366);
+    var v'queryId = sc_0~load_uint(64);
+    var v'dealId = sc_0~load_uint(32);
+    return (sc_0, (v'queryId, v'dealId));
+}
+
+;;
+;; Type: ProcessDeal
+;; Header: 0xe9626fba
+;; TLB: process_deal#e9626fba queryId:uint64 dealId:uint32 oracleAssetData:^cell oracleTokenData:^cell = ProcessDeal
+;;
+
+(slice, ((int, int, cell, cell))) $ProcessDeal$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3915542458);
+    var v'queryId = sc_0~load_uint(64);
+    var v'dealId = sc_0~load_uint(32);
+    var v'oracleAssetData = sc_0~load_ref();
+    var v'oracleTokenData = sc_0~load_ref();
+    return (sc_0, (v'queryId, v'dealId, v'oracleAssetData, v'oracleTokenData));
+}
+
+;;
+;; Type: DealData
+;; TLB: _ status:uint8 isSeller:bool rate:coins rateMaker:coins percent:coins slippageMaker:coins collateralAmountMaker:coins dateOrderCreation:uint32 dateOrderExpiration:uint32 dateStart:uint32 dateStop:uint32 buyerTokenId:uint32 sellerTokenId:uint32 maker:address = DealData
+;;
+
+builder $DealData$_store(builder build_0, (int, int, int, int, int, int, int, int, int, int, int, int, int, slice) v) inline_ref {
+    var (v'status, v'isSeller, v'rate, v'rateMaker, v'percent, v'slippageMaker, v'collateralAmountMaker, v'dateOrderCreation, v'dateOrderExpiration, v'dateStart, v'dateStop, v'buyerTokenId, v'sellerTokenId, v'maker) = v;
+    build_0 = build_0.store_uint(v'status, 8);
+    build_0 = build_0.store_int(v'isSeller, 1);
+    build_0 = build_0.store_coins(v'rate);
+    build_0 = build_0.store_coins(v'rateMaker);
+    build_0 = build_0.store_coins(v'percent);
+    build_0 = build_0.store_coins(v'slippageMaker);
+    build_0 = build_0.store_coins(v'collateralAmountMaker);
+    build_0 = build_0.store_uint(v'dateOrderCreation, 32);
+    build_0 = build_0.store_uint(v'dateOrderExpiration, 32);
+    build_0 = build_0.store_uint(v'dateStart, 32);
+    build_0 = build_0.store_uint(v'dateStop, 32);
+    build_0 = build_0.store_uint(v'buyerTokenId, 32);
+    build_0 = build_0.store_uint(v'sellerTokenId, 32);
+    var build_1 = begin_cell();
+    build_1 = __tact_store_address(build_1, v'maker);
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+cell $DealData$_store_cell((int, int, int, int, int, int, int, int, int, int, int, int, int, slice) v) inline {
+    return $DealData$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((int, int, int, int, int, int, int, int, int, int, int, int, int, slice))) $DealData$_load(slice sc_0) inline_ref {
+    var v'status = sc_0~load_uint(8);
+    var v'isSeller = sc_0~load_int(1);
+    var v'rate = sc_0~load_coins();
+    var v'rateMaker = sc_0~load_coins();
+    var v'percent = sc_0~load_coins();
+    var v'slippageMaker = sc_0~load_coins();
+    var v'collateralAmountMaker = sc_0~load_coins();
+    var v'dateOrderCreation = sc_0~load_uint(32);
+    var v'dateOrderExpiration = sc_0~load_uint(32);
+    var v'dateStart = sc_0~load_uint(32);
+    var v'dateStop = sc_0~load_uint(32);
+    var v'buyerTokenId = sc_0~load_uint(32);
+    var v'sellerTokenId = sc_0~load_uint(32);
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'maker = sc_1~__tact_load_address();
+    return (sc_0, (v'status, v'isSeller, v'rate, v'rateMaker, v'percent, v'slippageMaker, v'collateralAmountMaker, v'dateOrderCreation, v'dateOrderExpiration, v'dateStart, v'dateStop, v'buyerTokenId, v'sellerTokenId, v'maker));
+}
+
+((int, int, int, int, int, int, int, int, int, int, int, int, int, slice)) $DealData$_load_not_mut(slice sc_0) inline_ref {
+    var r = sc_0~$DealData$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((int, int, int, int, int, int, int, int, int, int, int, int, int, slice)) $DealData$_constructor_rate_rateMaker_percent_slippageMaker_collateralAmountMaker_dateOrderCreation_dateOrderExpiration_dateStart_dateStop_buyerTokenId_sellerTokenId_maker_isSeller_status(int $rate, int $rateMaker, int $percent, int $slippageMaker, int $collateralAmountMaker, int $dateOrderCreation, int $dateOrderExpiration, int $dateStart, int $dateStop, int $buyerTokenId, int $sellerTokenId, slice $maker, int $isSeller, int $status) inline {
+    return ($status, $isSeller, $rate, $rateMaker, $percent, $slippageMaker, $collateralAmountMaker, $dateOrderCreation, $dateOrderExpiration, $dateStart, $dateStop, $buyerTokenId, $sellerTokenId, $maker);
+}
+
+;;
+;; Type: CancelEvent
+;; Header: 0xcb34521d
+;; TLB: cancel_event#cb34521d queryId:uint64 dealId:uint32 maker:address collateralAmountMaker:coins = CancelEvent
+;;
+
+builder $CancelEvent$_store(builder build_0, (int, int, slice, int) v) inline {
+    var (v'queryId, v'dealId, v'maker, v'collateralAmountMaker) = v;
+    build_0 = store_uint(build_0, 3409203741, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = __tact_store_address(build_0, v'maker);
+    build_0 = build_0.store_coins(v'collateralAmountMaker);
+    return build_0;
+}
+
+cell $CancelEvent$_store_cell((int, int, slice, int) v) inline {
+    return $CancelEvent$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice, int)) $CancelEvent$_constructor_queryId_dealId_maker_collateralAmountMaker(int $queryId, int $dealId, slice $maker, int $collateralAmountMaker) inline {
+    return ($queryId, $dealId, $maker, $collateralAmountMaker);
+}
+
+;;
+;; Type: DealAcceptedEvent
+;; Header: 0x045eab71
+;; TLB: deal_accepted_event#045eab71 queryId:uint64 dealId:uint32 maker:address collateralAmountMaker:coins = DealAcceptedEvent
+;;
+
+builder $DealAcceptedEvent$_store(builder build_0, (int, int, slice, int) v) inline {
+    var (v'queryId, v'dealId, v'maker, v'collateralAmountMaker) = v;
+    build_0 = store_uint(build_0, 73313137, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = __tact_store_address(build_0, v'maker);
+    build_0 = build_0.store_coins(v'collateralAmountMaker);
+    return build_0;
+}
+
+cell $DealAcceptedEvent$_store_cell((int, int, slice, int) v) inline {
+    return $DealAcceptedEvent$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice, int)) $DealAcceptedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker(int $queryId, int $dealId, slice $maker, int $collateralAmountMaker) inline {
+    return ($queryId, $dealId, $maker, $collateralAmountMaker);
+}
+
+;;
+;; Type: DealCreatedEvent
+;; Header: 0x0108ab4b
+;; TLB: deal_created_event#0108ab4b queryId:uint64 dealId:uint32 maker:address collateralAmountMaker:coins = DealCreatedEvent
+;;
+
+builder $DealCreatedEvent$_store(builder build_0, (int, int, slice, int) v) inline {
+    var (v'queryId, v'dealId, v'maker, v'collateralAmountMaker) = v;
+    build_0 = store_uint(build_0, 17345355, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = __tact_store_address(build_0, v'maker);
+    build_0 = build_0.store_coins(v'collateralAmountMaker);
+    return build_0;
+}
+
+cell $DealCreatedEvent$_store_cell((int, int, slice, int) v) inline {
+    return $DealCreatedEvent$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice, int)) $DealCreatedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker(int $queryId, int $dealId, slice $maker, int $collateralAmountMaker) inline {
+    return ($queryId, $dealId, $maker, $collateralAmountMaker);
+}
+
+;;
+;; Type: DealCompletedEvent
+;; Header: 0x8b6d3812
+;; TLB: deal_completed_event#8b6d3812 queryId:uint64 dealId:uint32 maker:address collateralAmountMaker:coins = DealCompletedEvent
+;;
+
+builder $DealCompletedEvent$_store(builder build_0, (int, int, slice, int) v) inline {
+    var (v'queryId, v'dealId, v'maker, v'collateralAmountMaker) = v;
+    build_0 = store_uint(build_0, 2339190802, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = __tact_store_address(build_0, v'maker);
+    build_0 = build_0.store_coins(v'collateralAmountMaker);
+    return build_0;
+}
+
+cell $DealCompletedEvent$_store_cell((int, int, slice, int) v) inline {
+    return $DealCompletedEvent$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice, int)) $DealCompletedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker(int $queryId, int $dealId, slice $maker, int $collateralAmountMaker) inline {
+    return ($queryId, $dealId, $maker, $collateralAmountMaker);
+}
+
+;;
+;; Type: DealExpiredEvent
+;; Header: 0x116fc13c
+;; TLB: deal_expired_event#116fc13c queryId:uint64 dealId:uint32 maker:address collateralAmountMaker:coins = DealExpiredEvent
+;;
+
+builder $DealExpiredEvent$_store(builder build_0, (int, int, slice, int) v) inline {
+    var (v'queryId, v'dealId, v'maker, v'collateralAmountMaker) = v;
+    build_0 = store_uint(build_0, 292536636, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = __tact_store_address(build_0, v'maker);
+    build_0 = build_0.store_coins(v'collateralAmountMaker);
+    return build_0;
+}
+
+cell $DealExpiredEvent$_store_cell((int, int, slice, int) v) inline {
+    return $DealExpiredEvent$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice, int)) $DealExpiredEvent$_constructor_queryId_dealId_maker_collateralAmountMaker(int $queryId, int $dealId, slice $maker, int $collateralAmountMaker) inline {
+    return ($queryId, $dealId, $maker, $collateralAmountMaker);
+}
+
+;;
+;; Type: ContextCancelDealForDealReceived
+;; TLB: _ from:address = ContextCancelDealForDealReceived
+;;
+
+builder $ContextCancelDealForDealReceived$_store(builder build_0, (slice) v) inline {
+    var (v'from) = v;
+    build_0 = __tact_store_address(build_0, v'from);
+    return build_0;
+}
+
+cell $ContextCancelDealForDealReceived$_store_cell((slice) v) inline {
+    return $ContextCancelDealForDealReceived$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice))) $ContextCancelDealForDealReceived$_load(slice sc_0) inline {
+    var v'from = sc_0~__tact_load_address();
+    return (sc_0, (v'from));
+}
+
+((slice)) $ContextCancelDealForDealReceived$_load_not_mut(slice sc_0) inline {
+    var r = sc_0~$ContextCancelDealForDealReceived$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((slice)) $ContextCancelDealForDealReceived$_constructor_from(slice $from) inline {
+    return ($from);
+}
+
+;;
+;; Type: ContextTakeDealForDealReceived
+;; TLB: _ from:address amount:coins originalGasTo:address feedId:uint32 price:uint128 timestamp:uint32 feedId2:uint32 price2:uint128 timestamp2:uint32 = ContextTakeDealForDealReceived
+;;
+
+builder $ContextTakeDealForDealReceived$_store(builder build_0, (slice, int, slice, int, int, int, int, int, int) v) inline_ref {
+    var (v'from, v'amount, v'originalGasTo, v'feedId, v'price, v'timestamp, v'feedId2, v'price2, v'timestamp2) = v;
+    build_0 = __tact_store_address(build_0, v'from);
+    build_0 = build_0.store_coins(v'amount);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    build_0 = build_0.store_uint(v'feedId, 32);
+    build_0 = build_0.store_uint(v'price, 128);
+    build_0 = build_0.store_uint(v'timestamp, 32);
+    build_0 = build_0.store_uint(v'feedId2, 32);
+    build_0 = build_0.store_uint(v'price2, 128);
+    var build_1 = begin_cell();
+    build_1 = build_1.store_uint(v'timestamp2, 32);
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+cell $ContextTakeDealForDealReceived$_store_cell((slice, int, slice, int, int, int, int, int, int) v) inline {
+    return $ContextTakeDealForDealReceived$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice, int, slice, int, int, int, int, int, int))) $ContextTakeDealForDealReceived$_load(slice sc_0) inline_ref {
+    var v'from = sc_0~__tact_load_address();
+    var v'amount = sc_0~load_coins();
+    var v'originalGasTo = sc_0~__tact_load_address();
+    var v'feedId = sc_0~load_uint(32);
+    var v'price = sc_0~load_uint(128);
+    var v'timestamp = sc_0~load_uint(32);
+    var v'feedId2 = sc_0~load_uint(32);
+    var v'price2 = sc_0~load_uint(128);
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'timestamp2 = sc_1~load_uint(32);
+    return (sc_0, (v'from, v'amount, v'originalGasTo, v'feedId, v'price, v'timestamp, v'feedId2, v'price2, v'timestamp2));
+}
+
+((slice, int, slice, int, int, int, int, int, int)) $ContextTakeDealForDealReceived$_load_not_mut(slice sc_0) inline_ref {
+    var r = sc_0~$ContextTakeDealForDealReceived$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((slice, int, slice, int, int, int, int, int, int)) $ContextTakeDealForDealReceived$_constructor_from_amount_originalGasTo_feedId_price_timestamp_feedId2_price2_timestamp2(slice $from, int $amount, slice $originalGasTo, int $feedId, int $price, int $timestamp, int $feedId2, int $price2, int $timestamp2) inline {
+    return ($from, $amount, $originalGasTo, $feedId, $price, $timestamp, $feedId2, $price2, $timestamp2);
+}
+
+;;
+;; Type: ContextProcessDealForDealReceived
+;; TLB: _ from:address feedId:uint32 price:uint128 timestamp:uint32 feedId2:uint32 price2:uint128 timestamp2:uint32 = ContextProcessDealForDealReceived
+;;
+
+builder $ContextProcessDealForDealReceived$_store(builder build_0, (slice, int, int, int, int, int, int) v) inline_ref {
+    var (v'from, v'feedId, v'price, v'timestamp, v'feedId2, v'price2, v'timestamp2) = v;
+    build_0 = __tact_store_address(build_0, v'from);
+    build_0 = build_0.store_uint(v'feedId, 32);
+    build_0 = build_0.store_uint(v'price, 128);
+    build_0 = build_0.store_uint(v'timestamp, 32);
+    build_0 = build_0.store_uint(v'feedId2, 32);
+    build_0 = build_0.store_uint(v'price2, 128);
+    build_0 = build_0.store_uint(v'timestamp2, 32);
+    return build_0;
+}
+
+cell $ContextProcessDealForDealReceived$_store_cell((slice, int, int, int, int, int, int) v) inline {
+    return $ContextProcessDealForDealReceived$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice, int, int, int, int, int, int))) $ContextProcessDealForDealReceived$_load(slice sc_0) inline_ref {
+    var v'from = sc_0~__tact_load_address();
+    var v'feedId = sc_0~load_uint(32);
+    var v'price = sc_0~load_uint(128);
+    var v'timestamp = sc_0~load_uint(32);
+    var v'feedId2 = sc_0~load_uint(32);
+    var v'price2 = sc_0~load_uint(128);
+    var v'timestamp2 = sc_0~load_uint(32);
+    return (sc_0, (v'from, v'feedId, v'price, v'timestamp, v'feedId2, v'price2, v'timestamp2));
+}
+
+((slice, int, int, int, int, int, int)) $ContextProcessDealForDealReceived$_load_not_mut(slice sc_0) inline_ref {
+    var r = sc_0~$ContextProcessDealForDealReceived$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((slice, int, int, int, int, int, int)) $ContextProcessDealForDealReceived$_constructor_from_feedId_price_timestamp_feedId2_price2_timestamp2(slice $from, int $feedId, int $price, int $timestamp, int $feedId2, int $price2, int $timestamp2) inline {
+    return ($from, $feedId, $price, $timestamp, $feedId2, $price2, $timestamp2);
+}
+
+;;
+;; Type: ContextTakeDealForPriceReceived
+;; TLB: _ from:address amount:coins dealId:uint32 originalGasTo:address = ContextTakeDealForPriceReceived
+;;
+
+builder $ContextTakeDealForPriceReceived$_store(builder build_0, (slice, int, int, slice) v) inline {
+    var (v'from, v'amount, v'dealId, v'originalGasTo) = v;
+    build_0 = __tact_store_address(build_0, v'from);
+    build_0 = build_0.store_coins(v'amount);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    return build_0;
+}
+
+cell $ContextTakeDealForPriceReceived$_store_cell((slice, int, int, slice) v) inline {
+    return $ContextTakeDealForPriceReceived$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice, int, int, slice))) $ContextTakeDealForPriceReceived$_load(slice sc_0) inline {
+    var v'from = sc_0~__tact_load_address();
+    var v'amount = sc_0~load_coins();
+    var v'dealId = sc_0~load_uint(32);
+    var v'originalGasTo = sc_0~__tact_load_address();
+    return (sc_0, (v'from, v'amount, v'dealId, v'originalGasTo));
+}
+
+((slice, int, int, slice)) $ContextTakeDealForPriceReceived$_load_not_mut(slice sc_0) inline {
+    var r = sc_0~$ContextTakeDealForPriceReceived$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((slice, int, int, slice)) $ContextTakeDealForPriceReceived$_constructor_from_amount_dealId_originalGasTo(slice $from, int $amount, int $dealId, slice $originalGasTo) inline {
+    return ($from, $amount, $dealId, $originalGasTo);
+}
+
+;;
+;; Type: ContextProcessDealForPriceReceived
+;; TLB: _ from:address dealId:uint32 = ContextProcessDealForPriceReceived
+;;
+
+builder $ContextProcessDealForPriceReceived$_store(builder build_0, (slice, int) v) inline {
+    var (v'from, v'dealId) = v;
+    build_0 = __tact_store_address(build_0, v'from);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    return build_0;
+}
+
+cell $ContextProcessDealForPriceReceived$_store_cell((slice, int) v) inline {
+    return $ContextProcessDealForPriceReceived$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((slice, int))) $ContextProcessDealForPriceReceived$_load(slice sc_0) inline {
+    var v'from = sc_0~__tact_load_address();
+    var v'dealId = sc_0~load_uint(32);
+    return (sc_0, (v'from, v'dealId));
+}
+
+((slice, int)) $ContextProcessDealForPriceReceived$_load_not_mut(slice sc_0) inline {
+    var r = sc_0~$ContextProcessDealForPriceReceived$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((slice, int)) $ContextProcessDealForPriceReceived$_constructor_from_dealId(slice $from, int $dealId) inline {
+    return ($from, $dealId);
+}
+
+;;
+;; Type: ContextForGetOwner
+;; TLB: _ amount:coins originalGasTo:address = ContextForGetOwner
+;;
+
+builder $ContextForGetOwner$_store(builder build_0, (int, slice) v) inline {
+    var (v'amount, v'originalGasTo) = v;
+    build_0 = build_0.store_coins(v'amount);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    return build_0;
+}
+
+cell $ContextForGetOwner$_store_cell((int, slice) v) inline {
+    return $ContextForGetOwner$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((int, slice))) $ContextForGetOwner$_load(slice sc_0) inline {
+    var v'amount = sc_0~load_coins();
+    var v'originalGasTo = sc_0~__tact_load_address();
+    return (sc_0, (v'amount, v'originalGasTo));
+}
+
+((int, slice)) $ContextForGetOwner$_load_not_mut(slice sc_0) inline {
+    var r = sc_0~$ContextForGetOwner$_load();
+    sc_0.end_parse();
+    return r;
+}
+
+((int, slice)) $ContextForGetOwner$_constructor_amount_originalGasTo(int $amount, slice $originalGasTo) inline {
+    return ($amount, $originalGasTo);
+}
+
+;;
+;; Type: TakeDealAmm
+;; Header: 0x70f489e3
+;; TLB: take_deal_amm#70f489e3 queryId:uint64 dealId:uint32 amount:coins originalGasTo:address oracleAssetData:^cell oracleTokenData:^cell = TakeDealAmm
+;;
+
+builder $TakeDealAmm$_store(builder build_0, (int, int, int, slice, cell, cell) v) inline_ref {
+    var (v'queryId, v'dealId, v'amount, v'originalGasTo, v'oracleAssetData, v'oracleTokenData) = v;
+    build_0 = store_uint(build_0, 1895074275, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = build_0.store_coins(v'amount);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    build_0 = build_0.store_ref(v'oracleAssetData);
+    build_0 = build_0.store_ref(v'oracleTokenData);
+    return build_0;
+}
+
+cell $TakeDealAmm$_store_cell((int, int, int, slice, cell, cell) v) inline {
+    return $TakeDealAmm$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, int, slice, cell, cell)) $TakeDealAmm$_constructor_dealId_queryId_amount_originalGasTo_oracleAssetData_oracleTokenData(int $dealId, int $queryId, int $amount, slice $originalGasTo, cell $oracleAssetData, cell $oracleTokenData) inline {
+    return ($queryId, $dealId, $amount, $originalGasTo, $oracleAssetData, $oracleTokenData);
+}
+
+;;
+;; Type: TokenTransfer
+;; Header: 0x0f8a7ea5
+;; TLB: token_transfer#0f8a7ea5 query_id:uint64 amount:coins recipient:address response_destination:Maybe address custom_payload:Maybe ^cell forward_ton_amount:coins forward_payload:remainder<slice> = TokenTransfer
+;;
+
+builder $TokenTransfer$_store(builder build_0, (int, int, slice, slice, cell, int, slice) v) inline_ref {
+    var (v'query_id, v'amount, v'recipient, v'response_destination, v'custom_payload, v'forward_ton_amount, v'forward_payload) = v;
+    build_0 = store_uint(build_0, 260734629, 32);
+    build_0 = build_0.store_uint(v'query_id, 64);
+    build_0 = build_0.store_coins(v'amount);
+    build_0 = __tact_store_address(build_0, v'recipient);
+    build_0 = __tact_store_address_opt(build_0, v'response_destination);
+    build_0 = ~ null?(v'custom_payload) ? build_0.store_int(true, 1).store_ref(v'custom_payload) : build_0.store_int(false, 1);
+    build_0 = build_0.store_coins(v'forward_ton_amount);
+    build_0 = build_0.store_slice(v'forward_payload);
+    return build_0;
+}
+
+cell $TokenTransfer$_store_cell((int, int, slice, slice, cell, int, slice) v) inline {
+    return $TokenTransfer$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice, slice, cell, int, slice)) $TokenTransfer$_constructor_amount_recipient_query_id_response_destination_custom_payload_forward_ton_amount_forward_payload(int $amount, slice $recipient, int $query_id, slice $response_destination, cell $custom_payload, int $forward_ton_amount, slice $forward_payload) inline {
+    return ($query_id, $amount, $recipient, $response_destination, $custom_payload, $forward_ton_amount, $forward_payload);
+}
+
+((int, int, slice, slice, cell, int, slice)) $TokenTransfer$_constructor_amount_query_id_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload(int $amount, int $query_id, slice $recipient, slice $response_destination, cell $custom_payload, int $forward_ton_amount, slice $forward_payload) inline {
+    return ($query_id, $amount, $recipient, $response_destination, $custom_payload, $forward_ton_amount, $forward_payload);
+}
+
+;;
+;; Type: TokenNotification
+;; Header: 0x7362d09c
+;; TLB: token_notification#7362d09c query_id:uint64 amount:coins from:address forward_payload:remainder<slice> = TokenNotification
+;;
+
+(slice, ((int, int, slice, slice))) $TokenNotification$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 1935855772);
+    var v'query_id = sc_0~load_uint(64);
+    var v'amount = sc_0~load_coins();
+    var v'from = sc_0~__tact_load_address();
+    var v'forward_payload = sc_0;
+    return (sc_0, (v'query_id, v'amount, v'from, v'forward_payload));
+}
+
+;;
+;; Type: GetData
+;; Header: 0xe601f8e5
+;; TLB: get_data#e601f8e5 queryId:uint64 = GetData
+;;
+
+builder $GetData$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 3858888933, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $GetData$_store_cell((int) v) inline {
+    return $GetData$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((int))) $GetData$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3858888933);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+((int)) $GetData$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: ReportData
+;; Header: 0xb687ab17
+;; TLB: report_data#b687ab17 queryId:uint64 id:uint32 data:^cell = ReportData
+;;
+
+(slice, ((int, int, cell))) $ReportData$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3062344471);
+    var v'queryId = sc_0~load_uint(64);
+    var v'id = sc_0~load_uint(32);
+    var v'data = sc_0~load_ref();
+    return (sc_0, (v'queryId, v'id, v'data));
+}
+
+;;
+;; Type: SaveData
+;; Header: 0xafe93535
+;; TLB: save_data#afe93535 queryId:uint64 originalGasTo:address data:^cell = SaveData
+;;
+
+builder $SaveData$_store(builder build_0, (int, slice, cell) v) inline {
+    var (v'queryId, v'originalGasTo, v'data) = v;
+    build_0 = store_uint(build_0, 2951296309, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    build_0 = build_0.store_ref(v'data);
+    return build_0;
+}
+
+cell $SaveData$_store_cell((int, slice, cell) v) inline {
+    return $SaveData$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice, cell)) $SaveData$_constructor_queryId_originalGasTo_data(int $queryId, slice $originalGasTo, cell $data) inline {
+    return ($queryId, $originalGasTo, $data);
+}
+
+;;
+;; Type: DeleteData
+;; Header: 0xb8a3aa14
+;; TLB: delete_data#b8a3aa14 queryId:uint64 originalGasTo:address = DeleteData
+;;
+
+builder $DeleteData$_store(builder build_0, (int, slice) v) inline {
+    var (v'queryId, v'originalGasTo) = v;
+    build_0 = store_uint(build_0, 3097733652, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    return build_0;
+}
+
+cell $DeleteData$_store_cell((int, slice) v) inline {
+    return $DeleteData$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice)) $DeleteData$_constructor_queryId_originalGasTo(int $queryId, slice $originalGasTo) inline {
+    return ($queryId, $originalGasTo);
+}
+
+;;
+;; Type: CollectionData
+;; TLB: _ next_item_index:int257 collection_content:^cell owner_address:address = CollectionData
+;;
+
+(int, cell, slice) $CollectionData$_to_external(((int, cell, slice)) v) inline {
+    var (v'next_item_index, v'collection_content, v'owner_address) = v; 
+    return (v'next_item_index, v'collection_content, v'owner_address);
+}
+
+((int, cell, slice)) $CollectionData$_constructor_next_item_index_collection_content_owner_address(int $next_item_index, cell $collection_content, slice $owner_address) inline {
+    return ($next_item_index, $collection_content, $owner_address);
+}
+
+;;
+;; Type: Transfer
+;; Header: 0x5fcc3d14
+;; TLB: transfer#5fcc3d14 query_id:uint64 new_owner:address response_destination:Maybe address custom_payload:Maybe ^cell forward_amount:coins forward_payload:remainder<slice> = Transfer
+;;
+
+builder $Transfer$_store(builder build_0, (int, slice, slice, cell, int, slice) v) inline_ref {
+    var (v'query_id, v'new_owner, v'response_destination, v'custom_payload, v'forward_amount, v'forward_payload) = v;
+    build_0 = store_uint(build_0, 1607220500, 32);
+    build_0 = build_0.store_uint(v'query_id, 64);
+    build_0 = __tact_store_address(build_0, v'new_owner);
+    build_0 = __tact_store_address_opt(build_0, v'response_destination);
+    build_0 = ~ null?(v'custom_payload) ? build_0.store_int(true, 1).store_ref(v'custom_payload) : build_0.store_int(false, 1);
+    build_0 = build_0.store_coins(v'forward_amount);
+    build_0 = build_0.store_slice(v'forward_payload);
+    return build_0;
+}
+
+cell $Transfer$_store_cell((int, slice, slice, cell, int, slice) v) inline {
+    return $Transfer$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice, slice, cell, int, slice)) $Transfer$_constructor_query_id_new_owner_response_destination_custom_payload_forward_amount_forward_payload(int $query_id, slice $new_owner, slice $response_destination, cell $custom_payload, int $forward_amount, slice $forward_payload) inline {
+    return ($query_id, $new_owner, $response_destination, $custom_payload, $forward_amount, $forward_payload);
+}
+
+;;
+;; Type: GetOwner
+;; Header: 0xbc26f4c8
+;; TLB: get_owner#bc26f4c8 query_id:uint64 = GetOwner
+;;
+
+builder $GetOwner$_store(builder build_0, (int) v) inline {
+    var (v'query_id) = v;
+    build_0 = store_uint(build_0, 3156669640, 32);
+    build_0 = build_0.store_uint(v'query_id, 64);
+    return build_0;
+}
+
+cell $GetOwner$_store_cell((int) v) inline {
+    return $GetOwner$_store(begin_cell(), v).end_cell();
+}
+
+(slice, ((int))) $GetOwner$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3156669640);
+    var v'query_id = sc_0~load_uint(64);
+    return (sc_0, (v'query_id));
+}
+
+((int)) $GetOwner$_constructor_query_id(int $query_id) inline {
+    return ($query_id);
+}
+
+;;
+;; Type: ReportOwner
+;; Header: 0x2a004a05
+;; TLB: report_owner#2a004a05 query_id:uint64 index_id:int257 owner:address = ReportOwner
+;;
+
+(slice, ((int, int, slice))) $ReportOwner$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 704662021);
+    var v'query_id = sc_0~load_uint(64);
+    var v'index_id = sc_0~load_int(257);
+    var v'owner = sc_0~__tact_load_address();
+    return (sc_0, (v'query_id, v'index_id, v'owner));
+}
+
+;;
+;; Type: Market
+;;
+
+builder $Market$_store(builder build_0, (int, slice, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, slice) v) inline {
+    var (v'id, v'owner, v'amm, v'jettonWallet, v'underlyingAssetName, v'duration, v'operatorFee, v'serviceFee, v'factory, v'stopped, v'countDeal, v'next_item_index, v'collection_content, v'mapQueriesToContext, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeSum, v'serviceFeeSum, v'operatorFeeAddress) = v;
+    build_0 = build_0.store_uint(v'id, 32);
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = __tact_store_address(build_0, v'amm);
+    build_0 = __tact_store_address(build_0, v'jettonWallet);
+    build_0 = build_0.store_ref(begin_cell().store_slice(v'underlyingAssetName).end_cell());
+    build_0 = build_0.store_uint(v'duration, 32);
+    build_0 = build_0.store_uint(v'operatorFee, 32);
+    build_0 = build_0.store_uint(v'serviceFee, 32);
+    var build_1 = begin_cell();
+    build_1 = __tact_store_address(build_1, v'factory);
+    build_1 = build_1.store_int(v'stopped, 1);
+    build_1 = build_1.store_uint(v'countDeal, 32);
+    build_1 = build_1.store_uint(v'next_item_index, 32);
+    build_1 = build_1.store_ref(v'collection_content);
+    build_1 = build_1.store_dict(v'mapQueriesToContext);
+    build_1 = __tact_store_address(build_1, v'oracle);
+    build_1 = build_1.store_uint(v'feedIdAsset, 256);
+    var build_2 = begin_cell();
+    build_2 = build_2.store_uint(v'feedIdToken, 256);
+    build_2 = build_2.store_coins(v'operatorFeeSum);
+    build_2 = build_2.store_coins(v'serviceFeeSum);
+    build_2 = __tact_store_address(build_2, v'operatorFeeAddress);
+    build_1 = store_ref(build_1, build_2.end_cell());
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+(slice, ((int, slice, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, slice))) $Market$_load(slice sc_0) inline {
+    var v'id = sc_0~load_uint(32);
+    var v'owner = sc_0~__tact_load_address();
+    var v'amm = sc_0~__tact_load_address();
+    var v'jettonWallet = sc_0~__tact_load_address();
+    var v'underlyingAssetName = sc_0~load_ref().begin_parse();
+    var v'duration = sc_0~load_uint(32);
+    var v'operatorFee = sc_0~load_uint(32);
+    var v'serviceFee = sc_0~load_uint(32);
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'factory = sc_1~__tact_load_address();
+    var v'stopped = sc_1~load_int(1);
+    var v'countDeal = sc_1~load_uint(32);
+    var v'next_item_index = sc_1~load_uint(32);
+    var v'collection_content = sc_1~load_ref();
+    var v'mapQueriesToContext = sc_1~load_dict();
+    var v'oracle = sc_1~__tact_load_address();
+    var v'feedIdAsset = sc_1~load_uint(256);
+    slice sc_2 = sc_1~load_ref().begin_parse();
+    var v'feedIdToken = sc_2~load_uint(256);
+    var v'operatorFeeSum = sc_2~load_coins();
+    var v'serviceFeeSum = sc_2~load_coins();
+    var v'operatorFeeAddress = sc_2~__tact_load_address();
+    return (sc_0, (v'id, v'owner, v'amm, v'jettonWallet, v'underlyingAssetName, v'duration, v'operatorFee, v'serviceFee, v'factory, v'stopped, v'countDeal, v'next_item_index, v'collection_content, v'mapQueriesToContext, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeSum, v'serviceFeeSum, v'operatorFeeAddress));
+}
+
+(slice, ((int, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice))) $Market$init$_load(slice sc_0) inline_ref {
+    var v'id = sc_0~load_int(257);
+    var v'owner = sc_0~__tact_load_address();
+    var v'coin = sc_0~__tact_load_address();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'amm = sc_1~__tact_load_address();
+    var v'factory = sc_1~__tact_load_address();
+    var v'underlyingAssetName = sc_1~load_ref().begin_parse();
+    var v'duration = sc_1~load_int(257);
+    var v'collection_content = sc_1~load_ref();
+    slice sc_2 = sc_1~load_ref().begin_parse();
+    var v'operatorFee = sc_2~load_int(257);
+    var v'serviceFee = sc_2~load_int(257);
+    var v'oracle = sc_2~__tact_load_address();
+    slice sc_3 = sc_2~load_ref().begin_parse();
+    var v'feedIdAsset = sc_3~load_int(257);
+    var v'feedIdToken = sc_3~load_int(257);
+    var v'operatorFeeAddress = sc_3~__tact_load_address();
+    return (sc_0, (v'id, v'owner, v'coin, v'amm, v'factory, v'underlyingAssetName, v'duration, v'collection_content, v'operatorFee, v'serviceFee, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeAddress));
+}
+
+(int, slice, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, slice) $Market$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$Market$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        (int $id, slice $owner, slice $coin, slice $amm, slice $factory, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) = $sc~$Market$init$_load();
+        $sc.end_parse();
+        return $Market$_contract_init($id, $owner, $coin, $amm, $factory, $underlyingAssetName, $duration, $collection_content, $operatorFee, $serviceFee, $oracle, $feedIdAsset, $feedIdToken, $operatorFeeAddress);
+    }
+}
+
+() $Market$_contract_store((int, slice, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, slice) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $Market$_store(b, v);
+    set_data(b.end_cell());
+}
+
+;;
+;; Type: Deal
+;;
+
+builder $Deal$init$_store(builder build_0, (int, slice) v) inline {
+    var (v'id, v'owner) = v;
+    build_0 = build_0.store_int(v'id, 257);
+    build_0 = __tact_store_address(build_0, v'owner);
+    return build_0;
+}
+
+(cell, cell) $Deal$_init_child(cell sys', int $id, slice $owner) inline_ref {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: Deal
+    cell mine = __tact_dict_get_code(source, 16839);
+    contracts = __tact_dict_set_code(contracts, 16839, mine);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $Deal$init$_store(b, ($id, $owner));
+    return (mine, b.end_cell());
+}
+
+;;
+;; Type: NftItem
+;;
+
+builder $NftItem$init$_store(builder build_0, (slice, int) v) inline {
+    var (v'collection_address, v'item_index) = v;
+    build_0 = __tact_store_address(build_0, v'collection_address);
+    build_0 = build_0.store_int(v'item_index, 257);
+    return build_0;
+}
+
+(cell, cell) $NftItem$_init_child(cell sys', slice $collection_address, int $item_index) inline_ref {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: NftItem
+    cell mine = __tact_dict_get_code(source, 31210);
+    contracts = __tact_dict_set_code(contracts, 31210, mine);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $NftItem$init$_store(b, ($collection_address, $item_index));
+    return (mine, b.end_cell());
+}

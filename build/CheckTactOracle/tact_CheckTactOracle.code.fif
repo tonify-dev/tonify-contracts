@@ -1,0 +1,633 @@
+PROGRAM{
+  DECLPROC __tact_verify_address
+  DECLPROC __tact_load_address
+  DECLPROC __tact_store_address
+  DECLPROC __tact_my_balance
+  DECLPROC __tact_not_null
+  DECLPROC __tact_context_get
+  DECLPROC __tact_context_get_sender
+  DECLPROC __tact_store_bool
+  DECLPROC __tact_slice_eq_bits
+  DECLPROC $Deploy$_load
+  DECLPROC $DeployOk$_store
+  DECLPROC $DeployOk$_store_cell
+  DECLPROC $SetPrice$_load
+  DECLPROC $CheckTactOracle$_store
+  DECLPROC $CheckTactOracle$_load
+  DECLPROC $StateInit$_not_null
+  DECLPROC $CheckTactOracle$init$_load
+  DECLPROC $CheckTactOracle$_contract_init
+  DECLPROC $CheckTactOracle$_contract_load
+  DECLPROC $CheckTactOracle$_contract_store
+  DECLPROC $global_send
+  DECLPROC $CheckTactOracle$_fun_onPriceReceived
+  DECLPROC $CheckTactOracle$_fun_onOracleErrorReceived
+  DECLPROC $CheckTactOracle$_fun_feedId
+  DECLPROC $CheckTactOracle$_fun_price
+  DECLPROC $CheckTactOracle$_fun_queryId
+  DECLPROC $CheckTactOracle$_fun_balance
+  DECLPROC $CheckTactOracle$_fun_timestamp
+  DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body_code_data
+  DECLPROC $CheckTactOracle$_fun_forward
+  DECLPROC $CheckTactOracle$_fun_notify
+  DECLPROC $SendParameters$_constructor_to_value_mode_body
+  DECLPROC $CheckTactOracle$_fun_fetchPrice
+  DECLPROC $DeployOk$_constructor_queryId
+  DECLPROC $CheckTactOracle$_internal_binary_SetPrice
+  DECLPROC $CheckTactOracle$_internal_binary_Deploy
+  DECLPROC $CheckTactOracle$_internal_any
+  DECLPROC $CheckTactOracle$_receive_bounce
+  119096 DECLMETHOD %feedId
+  120091 DECLMETHOD %price
+  94948 DECLMETHOD %queryId
+  104128 DECLMETHOD %balance
+  94950 DECLMETHOD %timestamp
+  115390 DECLMETHOD lazy_deployment_completed
+  DECLPROC $CheckTactOracle$_contract_router_internal
+  DECLPROC recv_internal
+  DECLGLOBVAR __tact_context
+  DECLGLOBVAR __tact_context_sender
+  DECLGLOBVAR __tact_context_sys
+  DECLGLOBVAR __tact_randomized
+  __tact_verify_address PROCINLINE:<{
+    DUP
+    SBITS
+    267 PUSHINT
+    EQUAL
+    136 THROWIFNOT
+    DUP
+    11 PLDU
+    DUP
+    1279 PUSHINT
+    EQUAL
+    137 THROWIF
+    10 PUSHPOW2
+    EQUAL
+    136 THROWIFNOT
+  }>
+  __tact_load_address PROCINLINE:<{
+    LDMSGADDR
+    SWAP
+    __tact_verify_address INLINECALLDICT
+  }>
+  __tact_store_address PROCINLINE:<{
+    __tact_verify_address INLINECALLDICT
+    STSLICER
+  }>
+  __tact_my_balance PROCINLINE:<{
+    BALANCE
+    FIRST
+  }>
+  __tact_not_null PROCINLINE:<{
+    DUP
+    ISNULL
+    128 THROWIF
+  }>
+  __tact_context_get PROCINLINE:<{
+    __tact_context GETGLOB
+    4 UNTUPLE
+  }>
+  __tact_context_get_sender PROCINLINE:<{
+    __tact_context_sender GETGLOB
+  }>
+  __tact_store_bool PROCINLINE:<{
+    SWAP
+    1 STI
+  }>
+  __tact_slice_eq_bits PROCINLINE:<{
+    SDEQ
+  }>
+  $Deploy$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    2490013878 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    SWAP
+  }>
+  $DeployOk$_store PROCINLINE:<{
+    2952335191 PUSHINT
+    ROT
+    32 STU
+    64 STU
+  }>
+  $DeployOk$_store_cell PROCINLINE:<{
+    NEWC
+    SWAP
+    $DeployOk$_store INLINECALLDICT
+    ENDC
+  }>
+  $SetPrice$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    623813157 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    LDREF
+    LDREF
+    3 -ROLL
+  }>
+  $CheckTactOracle$_store PROCINLINE:<{
+    s5 s6 XCHG2
+    32 STU
+    s0 s3 XCHG2
+    __tact_store_address INLINECALLDICT
+    OVER
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+      SWAP
+      1 STI
+      64 STU
+    }>ELSE<{
+      FALSE
+      s2 POP
+      1 STI
+    }>
+    OVER
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+      SWAP
+      1 STI
+      256 STU
+    }>ELSE<{
+      FALSE
+      s2 POP
+      1 STI
+    }>
+    OVER
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+      SWAP
+      1 STI
+      256 STU
+    }>ELSE<{
+      FALSE
+      s2 POP
+      1 STI
+    }>
+    OVER
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+      SWAP
+      1 STI
+      64 STU
+    }>ELSE<{
+      FALSE
+      s2 POP
+      1 STI
+    }>
+  }>
+  $CheckTactOracle$_load PROCINLINE:<{
+    32 LDU
+    __tact_load_address INLINECALLDICT
+    SWAP
+    1 LDI
+    SWAP
+    IF:<{
+      64 LDU
+    }>ELSE<{
+      PUSHNULL
+      SWAP
+    }>
+    1 LDI
+    SWAP
+    IF:<{
+      256 LDU
+    }>ELSE<{
+      PUSHNULL
+      SWAP
+    }>
+    1 LDI
+    SWAP
+    IF:<{
+      256 LDU
+    }>ELSE<{
+      PUSHNULL
+      SWAP
+    }>
+    1 LDI
+    SWAP
+    IF:<{
+      64 LDU
+    }>ELSE<{
+      PUSHNULL
+      SWAP
+    }>
+    6 -ROLL
+  }>
+  $StateInit$_not_null PROCINLINE:<{
+    DUP
+    ISNULL
+    128 THROWIF
+    2 UNTUPLE
+  }>
+  $CheckTactOracle$init$_load PROCINLINE:<{
+    257 PUSHINT
+    LDIX
+    __tact_load_address INLINECALLDICT
+    s1 s2 XCHG
+  }>
+  $CheckTactOracle$_contract_init PROCREF:<{
+    PUSHNULL
+    PUSHNULL
+    PUSHNULL
+    PUSHNULL
+  }>
+  $CheckTactOracle$_contract_load PROCREF:<{
+    c4 PUSH
+    CTOS
+    LDREF
+    SWAP
+    __tact_context_sys SETGLOB
+    1 LDI
+    SWAP
+    IFJMP:<{
+      $CheckTactOracle$_load INLINECALLDICT
+      1 6 BLKDROP2
+    }>
+    MYADDR
+    11 PLDU
+    10 PUSHPOW2
+    EQUAL
+    137 THROWIFNOT
+    $CheckTactOracle$init$_load INLINECALLDICT
+    s0 s2 XCHG
+    ENDS
+    SWAP
+    $CheckTactOracle$_contract_init INLINECALLDICT
+  }>
+  $CheckTactOracle$_contract_store PROCINLINE:<{
+    NEWC
+    __tact_context_sys GETGLOB
+    SWAP
+    STREF
+    TRUE
+    SWAP
+    1 STI
+    6 -ROLL
+    $CheckTactOracle$_store INLINECALLDICT
+    ENDC
+    c4 POP
+  }>
+  $global_send PROCREF:<{
+    NEWC
+    1 PUSHINT
+    SWAP
+    2 STI
+    s0 s7 XCHG2
+    __tact_store_bool INLINECALLDICT
+    0 PUSHINT
+    SWAP
+    3 STI
+    s0 s5 XCHG2
+    __tact_store_address INLINECALLDICT
+    s0 s3 XCHG2
+    STGRAMS
+    0 PUSHINT
+    SWAP
+    105 STI
+    s3 PUSH
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+    }>ELSE<{
+      s4 PUSH
+      ISNULL
+      NOT
+    }>
+    IF:<{
+      TRUE
+      __tact_store_bool INLINECALLDICT
+      NEWC
+      FALSE
+      __tact_store_bool INLINECALLDICT
+      FALSE
+      __tact_store_bool INLINECALLDICT
+      s4 PUSH
+      ISNULL
+      NOT
+      IF:<{
+        TRUE
+        __tact_store_bool INLINECALLDICT
+        s0 s4 XCHG
+        __tact_not_null INLINECALLDICT
+        s0 s4 XCHG2
+        STREF
+      }>ELSE<{
+        s4 POP
+        s0 s3 XCHG
+        FALSE
+        __tact_store_bool INLINECALLDICT
+      }>
+      s4 PUSH
+      ISNULL
+      NOT
+      IF:<{
+        TRUE
+        __tact_store_bool INLINECALLDICT
+        s0 s4 XCHG
+        __tact_not_null INLINECALLDICT
+        s0 s4 XCHG2
+        STREF
+      }>ELSE<{
+        s4 POP
+        s0 s3 XCHG
+        FALSE
+        __tact_store_bool INLINECALLDICT
+      }>
+      FALSE
+      __tact_store_bool INLINECALLDICT
+      s0 s2 XCHG
+      TRUE
+      __tact_store_bool INLINECALLDICT
+      s0 s2 XCHG
+      ENDC
+      ROT
+      STREF
+    }>ELSE<{
+      s3 POP
+      s3 POP
+      SWAP
+      FALSE
+      __tact_store_bool INLINECALLDICT
+    }>
+    OVER
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+      __tact_store_bool INLINECALLDICT
+      SWAP
+      __tact_not_null INLINECALLDICT
+      SWAP
+      STREF
+    }>ELSE<{
+      NIP
+      FALSE
+      __tact_store_bool INLINECALLDICT
+    }>
+    ENDC
+    SWAP
+    SENDRAWMSG
+  }>
+  $CheckTactOracle$_fun_onPriceReceived PROCREF:<{
+    3 BLKDROP
+    4 4 BLKDROP2
+  }>
+  $CheckTactOracle$_fun_onOracleErrorReceived PROCREF:<{
+    s5 POP
+    B{b5ee9c7241010101000b00001264756d70286d73672901dbc6db} B>boc <s PUSHSLICE
+    s1 s5 XCHG
+    x{46696c6520636f6e7472616374732f6f7261636c652f74657374732f636865636b5f746163745f6f7261636c652e746163743a33373a393a} PUSHSLICE
+    STRDUMP
+    DROP
+    STRDUMP
+    DROP
+    s0 DUMP
+    DROP
+  }>
+  $CheckTactOracle$_fun_feedId PROCREF:<{
+    s2 PUSH
+  }>
+  $CheckTactOracle$_fun_price PROCREF:<{
+    OVER
+  }>
+  $CheckTactOracle$_fun_queryId PROCREF:<{
+    s3 PUSH
+  }>
+  $CheckTactOracle$_fun_balance PROCREF:<{
+    __tact_my_balance INLINECALLDICT
+  }>
+  $CheckTactOracle$_fun_timestamp PROCREF:<{
+    DUP
+  }>
+  $SendParameters$_constructor_bounce_to_value_mode_body_code_data PROCINLINE:<{
+  }>
+  $CheckTactOracle$_fun_forward PROCREF:<{
+    PUSHNULL
+    PUSHNULL
+    s2 PUSH
+    ISNULL
+    NOT
+    IF:<{
+      2DROP
+      $StateInit$_not_null INLINECALLDICT
+      SWAP
+    }>ELSE<{
+      s2 POP
+    }>
+    s2 s4 XCHG
+    0 PUSHINT
+    s0 s3 XCHG
+    s0 s4 XCHG
+    66 PUSHINT
+    s2 s3 XCHG2
+    $SendParameters$_constructor_bounce_to_value_mode_body_code_data INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $CheckTactOracle$_fun_notify PROCINLINE:<{
+    __tact_context_get_sender INLINECALLDICT
+    SWAP
+    FALSE
+    PUSHNULL
+    $CheckTactOracle$_fun_forward INLINECALLDICT
+  }>
+  $SendParameters$_constructor_to_value_mode_body PROCINLINE:<{
+    TRUE
+    4 -ROLL
+    PUSHNULL
+    PUSHNULL
+  }>
+  $CheckTactOracle$_fun_fetchPrice PROCREF:<{
+    SWAP
+    CTOS
+    SWAP
+    CTOS
+    32 LDU
+    NIP
+    NEWC
+    s0 s2 XCHG
+    32 LDU
+    s0 s3 XCHG
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    SWAP
+    STSLICER
+    SWAP
+    STSLICER
+    NEWC
+    ENDC
+    SWAP
+    STREF
+    ENDC
+    0 PUSHINT
+    7 PUSHPOW2
+    s7 PUSH
+    s0 s3 XCHG
+    $SendParameters$_constructor_to_value_mode_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $DeployOk$_constructor_queryId PROCINLINE:<{
+  }>
+  $CheckTactOracle$_internal_binary_SetPrice PROCINLINE:<{
+    $CheckTactOracle$_fun_fetchPrice INLINECALLDICT
+  }>
+  $CheckTactOracle$_internal_binary_Deploy PROCINLINE:<{
+    $DeployOk$_constructor_queryId INLINECALLDICT
+    $DeployOk$_store_cell INLINECALLDICT
+    $CheckTactOracle$_fun_notify INLINECALLDICT
+  }>
+  $CheckTactOracle$_internal_any PROCINLINE:<{
+    32 LDU
+    SWAP
+    2472520145 PUSHINT
+    EQUAL
+    IF:<{
+      7021 PUSHINT
+      __tact_context_get_sender INLINECALLDICT
+      s7 s(-1) PUXC
+      __tact_slice_eq_bits INLINECALLDICT
+      THROWANYIFNOT
+      64 LDU
+      LDREF
+      SWAP
+      CTOS
+      SWAP
+      LDREF
+      DROP
+      CTOS
+      SWAP
+      256 LDU
+      256 LDU
+      48 LDU
+      DROP
+      s0 s3 XCHG
+      256 LDU
+      256 LDU
+      48 LDU
+      DROP
+      s4 s5 XCHG
+      s3 s4 XCHG
+      $CheckTactOracle$_fun_onPriceReceived INLINECALLDICT
+    }>ELSE<{
+      DROP
+    }>
+  }>
+  $CheckTactOracle$_receive_bounce PROCINLINE:<{
+    32 LDU
+    SWAP
+    64984234 PUSHINT
+    EQUAL
+    IF:<{
+      64 LDU
+      $CheckTactOracle$_fun_onOracleErrorReceived INLINECALLDICT
+    }>ELSE<{
+      DROP
+    }>
+  }>
+  %feedId PROC:<{
+    $CheckTactOracle$_contract_load INLINECALLDICT
+    $CheckTactOracle$_fun_feedId INLINECALLDICT
+    6 1 BLKDROP2
+  }>
+  %price PROC:<{
+    $CheckTactOracle$_contract_load INLINECALLDICT
+    $CheckTactOracle$_fun_price INLINECALLDICT
+    6 1 BLKDROP2
+  }>
+  %queryId PROC:<{
+    $CheckTactOracle$_contract_load INLINECALLDICT
+    $CheckTactOracle$_fun_queryId INLINECALLDICT
+    6 1 BLKDROP2
+  }>
+  %balance PROC:<{
+    $CheckTactOracle$_contract_load INLINECALLDICT
+    $CheckTactOracle$_fun_balance INLINECALLDICT
+    6 1 BLKDROP2
+  }>
+  %timestamp PROC:<{
+    $CheckTactOracle$_contract_load INLINECALLDICT
+    $CheckTactOracle$_fun_timestamp INLINECALLDICT
+    6 1 BLKDROP2
+  }>
+  lazy_deployment_completed PROC:<{
+    c4 PUSH
+    CTOS
+    1 LDI
+    SWAP
+  }>
+  $CheckTactOracle$_contract_router_internal PROCREF:<{
+    SWAP
+    IFJMP:<{
+      32 PUSHINT
+      SDSKIPFIRST
+      $CheckTactOracle$_receive_bounce INLINECALLDICT
+      TRUE
+    }>
+    0 PUSHINT
+    OVER
+    SBITS
+    31 GTINT
+    IF:<{
+      DROP
+      DUP
+      32 PLDU
+    }>
+    DUP
+    623813157 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $SetPrice$_load INLINECALLDICT
+      1 3 BLKDROP2
+      $CheckTactOracle$_internal_binary_SetPrice INLINECALLDICT
+      TRUE
+    }>
+    2490013878 PUSHINT
+    EQUAL
+    IFJMP:<{
+      $Deploy$_load INLINECALLDICT
+      NIP
+      $CheckTactOracle$_internal_binary_Deploy INLINECALLDICT
+      TRUE
+    }>
+    $CheckTactOracle$_internal_any INLINECALLDICT
+    TRUE
+  }>
+  recv_internal PROC:<{
+    SWAP
+    CTOS
+    4 LDU
+    SWAP
+    1 PUSHINT
+    AND
+    NEGATE
+    SWAP
+    LDMSGADDR
+    SWAP
+    __tact_verify_address INLINECALLDICT
+    s0 s4 s2 PUXCPU
+    s0 s3 XCHG
+    4 TUPLE
+    __tact_context SETGLOB
+    s0 s2 XCHG
+    __tact_context_sender SETGLOB
+    $CheckTactOracle$_contract_load INLINECALLDICT
+    2 6 BLKSWAP
+    $CheckTactOracle$_contract_router_internal INLINECALLDICT
+    130 THROWIFNOT
+    $CheckTactOracle$_contract_store INLINECALLDICT
+  }>
+}END>c

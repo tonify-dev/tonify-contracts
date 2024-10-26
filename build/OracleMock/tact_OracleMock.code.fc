@@ -1,0 +1,102 @@
+#pragma version =0.4.4;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_OracleMock.headers.fc";
+#include "tact_OracleMock.stdlib.fc";
+#include "tact_OracleMock.storage.fc";
+
+;;
+;; Contract OracleMock functions
+;;
+
+(int) $OracleMock$_contract_init(int $id) impure inline_ref {
+    var (($self'id)) = (0);
+    $self'id = $id;
+    return ($self'id);
+}
+
+;;
+;; Receivers of a Contract OracleMock
+;;
+
+(((int)), ()) $OracleMock$_internal_binary_CheckAndReturnPrice((int) $self, (int, int, int, int, int, int, int, int, int) $msg) impure inline {
+    var ($self'id) = $self;
+    var ($msg'queryId, $msg'feedId, $msg'price, $msg'timestamp, $msg'needBounce, $msg'feedId2, $msg'price2, $msg'timestamp2, $msg'needBounce2) = $msg;
+    throw_unless(41502, (~ $msg'needBounce));
+    cell $body = end_cell(store_ref(store_ref(store_uint(store_uint(begin_cell(), 2472520145, 32), $msg'queryId, 64), end_cell(store_uint(store_uint(store_uint(begin_cell(), $msg'feedId, 256), $msg'price, 256), $msg'timestamp, 48))), end_cell(store_uint(store_uint(store_uint(begin_cell(), $msg'feedId2, 256), $msg'price2, 256), $msg'timestamp2, 48))));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body(__tact_context_get_sender(), 0, 64, true, $body));
+    return (($self'id), ());
+}
+
+(((int)), ()) $OracleMock$_internal_binary_Deploy((int) $self, (int) $deploy) impure inline {
+    var ($self'id) = $self;
+    var ($deploy'queryId) = $deploy;
+    ($self'id)~$OracleMock$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'id), ());
+}
+
+;;
+;; Get methods of a Contract OracleMock
+;;
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract OracleMock
+;;
+
+((int), int) $OracleMock$_contract_router_internal((int) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive CheckAndReturnPrice message
+    if (op == 64984234) {
+        var msg = in_msg~$CheckAndReturnPrice$_load();
+        self~$OracleMock$_internal_binary_CheckAndReturnPrice(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Deploy message
+    if (op == 2490013878) {
+        var msg = in_msg~$Deploy$_load();
+        self~$OracleMock$_internal_binary_Deploy(msg);
+        return (self, true);
+    }
+    
+    return (self, false);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $OracleMock$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$OracleMock$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $OracleMock$_contract_store(self);
+}

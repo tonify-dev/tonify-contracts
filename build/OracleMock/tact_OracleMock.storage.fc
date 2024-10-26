@@ -1,0 +1,119 @@
+;;
+;; Type: StateInit
+;; TLB: _ code:^cell data:^cell = StateInit
+;;
+
+((cell, cell)) $StateInit$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (cell vvv'code, cell vvv'data) = __tact_tuple_destroy_2(v);
+    return (vvv'code, vvv'data);
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int $bounce, slice $to, int $value, int $mode, cell $body, cell $code, cell $data) inline {
+    return ($bounce, $to, $value, $mode, $body, $code, $data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body(slice $to, int $value, int $mode, int $bounce, cell $body) inline {
+    return ($bounce, $to, $value, $mode, $body, null(), null());
+}
+
+;;
+;; Type: Deploy
+;; Header: 0x946a98b6
+;; TLB: deploy#946a98b6 queryId:uint64 = Deploy
+;;
+
+(slice, ((int))) $Deploy$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2490013878);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v) inline {
+    return $DeployOk$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: CheckAndReturnPrice
+;; Header: 0x03df94aa
+;; TLB: check_and_return_price#03df94aa queryId:uint64 feedId:uint8 price:coins timestamp:uint64 needBounce:bool feedId2:uint8 price2:coins timestamp2:uint64 needBounce2:bool = CheckAndReturnPrice
+;;
+
+(slice, ((int, int, int, int, int, int, int, int, int))) $CheckAndReturnPrice$_load(slice sc_0) inline_ref {
+    throw_unless(129, sc_0~load_uint(32) == 64984234);
+    var v'queryId = sc_0~load_uint(64);
+    var v'feedId = sc_0~load_uint(8);
+    var v'price = sc_0~load_coins();
+    var v'timestamp = sc_0~load_uint(64);
+    var v'needBounce = sc_0~load_int(1);
+    var v'feedId2 = sc_0~load_uint(8);
+    var v'price2 = sc_0~load_coins();
+    var v'timestamp2 = sc_0~load_uint(64);
+    var v'needBounce2 = sc_0~load_int(1);
+    return (sc_0, (v'queryId, v'feedId, v'price, v'timestamp, v'needBounce, v'feedId2, v'price2, v'timestamp2, v'needBounce2));
+}
+
+;;
+;; Type: OracleMock
+;;
+
+builder $OracleMock$_store(builder build_0, (int) v) inline {
+    var (v'id) = v;
+    build_0 = build_0.store_uint(v'id, 32);
+    return build_0;
+}
+
+(slice, ((int))) $OracleMock$_load(slice sc_0) inline {
+    var v'id = sc_0~load_uint(32);
+    return (sc_0, (v'id));
+}
+
+(slice, ((int))) $OracleMock$init$_load(slice sc_0) inline {
+    var v'id = sc_0~load_int(257);
+    return (sc_0, (v'id));
+}
+
+(int) $OracleMock$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$OracleMock$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        (int $id) = $sc~$OracleMock$init$_load();
+        $sc.end_parse();
+        return $OracleMock$_contract_init($id);
+    }
+}
+
+() $OracleMock$_contract_store((int) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $OracleMock$_store(b, v);
+    set_data(b.end_cell());
+}

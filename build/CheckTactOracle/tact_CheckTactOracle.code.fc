@@ -1,0 +1,215 @@
+#pragma version =0.4.4;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_CheckTactOracle.headers.fc";
+#include "tact_CheckTactOracle.stdlib.fc";
+#include "tact_CheckTactOracle.constants.fc";
+#include "tact_CheckTactOracle.storage.fc";
+
+;;
+;; Contract CheckTactOracle functions
+;;
+
+(int, slice, int, int, int, int) $CheckTactOracle$_contract_init(int $id, slice $oracle) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = (null(), null(), null(), null(), null(), null());
+    $self'id = $id;
+    $self'oracle = $oracle;
+    return ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp);
+}
+
+((int, slice, int, int, int, int), ()) $CheckTactOracle$_fun_onPriceReceived((int, slice, int, int, int, int) $self, int $queryId, int $feedId, int $price, int $timestamp, int $feedId_2, int $price_2, int $timestamp_2) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    $self'queryId = $queryId;
+    $self'feedId = $feedId;
+    $self'price = $price;
+    $self'timestamp = $timestamp;
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), ());
+}
+
+((int, slice, int, int, int, int), ()) $CheckTactOracle$_fun_onOracleErrorReceived((int, slice, int, int, int, int) $self, int $queryId, slice $msg) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    $self'queryId = $queryId;
+    __tact_debug($msg, __gen_slice_string_2251f9d2ce7d38ffa667d48793ce502c78467e4a5574fde1d7d055f141ccb15b(), "File contracts/oracle/tests/check_tact_oracle.tact:37:9:");
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), ());
+}
+
+((int, slice, int, int, int, int), int) $CheckTactOracle$_fun_feedId((int, slice, int, int, int, int) $self) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), $self'feedId);
+}
+
+((int, slice, int, int, int, int), int) $CheckTactOracle$_fun_price((int, slice, int, int, int, int) $self) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), $self'price);
+}
+
+((int, slice, int, int, int, int), int) $CheckTactOracle$_fun_queryId((int, slice, int, int, int, int) $self) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), $self'queryId);
+}
+
+((int, slice, int, int, int, int), int) $CheckTactOracle$_fun_balance((int, slice, int, int, int, int) $self) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), __tact_my_balance());
+}
+
+((int, slice, int, int, int, int), int) $CheckTactOracle$_fun_timestamp((int, slice, int, int, int, int) $self) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), $self'timestamp);
+}
+
+((int, slice, int, int, int, int), ()) $CheckTactOracle$_fun_fetchPrice((int, slice, int, int, int, int) $self, int $queryId, cell $firstOracleData, cell $secondOracleData) impure inline_ref {
+    var (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)) = $self;
+    slice $slice = begin_parse($firstOracleData);
+    slice $slice_2 = begin_parse($secondOracleData);
+    $slice_2~load_uint(32);
+    cell $_oracleData = end_cell(store_ref(store_slice(store_slice(store_uint(store_uint(begin_cell(), $slice~load_uint(32), 32), $queryId, 64), $slice), $slice_2), end_cell(begin_cell())));
+    $global_send($SendParameters$_constructor_to_value_mode_body($self'oracle, 0, 128, $_oracleData));
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), ());
+}
+
+;;
+;; Receivers of a Contract CheckTactOracle
+;;
+
+(((int, slice, int, int, int, int)), ()) $CheckTactOracle$_internal_binary_SetPrice((int, slice, int, int, int, int) $self, (int, cell, cell) $msg) impure inline {
+    var ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp) = $self;
+    var ($msg'queryId, $msg'data, $msg'data_2) = $msg;
+    ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)~$CheckTactOracle$_fun_fetchPrice($msg'queryId, $msg'data, $msg'data_2);
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), ());
+}
+
+(((int, slice, int, int, int, int)), ()) $CheckTactOracle$_internal_binary_Deploy((int, slice, int, int, int, int) $self, (int) $deploy) impure inline {
+    var ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp) = $self;
+    var ($deploy'queryId) = $deploy;
+    ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)~$CheckTactOracle$_fun_notify($DeployOk$_store_cell($DeployOk$_constructor_queryId($deploy'queryId)));
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), ());
+}
+
+((int, slice, int, int, int, int), ()) $CheckTactOracle$_internal_any((int, slice, int, int, int, int) $self, slice $msg) impure inline {
+    var ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp) = $self;
+    int $op = $msg~load_uint(32);
+    if (($op == 2472520145)) {
+        throw_unless(7021, ( __tact_slice_eq_bits($self'oracle, __tact_context_get_sender()) ));
+        int $queryId = $msg~load_uint(64);
+        slice $slice = begin_parse($msg~load_ref());
+        slice $slice_2 = begin_parse($msg~load_ref());
+        ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)~$CheckTactOracle$_fun_onPriceReceived($queryId, $slice~load_uint(256), $slice~load_uint(256), $slice~load_uint(48), $slice_2~load_uint(256), $slice_2~load_uint(256), $slice_2~load_uint(48));
+    }
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), ());
+}
+
+((int, slice, int, int, int, int), ()) $CheckTactOracle$_receive_bounce((int, slice, int, int, int, int) $self, slice $msg) impure inline {
+    var ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp) = $self;
+    int $op = $msg~load_uint(32);
+    if (($op == 64984234)) {
+        int $queryId = $msg~load_uint(64);
+        ($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp)~$CheckTactOracle$_fun_onOracleErrorReceived($queryId, $msg);
+    }
+    return (($self'id, $self'oracle, $self'queryId, $self'feedId, $self'price, $self'timestamp), ());
+}
+
+;;
+;; Get methods of a Contract CheckTactOracle
+;;
+
+_ %feedId() method_id(119096) {
+    var self = $CheckTactOracle$_contract_load();
+    var res = self~$CheckTactOracle$_fun_feedId();
+    return res;
+}
+
+_ %price() method_id(120091) {
+    var self = $CheckTactOracle$_contract_load();
+    var res = self~$CheckTactOracle$_fun_price();
+    return res;
+}
+
+_ %queryId() method_id(94948) {
+    var self = $CheckTactOracle$_contract_load();
+    var res = self~$CheckTactOracle$_fun_queryId();
+    return res;
+}
+
+_ %balance() method_id(104128) {
+    var self = $CheckTactOracle$_contract_load();
+    var res = self~$CheckTactOracle$_fun_balance();
+    return res;
+}
+
+_ %timestamp() method_id(94950) {
+    var self = $CheckTactOracle$_contract_load();
+    var res = self~$CheckTactOracle$_fun_timestamp();
+    return res;
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract CheckTactOracle
+;;
+
+((int, slice, int, int, int, int), int) $CheckTactOracle$_contract_router_internal((int, slice, int, int, int, int) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        
+        ;; Skip 0xFFFFFFFF
+        in_msg~skip_bits(32);
+        
+        ;; Fallback bounce receiver
+        self~$CheckTactOracle$_receive_bounce(in_msg);
+        
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive SetPrice message
+    if (op == 623813157) {
+        var msg = in_msg~$SetPrice$_load();
+        self~$CheckTactOracle$_internal_binary_SetPrice(msg);
+        return (self, true);
+    }
+    
+    ;; Receive Deploy message
+    if (op == 2490013878) {
+        var msg = in_msg~$Deploy$_load();
+        self~$CheckTactOracle$_internal_binary_Deploy(msg);
+        return (self, true);
+    }
+    
+    ;; Receiver fallback
+    self~$CheckTactOracle$_internal_any(in_msg);
+    return (self, true);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $CheckTactOracle$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$CheckTactOracle$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $CheckTactOracle$_contract_store(self);
+}

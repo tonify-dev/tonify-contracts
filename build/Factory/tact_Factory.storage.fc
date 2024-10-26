@@ -1,0 +1,369 @@
+;;
+;; Type: StateInit
+;; TLB: _ code:^cell data:^cell = StateInit
+;;
+
+((cell, cell)) $StateInit$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (cell vvv'code, cell vvv'data) = __tact_tuple_destroy_2(v);
+    return (vvv'code, vvv'data);
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body_code_data(slice $to, int $value, int $mode, int $bounce, cell $body, cell $code, cell $data) inline {
+    return ($bounce, $to, $value, $mode, $body, $code, $data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int $bounce, slice $to, int $value, int $mode, cell $body, cell $code, cell $data) inline {
+    return ($bounce, $to, $value, $mode, $body, $code, $data);
+}
+
+;;
+;; Type: Deploy
+;; Header: 0x946a98b6
+;; TLB: deploy#946a98b6 queryId:uint64 = Deploy
+;;
+
+(slice, ((int))) $Deploy$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2490013878);
+    var v'queryId = sc_0~load_uint(64);
+    return (sc_0, (v'queryId));
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v) inline {
+    return $DeployOk$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: InnerDeployAmm
+;; Header: 0x7beaac57
+;; TLB: inner_deploy_amm#7beaac57 queryId:uint64 jettonWallet:address originalGasTo:address market:address = InnerDeployAmm
+;;
+
+builder $InnerDeployAmm$_store(builder build_0, (int, slice, slice, slice) v) inline {
+    var (v'queryId, v'jettonWallet, v'originalGasTo, v'market) = v;
+    build_0 = store_uint(build_0, 2078977111, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'jettonWallet);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    build_0 = __tact_store_address(build_0, v'market);
+    return build_0;
+}
+
+cell $InnerDeployAmm$_store_cell((int, slice, slice, slice) v) inline {
+    return $InnerDeployAmm$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice, slice, slice)) $InnerDeployAmm$_constructor_queryId_jettonWallet_market_originalGasTo(int $queryId, slice $jettonWallet, slice $market, slice $originalGasTo) inline {
+    return ($queryId, $jettonWallet, $originalGasTo, $market);
+}
+
+;;
+;; Type: InnerDeployMarket
+;; Header: 0x690d7fe0
+;; TLB: inner_deploy_market#690d7fe0 queryId:uint64 jettonWallet:address originalGasTo:address = InnerDeployMarket
+;;
+
+builder $InnerDeployMarket$_store(builder build_0, (int, slice, slice) v) inline {
+    var (v'queryId, v'jettonWallet, v'originalGasTo) = v;
+    build_0 = store_uint(build_0, 1762492384, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'jettonWallet);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    return build_0;
+}
+
+cell $InnerDeployMarket$_store_cell((int, slice, slice) v) inline {
+    return $InnerDeployMarket$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice, slice)) $InnerDeployMarket$_constructor_queryId_jettonWallet_originalGasTo(int $queryId, slice $jettonWallet, slice $originalGasTo) inline {
+    return ($queryId, $jettonWallet, $originalGasTo);
+}
+
+;;
+;; Type: DeployTokenMarket
+;; Header: 0xbac22c73
+;; TLB: deploy_token_market#bac22c73 queryId:uint64 id:uint32 owner:address coin:address jettonWallet:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address originalGasTo:address = DeployTokenMarket
+;;
+
+(slice, ((int, int, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice, slice))) $DeployTokenMarket$_load(slice sc_0) inline_ref {
+    throw_unless(129, sc_0~load_uint(32) == 3133287539);
+    var v'queryId = sc_0~load_uint(64);
+    var v'id = sc_0~load_uint(32);
+    var v'owner = sc_0~__tact_load_address();
+    var v'coin = sc_0~__tact_load_address();
+    var v'jettonWallet = sc_0~__tact_load_address();
+    var v'underlyingAssetName = sc_0~load_ref().begin_parse();
+    var v'duration = sc_0~load_uint(32);
+    var v'collection_content = sc_0~load_ref();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'operatorFee = sc_1~load_coins();
+    var v'serviceFee = sc_1~load_coins();
+    var v'oracle = sc_1~__tact_load_address();
+    var v'feedIdAsset = sc_1~load_uint(256);
+    slice sc_2 = sc_1~load_ref().begin_parse();
+    var v'feedIdToken = sc_2~load_uint(256);
+    var v'operatorFeeAddress = sc_2~__tact_load_address();
+    var v'originalGasTo = sc_2~__tact_load_address();
+    return (sc_0, (v'queryId, v'id, v'owner, v'coin, v'jettonWallet, v'underlyingAssetName, v'duration, v'collection_content, v'operatorFee, v'serviceFee, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeAddress, v'originalGasTo));
+}
+
+;;
+;; Type: MarketDeployedEvent
+;; Header: 0xf39cb0ac
+;; TLB: market_deployed_event#f39cb0ac queryId:uint64 marketAddress:address id:uint32 owner:address coin:address jettonWallet:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address = MarketDeployedEvent
+;;
+
+builder $MarketDeployedEvent$_store(builder build_0, (int, slice, int, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline_ref {
+    var (v'queryId, v'marketAddress, v'id, v'owner, v'coin, v'jettonWallet, v'underlyingAssetName, v'duration, v'collection_content, v'operatorFee, v'serviceFee, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeAddress) = v;
+    build_0 = store_uint(build_0, 4087132332, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'marketAddress);
+    build_0 = build_0.store_uint(v'id, 32);
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = __tact_store_address(build_0, v'coin);
+    var build_1 = begin_cell();
+    build_1 = __tact_store_address(build_1, v'jettonWallet);
+    build_1 = build_1.store_ref(begin_cell().store_slice(v'underlyingAssetName).end_cell());
+    build_1 = build_1.store_uint(v'duration, 32);
+    build_1 = build_1.store_ref(v'collection_content);
+    build_1 = build_1.store_coins(v'operatorFee);
+    build_1 = build_1.store_coins(v'serviceFee);
+    build_1 = __tact_store_address(build_1, v'oracle);
+    var build_2 = begin_cell();
+    build_2 = build_2.store_uint(v'feedIdAsset, 256);
+    build_2 = build_2.store_uint(v'feedIdToken, 256);
+    build_2 = __tact_store_address(build_2, v'operatorFeeAddress);
+    build_1 = store_ref(build_1, build_2.end_cell());
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+cell $MarketDeployedEvent$_store_cell((int, slice, int, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline {
+    return $MarketDeployedEvent$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice, int, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice)) $MarketDeployedEvent$_constructor_queryId_marketAddress_id_owner_coin_jettonWallet_underlyingAssetName_duration_collection_content_operatorFee_serviceFee_oracle_feedIdAsset_feedIdToken_operatorFeeAddress(int $queryId, slice $marketAddress, int $id, slice $owner, slice $coin, slice $jettonWallet, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) inline {
+    return ($queryId, $marketAddress, $id, $owner, $coin, $jettonWallet, $underlyingAssetName, $duration, $collection_content, $operatorFee, $serviceFee, $oracle, $feedIdAsset, $feedIdToken, $operatorFeeAddress);
+}
+
+;;
+;; Type: DeployTokenMarketWithAmm
+;; Header: 0x6468642b
+;; TLB: deploy_token_market_with_amm#6468642b queryId:uint64 id:uint32 owner:address coin:address jettonWallet:address jettonWalletAmm:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address originalGasTo:address = DeployTokenMarketWithAmm
+;;
+
+(slice, ((int, int, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice, slice))) $DeployTokenMarketWithAmm$_load(slice sc_0) inline_ref {
+    throw_unless(129, sc_0~load_uint(32) == 1684562987);
+    var v'queryId = sc_0~load_uint(64);
+    var v'id = sc_0~load_uint(32);
+    var v'owner = sc_0~__tact_load_address();
+    var v'coin = sc_0~__tact_load_address();
+    var v'jettonWallet = sc_0~__tact_load_address();
+    slice sc_1 = sc_0~load_ref().begin_parse();
+    var v'jettonWalletAmm = sc_1~__tact_load_address();
+    var v'underlyingAssetName = sc_1~load_ref().begin_parse();
+    var v'duration = sc_1~load_uint(32);
+    var v'collection_content = sc_1~load_ref();
+    var v'operatorFee = sc_1~load_coins();
+    var v'serviceFee = sc_1~load_coins();
+    var v'oracle = sc_1~__tact_load_address();
+    slice sc_2 = sc_1~load_ref().begin_parse();
+    var v'feedIdAsset = sc_2~load_uint(256);
+    var v'feedIdToken = sc_2~load_uint(256);
+    var v'operatorFeeAddress = sc_2~__tact_load_address();
+    slice sc_3 = sc_2~load_ref().begin_parse();
+    var v'originalGasTo = sc_3~__tact_load_address();
+    return (sc_0, (v'queryId, v'id, v'owner, v'coin, v'jettonWallet, v'jettonWalletAmm, v'underlyingAssetName, v'duration, v'collection_content, v'operatorFee, v'serviceFee, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeAddress, v'originalGasTo));
+}
+
+;;
+;; Type: MarketDeployedEventWithAmm
+;; Header: 0xb556f0d9
+;; TLB: market_deployed_event_with_amm#b556f0d9 queryId:uint64 marketAddress:address id:uint32 owner:address coin:address amm:address jettonWallet:address jettonWalletAmm:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address = MarketDeployedEventWithAmm
+;;
+
+builder $MarketDeployedEventWithAmm$_store(builder build_0, (int, slice, int, slice, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline_ref {
+    var (v'queryId, v'marketAddress, v'id, v'owner, v'coin, v'amm, v'jettonWallet, v'jettonWalletAmm, v'underlyingAssetName, v'duration, v'collection_content, v'operatorFee, v'serviceFee, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeAddress) = v;
+    build_0 = store_uint(build_0, 3042373849, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'marketAddress);
+    build_0 = build_0.store_uint(v'id, 32);
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = __tact_store_address(build_0, v'coin);
+    var build_1 = begin_cell();
+    build_1 = __tact_store_address(build_1, v'amm);
+    build_1 = __tact_store_address(build_1, v'jettonWallet);
+    build_1 = __tact_store_address(build_1, v'jettonWalletAmm);
+    build_1 = build_1.store_ref(begin_cell().store_slice(v'underlyingAssetName).end_cell());
+    build_1 = build_1.store_uint(v'duration, 32);
+    build_1 = build_1.store_ref(v'collection_content);
+    build_1 = build_1.store_coins(v'operatorFee);
+    var build_2 = begin_cell();
+    build_2 = build_2.store_coins(v'serviceFee);
+    build_2 = __tact_store_address(build_2, v'oracle);
+    build_2 = build_2.store_uint(v'feedIdAsset, 256);
+    build_2 = build_2.store_uint(v'feedIdToken, 256);
+    var build_3 = begin_cell();
+    build_3 = __tact_store_address(build_3, v'operatorFeeAddress);
+    build_2 = store_ref(build_2, build_3.end_cell());
+    build_1 = store_ref(build_1, build_2.end_cell());
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+cell $MarketDeployedEventWithAmm$_store_cell((int, slice, int, slice, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline {
+    return $MarketDeployedEventWithAmm$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice, int, slice, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice)) $MarketDeployedEventWithAmm$_constructor_queryId_marketAddress_id_owner_coin_amm_jettonWallet_jettonWalletAmm_underlyingAssetName_duration_collection_content_operatorFee_serviceFee_oracle_feedIdAsset_feedIdToken_operatorFeeAddress(int $queryId, slice $marketAddress, int $id, slice $owner, slice $coin, slice $amm, slice $jettonWallet, slice $jettonWalletAmm, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) inline {
+    return ($queryId, $marketAddress, $id, $owner, $coin, $amm, $jettonWallet, $jettonWalletAmm, $underlyingAssetName, $duration, $collection_content, $operatorFee, $serviceFee, $oracle, $feedIdAsset, $feedIdToken, $operatorFeeAddress);
+}
+
+;;
+;; Type: Market
+;;
+
+builder $Market$init$_store(builder build_0, (int, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline {
+    var (v'id, v'owner, v'coin, v'amm, v'factory, v'underlyingAssetName, v'duration, v'collection_content, v'operatorFee, v'serviceFee, v'oracle, v'feedIdAsset, v'feedIdToken, v'operatorFeeAddress) = v;
+    build_0 = build_0.store_int(v'id, 257);
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = __tact_store_address(build_0, v'coin);
+    var build_1 = begin_cell();
+    build_1 = __tact_store_address(build_1, v'amm);
+    build_1 = __tact_store_address(build_1, v'factory);
+    build_1 = build_1.store_ref(begin_cell().store_slice(v'underlyingAssetName).end_cell());
+    build_1 = build_1.store_int(v'duration, 257);
+    build_1 = build_1.store_ref(v'collection_content);
+    var build_2 = begin_cell();
+    build_2 = build_2.store_int(v'operatorFee, 257);
+    build_2 = build_2.store_int(v'serviceFee, 257);
+    build_2 = __tact_store_address(build_2, v'oracle);
+    var build_3 = begin_cell();
+    build_3 = build_3.store_int(v'feedIdAsset, 257);
+    build_3 = build_3.store_int(v'feedIdToken, 257);
+    build_3 = __tact_store_address(build_3, v'operatorFeeAddress);
+    build_2 = store_ref(build_2, build_3.end_cell());
+    build_1 = store_ref(build_1, build_2.end_cell());
+    build_0 = store_ref(build_0, build_1.end_cell());
+    return build_0;
+}
+
+(cell, cell) $Market$_init_child(cell sys', int $id, slice $owner, slice $coin, slice $amm, slice $factory, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) inline_ref {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: Market
+    cell mine = __tact_dict_get_code(source, 39317);
+    contracts = __tact_dict_set_code(contracts, 39317, mine);
+    
+    ;; Contract Code: Deal
+    cell code_16839 = __tact_dict_get_code(source, 16839);
+    contracts = __tact_dict_set_code(contracts, 16839, code_16839);
+    
+    ;; Contract Code: NftItem
+    cell code_31210 = __tact_dict_get_code(source, 31210);
+    contracts = __tact_dict_set_code(contracts, 31210, code_31210);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $Market$init$_store(b, ($id, $owner, $coin, $amm, $factory, $underlyingAssetName, $duration, $collection_content, $operatorFee, $serviceFee, $oracle, $feedIdAsset, $feedIdToken, $operatorFeeAddress));
+    return (mine, b.end_cell());
+}
+
+;;
+;; Type: Amm
+;;
+
+builder $Amm$init$_store(builder build_0, (int, slice, slice) v) inline {
+    var (v'id, v'factory, v'owner) = v;
+    build_0 = build_0.store_int(v'id, 257);
+    build_0 = __tact_store_address(build_0, v'factory);
+    build_0 = __tact_store_address(build_0, v'owner);
+    return build_0;
+}
+
+(cell, cell) $Amm$_init_child(cell sys', int $id, slice $factory, slice $owner) inline_ref {
+    slice sc' = sys'.begin_parse();
+    cell source = sc'~load_dict();
+    cell contracts = new_dict();
+    
+    ;; Contract Code: Amm
+    cell mine = __tact_dict_get_code(source, 60128);
+    contracts = __tact_dict_set_code(contracts, 60128, mine);
+    
+    ;; Build cell
+    builder b = begin_cell();
+    b = b.store_ref(begin_cell().store_dict(contracts).end_cell());
+    b = b.store_int(false, 1);
+    b = $Amm$init$_store(b, ($id, $factory, $owner));
+    return (mine, b.end_cell());
+}
+
+;;
+;; Type: Factory
+;;
+
+builder $Factory$_store(builder build_0, (int) v) inline {
+    var (v'id) = v;
+    build_0 = build_0.store_uint(v'id, 32);
+    return build_0;
+}
+
+(slice, ((int))) $Factory$_load(slice sc_0) inline {
+    var v'id = sc_0~load_uint(32);
+    return (sc_0, (v'id));
+}
+
+(slice, ((int))) $Factory$init$_load(slice sc_0) inline {
+    var v'id = sc_0~load_int(257);
+    return (sc_0, (v'id));
+}
+
+(int) $Factory$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$Factory$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        (int $id) = $sc~$Factory$init$_load();
+        $sc.end_parse();
+        return $Factory$_contract_init($id);
+    }
+}
+
+() $Factory$_contract_store((int) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $Factory$_store(b, v);
+    set_data(b.end_cell());
+}
