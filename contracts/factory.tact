@@ -122,7 +122,7 @@ contract Factory with Deployable {
         }.toCell());
         send(SendParameters{
             to: contractAddress(winit),
-            value: TO_TAKE_AMM,
+            value: 0,
             mode: SendRemainingBalance,
             bounce: true,
             body: InnerDeployMarket{
@@ -190,7 +190,7 @@ contract Factory with Deployable {
         });
         send(SendParameters{
             to: contractAddress(winit),
-            value: TO_TAKE_AMM,
+            value: 0,
             mode: SendRemainingBalance,
             bounce: true,
             body: InnerDeployMarket{

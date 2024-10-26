@@ -321,7 +321,7 @@ describe('Market', () => {
         const createDealResult = await jettonWalletMaker.send(
             maker.getSender(),
             {
-                value: toNano('0.9'),
+                value: toNano('0.15'),
             },
             {
                 $$type: 'TokenTransfer',
@@ -330,7 +330,7 @@ describe('Market', () => {
                 recipient: market.address,
                 response_destination: maker.address,
                 custom_payload: null,
-                forward_ton_amount: toNano('0.8'),
+                forward_ton_amount: toNano('0.1'),
                 forward_payload: createDealData,
             },
         );
@@ -403,7 +403,7 @@ describe('Market', () => {
                 forward_payload: takeDealData,
             },
         );
-        console.log('takeDealResult', takeDealResult.transactions);
+        // console.log('takeDealResult', takeDealResult.transactions);
         // console.log('takeDealResult', takeDealResult.events);
         const tonBalanceAfter = await taker.getBalance();
         console.log('User fee :' + fromNano(tonBalanceAfter - tonBalanceBefore));

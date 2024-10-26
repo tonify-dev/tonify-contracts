@@ -1,9 +1,9 @@
 # TACT Compilation Report
 Contract: NftItem
-BOC Size: 1700 bytes
+BOC Size: 1594 bytes
 
 # Types
-Total Types: 26
+Total Types: 28
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -56,6 +56,14 @@ Signature: `GetStaticData{query_id:uint64}`
 ## ReportStaticData
 TLB: `report_static_data#8b771735 query_id:uint64 index_id:int257 collection:address = ReportStaticData`
 Signature: `ReportStaticData{query_id:uint64,index_id:int257,collection:address}`
+
+## GetOwner
+TLB: `get_owner#bc26f4c8 query_id:uint64 = GetOwner`
+Signature: `GetOwner{query_id:uint64}`
+
+## ReportOwner
+TLB: `report_owner#2a004a05 query_id:uint64 index_id:int257 owner:address = ReportOwner`
+Signature: `ReportOwner{query_id:uint64,index_id:int257,owner:address}`
 
 ## GetNftData
 TLB: `_ is_initialized:bool index:int257 collection_address:address owner_address:address individual_content:^cell = GetNftData`
@@ -139,7 +147,6 @@ Total Get Methods: 1
 135: Code of a contract was not found
 136: Invalid address
 137: Masterchain support is not enabled for this contract
-8236: Transfer jetton must be from collection
 27499: initialized tx need from collection
 49280: not owner
 49469: not from collection

@@ -1,4 +1,4 @@
-import { Address, beginCell, toNano } from '@ton/core';
+import { Address, beginCell, Cell, toNano } from '@ton/core';
 import { Amm } from '../wrappers/Amm';
 import { Factory } from '../wrappers/Factory';
 import { NetworkProvider } from '@ton/blueprint';
@@ -10,12 +10,12 @@ const jettonMasterAddress = Address.parse('EQAEjTwIDPZDLkPMbzUB5Pdu3BIbKYVdzgSp9
 const oracleAddress = Address.parse('EQD1HG-Y_20MGKGZc_fi-hB_9iIGLJvNf4JVZGXTWG93sRmI');
 const feedAssetId = 4543560n; // ETH
 const feedTokenId = 1431520340n; // USDT
-const id = 1n;
+const id = 2n;
 const coin = jettonMasterAddress;
 const serviceFee = toNano('0.01'); // 1%
 const operatorFee = toNano('0.01'); // 1%
-const content = beginCell().endCell();
-const duration = 60n * 60n * 24n * 30n; // 10 days
+const content = Cell.EMPTY;
+const duration = 60n; // 1 minute
 const underlyingAssetName = 'ETH';
 const operatorFeeAddress = Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ');
 
@@ -25,10 +25,11 @@ export async function run(provider: NetworkProvider) {
 
     const factory = provider.open(await Factory.fromAddress(Address.parse(factoryAddress)));
     const amm = await Amm.fromInit(
-        BigInt(Math.floor(Math.random() * 10000)),
+        id,
         Address.parse(factoryAddress),
         owner,
     );
+    console.log('amm', amm.address);
     const jettonDefaultWalletAddressAmm = await calculateJettonDefaultWalletAddress(jettonMasterAddress, amm.address);
     const market = provider.open(await Market.fromInit(
         id,
@@ -46,9 +47,10 @@ export async function run(provider: NetworkProvider) {
         feedTokenId,
         operatorFeeAddress,
     ));
+    console.log('market', market.address);
     const jettonDefaultWalletAddressMarket = await calculateJettonDefaultWalletAddress(
-        jettonMasterAddress,
         market.address,
+        jettonMasterAddress,
     );
 
     await factory.send(

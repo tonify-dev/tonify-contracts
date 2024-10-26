@@ -23,9 +23,9 @@ PROGRAM{
   DECLPROC $GetStaticData$_load
   DECLPROC $ReportStaticData$_store
   DECLPROC $ReportStaticData$_store_cell
-  DECLPROC $TokenTransfer$_store
-  DECLPROC $TokenTransfer$_store_cell
-  DECLPROC $TokenNotification$_load
+  DECLPROC $GetOwner$_load
+  DECLPROC $ReportOwner$_store
+  DECLPROC $ReportOwner$_store_cell
   DECLPROC $NftItem$_store
   DECLPROC $NftItem$_load
   DECLPROC $GetNftData$_to_external
@@ -33,10 +33,8 @@ PROGRAM{
   DECLPROC $NftItem$_contract_init
   DECLPROC $NftItem$_contract_load
   DECLPROC $NftItem$_contract_store
-  DECLPROC $global_emptyCell
-  DECLPROC $Cell$_fun_asSlice
-  DECLPROC $global_emptySlice
   DECLPROC $global_send
+  DECLPROC $Cell$_fun_asSlice
   DECLPROC $Context$_fun_readForwardFee
   DECLPROC $NftItem$_fun_msgValue
   DECLPROC $GetNftData$_constructor_is_initialized_index_collection_address_owner_address_individual_content
@@ -45,11 +43,11 @@ PROGRAM{
   DECLPROC $Excesses$_constructor_query_id
   DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
   DECLPROC $OwnershipAssigned$_constructor_query_id_prev_owner_forward_payload
-  DECLPROC $TokenTransfer$_constructor_query_id_amount_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload
   DECLPROC $ReportStaticData$_constructor_query_id_index_id_collection
+  DECLPROC $ReportOwner$_constructor_query_id_index_id_owner
   DECLPROC $NftItem$_internal_binary_Transfer
-  DECLPROC $NftItem$_internal_binary_TokenNotification
   DECLPROC $NftItem$_internal_binary_GetStaticData
+  DECLPROC $NftItem$_internal_binary_GetOwner
   102351 DECLMETHOD %get_nft_data
   115390 DECLMETHOD lazy_deployment_completed
   DECLPROC $NftItem$_contract_router_internal
@@ -384,53 +382,31 @@ PROGRAM{
     $ReportStaticData$_store INLINECALLDICT
     ENDC
   }>
-  $TokenTransfer$_store PROCREF:<{
-    260734629 PUSHINT
-    s0 s8 XCHG2
-    32 STU
-    s1 s6 XCHG
-    64 STU
-    s0 s4 XCHG2
-    STGRAMS
-    ROT
-    __tact_store_address INLINECALLDICT
-    SWAP
-    __tact_store_address_opt INLINECALLDICT
-    OVER
-    ISNULL
-    NOT
-    IF:<{
-      TRUE
-      SWAP
-      1 STI
-      STREF
-    }>ELSE<{
-      FALSE
-      s2 POP
-      1 STI
-    }>
-    SWAP
-    STGRAMS
-    SWAP
-    STSLICER
-  }>
-  $TokenTransfer$_store_cell PROCINLINE:<{
-    NEWC
-    7 -ROLL
-    $TokenTransfer$_store INLINECALLDICT
-    ENDC
-  }>
-  $TokenNotification$_load PROCINLINE:<{
+  $GetOwner$_load PROCINLINE:<{
     32 LDU
     SWAP
-    1935855772 PUSHINT
+    3156669640 PUSHINT
     EQUAL
     129 THROWIFNOT
     64 LDU
-    LDGRAMS
-    __tact_load_address INLINECALLDICT
-    s3 s0 s3 XC2PU
-    s2 s3 XCHG
+    SWAP
+  }>
+  $ReportOwner$_store PROCINLINE:<{
+    704662021 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    s1 s2 XCHG
+    64 STU
+    257 PUSHINT
+    STIX
+    SWAP
+    __tact_store_address INLINECALLDICT
+  }>
+  $ReportOwner$_store_cell PROCINLINE:<{
+    NEWC
+    3 -ROLL
+    $ReportOwner$_store INLINECALLDICT
+    ENDC
   }>
   $NftItem$_store PROCINLINE:<{
     s5 s4 XCHG2
@@ -528,17 +504,6 @@ PROGRAM{
     $NftItem$_store INLINECALLDICT
     ENDC
     c4 POP
-  }>
-  $global_emptyCell PROCINLINE:<{
-    NEWC
-    ENDC
-  }>
-  $Cell$_fun_asSlice PROCINLINE:<{
-    CTOS
-  }>
-  $global_emptySlice PROCINLINE:<{
-    $global_emptyCell INLINECALLDICT
-    $Cell$_fun_asSlice INLINECALLDICT
   }>
   $global_send PROCREF:<{
     NEWC
@@ -642,6 +607,9 @@ PROGRAM{
     SWAP
     SENDRAWMSG
   }>
+  $Cell$_fun_asSlice PROCINLINE:<{
+    CTOS
+  }>
   $Context$_fun_readForwardFee PROCREF:<{
     3 1 BLKDROP2
     __tact_load_address INLINECALLDICT
@@ -661,7 +629,7 @@ PROGRAM{
     __tact_my_balance INLINECALLDICT
     OVER
     SUB
-    20000000 PUSHINT
+    10000000 PUSHINT
     TUCK
     MIN
     SUB
@@ -708,9 +676,9 @@ PROGRAM{
   }>
   $OwnershipAssigned$_constructor_query_id_prev_owner_forward_payload PROCINLINE:<{
   }>
-  $TokenTransfer$_constructor_query_id_amount_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload PROCINLINE:<{
-  }>
   $ReportStaticData$_constructor_query_id_index_id_collection PROCINLINE:<{
+  }>
+  $ReportOwner$_constructor_query_id_index_id_owner PROCINLINE:<{
   }>
   $NftItem$_internal_binary_Transfer PROCINLINE:<{
     __tact_context_get INLINECALLDICT
@@ -734,10 +702,13 @@ PROGRAM{
       __tact_slice_eq_bits INLINECALLDICT
       s1 s6 XCHG
       THROWANYIFNOT
+      10000000 PUSHINT
+      0 PUSHINT
+      RAWRESERVE
       TRUE
       s0 s5 XCHG
       __tact_not_null INLINECALLDICT
-      1 PUSHINT
+      7 PUSHPOW2
       s0 s3 XCHG
       $Excesses$_constructor_query_id INLINECALLDICT
       $Excesses$_store_cell INLINECALLDICT
@@ -806,31 +777,6 @@ PROGRAM{
     s3 s3 XCHG2
     s0 s4 XCHG
   }>
-  $NftItem$_internal_binary_TokenNotification PROCINLINE:<{
-    DROP
-    s7 PUSH
-    8236 PUSHINT
-    s0 s2 XCHG
-    __tact_slice_eq_bits INLINECALLDICT
-    THROWANYIFNOT
-    __tact_context_get_sender INLINECALLDICT
-    0 PUSHINT
-    7 PUSHPOW2
-    s6 PUSH
-    __tact_not_null INLINECALLDICT
-    PUSHNULL
-    s3 PUSH
-    $global_emptySlice INLINECALLDICT
-    s10 PUSH
-    s6 s9 XCHG
-    s5 s8 XCHG
-    3 -ROLL
-    $TokenTransfer$_constructor_query_id_amount_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload INLINECALLDICT
-    $TokenTransfer$_store_cell INLINECALLDICT
-    s3 s3 s0 XCHG3
-    $SendParameters$_constructor_to_value_mode_body INLINECALLDICT
-    $global_send INLINECALLDICT
-  }>
   $NftItem$_internal_binary_GetStaticData PROCINLINE:<{
     __tact_context_get INLINECALLDICT
     s2 s3 XCHG
@@ -841,6 +787,23 @@ PROGRAM{
     s4 s8 s9 XCPU2
     $ReportStaticData$_constructor_query_id_index_id_collection INLINECALLDICT
     $ReportStaticData$_store_cell INLINECALLDICT
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $NftItem$_internal_binary_GetOwner PROCINLINE:<{
+    __tact_context_get INLINECALLDICT
+    s2 s3 XCHG
+    3 BLKDROP
+    0 PUSHINT
+    7 PUSHPOW2
+    TRUE
+    s6 PUSH
+    __tact_not_null INLINECALLDICT
+    s5 s9 s(-1) XCPUXC
+    $ReportOwner$_constructor_query_id_index_id_owner INLINECALLDICT
+    $ReportOwner$_store_cell INLINECALLDICT
     s3 s4 XCHG
     s1 s3 s0 XCHG3
     $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
@@ -884,21 +847,21 @@ PROGRAM{
       TRUE
     }>
     DUP
-    1935855772 PUSHINT
-    EQUAL
-    IFJMP:<{
-      DROP
-      $TokenNotification$_load INLINECALLDICT
-      1 4 BLKDROP2
-      $NftItem$_internal_binary_TokenNotification INLINECALLDICT
-      TRUE
-    }>
     801842850 PUSHINT
     EQUAL
     IFJMP:<{
+      DROP
       $GetStaticData$_load INLINECALLDICT
       NIP
       $NftItem$_internal_binary_GetStaticData INLINECALLDICT
+      TRUE
+    }>
+    3156669640 PUSHINT
+    EQUAL
+    IFJMP:<{
+      $GetOwner$_load INLINECALLDICT
+      NIP
+      $NftItem$_internal_binary_GetOwner INLINECALLDICT
       TRUE
     }>
     DROP

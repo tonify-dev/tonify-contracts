@@ -1,1 +1,1 @@
-export * from '../build/Market/tact_Market';
+export * from '../build/Factory/tact_Market';

@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: Factory
-BOC Size: 3187 bytes
+BOC Size: 3177 bytes
 
 # Types
 Total Types: 71

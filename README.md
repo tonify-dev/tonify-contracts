@@ -27,12 +27,19 @@
 
 # Addresses
 
--   Factory: EQDs3GAEZOCLVE45ZkwBG_PbqpZne2qBJzEqN4LhmQOHNSxd
--   Market: kQCoRXQUG4oHis-65lZ0R0M_O_DcKw6TysCfkbDpddRRh_gt
--   Market with Amm: kQA0APUqKE9Hd15SV0_nuHlUtGrj17SAsaDTSKOnBmK0ypT5
--   Amm: kQAxgJCvtxM7weVG-pqd1Q7Dmh9eNQucBaG-STq-5XXYzkaE
+-   Factory: EQBrUTgm5V6LAu3_phcQxdcbJbh7XYwU8SvMVronmovlm_x6
+-   Market: EQAJgiFz8almoi7-4kes_XZrsBbsn1lw9Mlorob7OmO4FcwN  (asset ETH, token USDT)
+-   Market with Amm: EQDwe0mfe7VUlNigbDU9Y2ZUO2JIMUZJ2wgt7GnOqbL-gUg4 (asset ETH, token USDT)
+-   Amm: EQAu7zE6FXmvVwu8MPJq4GV0C-ykj8tPWlQfrLrjH858urLN (asset ETH, token USDT)
+-   MyJetton: EQAEjTwIDPZDLkPMbzUB5Pdu3BIbKYVdzgSp9wG3VHJL-rWw (Test USDT)
 
 
+
+I use Blueprint, so I provide TypeScript examples for it. For frontend and backend, you will have different wallet interactions and you'll need to send transactions in your own way, but the internal message(body) should be formed as shown in my examples.
+
+If you don't work with ton.  Then you need understand how to interact with Jetton and NFT.
+[Interaction with Jetton](./docs/InteractionWithJetton.md)
+[Interaction with NFT](./docs/InteractionWithNFT.md)
 
 
 # Architecture

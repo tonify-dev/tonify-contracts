@@ -1,1 +1,1 @@
-export * from '../build/Amm/tact_Amm';
+export * from '../build/Factory/tact_Amm';

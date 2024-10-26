@@ -43,6 +43,14 @@ withdrawTokens().catch(console.error);
 
 ### Contract Messages
 
+#### WithdrawToken
+
+Facilitates the withdrawal of tokens from the AMM contract.
+
+- `queryId: Int as uint64` - Unique identifier for the withdrawal query.
+- `amount: Int as coins` - Amount of tokens to withdraw.
+- `originalGasTo: Address` - Address to receive any remaining gas after withdrawal.
+
 The `Amm` contract defines several messages to handle different operations:
 
 #### InnerDeployAmm
@@ -65,10 +73,3 @@ Handles the acceptance of a deal by interacting with the jetton wallet.
 - `oracleAssetData: Cell` - Oracle data for the asset.
 - `oracleTokenData: Cell` - Oracle data for the token.
 
-#### WithdrawToken
-
-Facilitates the withdrawal of tokens from the AMM contract.
-
-- `queryId: Int as uint64` - Unique identifier for the withdrawal query.
-- `amount: Int as coins` - Amount of tokens to withdraw.
-- `originalGasTo: Address` - Address to receive any remaining gas after withdrawal.

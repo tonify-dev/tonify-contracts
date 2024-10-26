@@ -801,7 +801,7 @@ PROGRAM{
     $global_emit INLINECALLDICT
     s1 s3 PUSH2
     $global_contractAddress INLINECALLDICT
-    350000000 PUSHINT
+    0 PUSHINT
     7 PUSHPOW2
     s7 s3 XCHG2
     TRUE
@@ -889,7 +889,7 @@ PROGRAM{
     $global_send INLINECALLDICT
     s1 s3 PUSH2
     $global_contractAddress INLINECALLDICT
-    350000000 PUSHINT
+    0 PUSHINT
     7 PUSHPOW2
     s7 s3 XCHG2
     TRUE

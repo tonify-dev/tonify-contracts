@@ -8,7 +8,7 @@ import { calculateJettonDefaultWalletAddress } from './uitls/calculateJettonWall
 
 const jettonMasterAddress = Address.parse('EQAEjTwIDPZDLkPMbzUB5Pdu3BIbKYVdzgSp9wG3VHJL-rWw');
 const oracleAddress = Address.parse('EQD1HG-Y_20MGKGZc_fi-hB_9iIGLJvNf4JVZGXTWG93sRmI');
-const ammAddress = Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ'); //zero address
+const ammAddress = Address.parse('EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c'); //zero address
 const feedAssetId = 4543560n; // ETH
 const feedTokenId = 1431520340n; // USDT
 const id = 1n;
@@ -16,9 +16,9 @@ const coin = jettonMasterAddress;
 const serviceFee = toNano('0.01'); // 1%
 const operatorFee = toNano('0.01'); // 1%
 const content = Cell.EMPTY;
-const duration = 60n; // 2 minutes
+const duration = 120n; // 2 minutes
 const underlyingAssetName = 'ETH';
-const operatorFeeAddress = Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ');
+const operatorFeeAddress = Address.parse('EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c');
 
 export async function run(provider: NetworkProvider) {
     const factoryAddress = data[provider.network()].factory;
@@ -32,7 +32,7 @@ export async function run(provider: NetworkProvider) {
             owner,
             coin,
             ammAddress,
-            factory.address,
+            owner,
             underlyingAssetName,
             duration,
             content,
@@ -45,34 +45,47 @@ export async function run(provider: NetworkProvider) {
         ),
     );
 
-    console.log('market', market.address);
-
     const jettonDefaultWalletAddressMarket = await calculateJettonDefaultWalletAddress(
         jettonMasterAddress,
         market.address,
     );
+    // console.log('jettonDefaultWalletAddressMarket', jettonDefaultWalletAddressMarket);
+    // console.log('market', market.address);
 
-    await factory.send(
+    // await factory.send(
+    //     provider.sender(),
+    //     {
+    //         value: toNano('0.25'),
+    //     },
+    //     {
+    //         $$type: 'DeployTokenMarket',
+    //         queryId: 0n,
+    //         id,
+    //         owner,
+    //         coin,
+    //         jettonWallet: jettonDefaultWalletAddressMarket,
+    //         underlyingAssetName,
+    //         duration,
+    //         collection_content: content,
+    //         oracle: oracleAddress,
+    //         feedIdAsset: feedAssetId,
+    //         feedIdToken: feedTokenId,
+    //         operatorFee,
+    //         serviceFee,
+    //         operatorFeeAddress,
+    //         originalGasTo: owner,
+    //     },
+    // );
+
+    await market.send(
         provider.sender(),
         {
             value: toNano('0.25'),
         },
         {
-            $$type: 'DeployTokenMarket',
+            $$type: 'InnerDeployMarket',
             queryId: 0n,
-            id,
-            owner,
-            coin,
             jettonWallet: jettonDefaultWalletAddressMarket,
-            underlyingAssetName,
-            duration,
-            collection_content: content,
-            oracle: oracleAddress,
-            feedIdAsset: feedAssetId,
-            feedIdToken: feedTokenId,
-            operatorFee,
-            serviceFee,
-            operatorFeeAddress,
             originalGasTo: owner,
         },
     );

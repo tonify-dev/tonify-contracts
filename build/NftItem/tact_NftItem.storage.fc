@@ -108,6 +108,41 @@ cell $ReportStaticData$_store_cell((int, int, slice) v) inline {
 }
 
 ;;
+;; Type: GetOwner
+;; Header: 0xbc26f4c8
+;; TLB: get_owner#bc26f4c8 query_id:uint64 = GetOwner
+;;
+
+(slice, ((int))) $GetOwner$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3156669640);
+    var v'query_id = sc_0~load_uint(64);
+    return (sc_0, (v'query_id));
+}
+
+;;
+;; Type: ReportOwner
+;; Header: 0x2a004a05
+;; TLB: report_owner#2a004a05 query_id:uint64 index_id:int257 owner:address = ReportOwner
+;;
+
+builder $ReportOwner$_store(builder build_0, (int, int, slice) v) inline {
+    var (v'query_id, v'index_id, v'owner) = v;
+    build_0 = store_uint(build_0, 704662021, 32);
+    build_0 = build_0.store_uint(v'query_id, 64);
+    build_0 = build_0.store_int(v'index_id, 257);
+    build_0 = __tact_store_address(build_0, v'owner);
+    return build_0;
+}
+
+cell $ReportOwner$_store_cell((int, int, slice) v) inline {
+    return $ReportOwner$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, slice)) $ReportOwner$_constructor_query_id_index_id_owner(int $query_id, int $index_id, slice $owner) inline {
+    return ($query_id, $index_id, $owner);
+}
+
+;;
 ;; Type: GetNftData
 ;; TLB: _ is_initialized:bool index:int257 collection_address:address owner_address:address individual_content:^cell = GetNftData
 ;;
@@ -119,48 +154,6 @@ cell $ReportStaticData$_store_cell((int, int, slice) v) inline {
 
 ((int, int, slice, slice, cell)) $GetNftData$_constructor_is_initialized_index_collection_address_owner_address_individual_content(int $is_initialized, int $index, slice $collection_address, slice $owner_address, cell $individual_content) inline {
     return ($is_initialized, $index, $collection_address, $owner_address, $individual_content);
-}
-
-;;
-;; Type: TokenTransfer
-;; Header: 0x0f8a7ea5
-;; TLB: token_transfer#0f8a7ea5 query_id:uint64 amount:coins recipient:address response_destination:Maybe address custom_payload:Maybe ^cell forward_ton_amount:coins forward_payload:remainder<slice> = TokenTransfer
-;;
-
-builder $TokenTransfer$_store(builder build_0, (int, int, slice, slice, cell, int, slice) v) inline_ref {
-    var (v'query_id, v'amount, v'recipient, v'response_destination, v'custom_payload, v'forward_ton_amount, v'forward_payload) = v;
-    build_0 = store_uint(build_0, 260734629, 32);
-    build_0 = build_0.store_uint(v'query_id, 64);
-    build_0 = build_0.store_coins(v'amount);
-    build_0 = __tact_store_address(build_0, v'recipient);
-    build_0 = __tact_store_address_opt(build_0, v'response_destination);
-    build_0 = ~ null?(v'custom_payload) ? build_0.store_int(true, 1).store_ref(v'custom_payload) : build_0.store_int(false, 1);
-    build_0 = build_0.store_coins(v'forward_ton_amount);
-    build_0 = build_0.store_slice(v'forward_payload);
-    return build_0;
-}
-
-cell $TokenTransfer$_store_cell((int, int, slice, slice, cell, int, slice) v) inline {
-    return $TokenTransfer$_store(begin_cell(), v).end_cell();
-}
-
-((int, int, slice, slice, cell, int, slice)) $TokenTransfer$_constructor_query_id_amount_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload(int $query_id, int $amount, slice $recipient, slice $response_destination, cell $custom_payload, int $forward_ton_amount, slice $forward_payload) inline {
-    return ($query_id, $amount, $recipient, $response_destination, $custom_payload, $forward_ton_amount, $forward_payload);
-}
-
-;;
-;; Type: TokenNotification
-;; Header: 0x7362d09c
-;; TLB: token_notification#7362d09c query_id:uint64 amount:coins from:address forward_payload:remainder<slice> = TokenNotification
-;;
-
-(slice, ((int, int, slice, slice))) $TokenNotification$_load(slice sc_0) inline {
-    throw_unless(129, sc_0~load_uint(32) == 1935855772);
-    var v'query_id = sc_0~load_uint(64);
-    var v'amount = sc_0~load_coins();
-    var v'from = sc_0~__tact_load_address();
-    var v'forward_payload = sc_0;
-    return (sc_0, (v'query_id, v'amount, v'from, v'forward_payload));
 }
 
 ;;

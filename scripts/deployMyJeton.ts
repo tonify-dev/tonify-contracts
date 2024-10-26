@@ -10,7 +10,11 @@ export async function run(provider: NetworkProvider) {
         {
             value: toNano('0.15'),
         },
-        "Mint: 100"
+        {
+            $$type: 'Mint',
+            amount: toNano('1000'),
+            receiver: provider.sender().address!,
+        }
     );
 
     await provider.waitForDeploy(myJetton.address);

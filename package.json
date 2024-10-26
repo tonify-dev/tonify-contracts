@@ -8,13 +8,15 @@
         "build-oracle": "blueprint build CheckTactOracle 1>/dev/null",
         "build-factory": "blueprint build Factory 1>/dev/null && npm run build-market",
         "build-amm": "blueprint build Amm 1>/dev/null && npm run build-market",
+        "build-nft": "blueprint build NftItem 1>/dev/null",
         "test": "jest --verbose",
         "test-oracle": "npm run build-oracle && jest ./tests/SingleFeedMan.spec.ts --verbose",
         "test-market": "npm run build-market && jest ./tests/Market.spec.ts --verbose",
         "test-market-integration": "npm run build-market && jest ./tests/MarketIntegration.spec.ts --verbose",
         "test-factory": "npm run build-factory && jest ./tests/Factory.spec.ts --verbose",
         "test-amm": "npm run build-amm && jest ./tests/Amm.spec.ts --verbose",
-        "test-amm-integration": "npm run build-amm && jest ./tests/AmmIntegration.spec.ts --verbose"
+        "test-amm-integration": "npm run build-amm && jest ./tests/AmmIntegration.spec.ts --verbose",
+        "test-nft": "npm run build-nft && jest ./tests/NftItem.spec.ts --verbose"
     },
     "devDependencies": {
         "@orbs-network/ton-access": "^2.3.3",
