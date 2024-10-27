@@ -1642,7 +1642,7 @@ PROGRAM{
     __tact_slice_eq_bits INLINECALLDICT
     NOT
     IF:<{
-      350000000 PUSHINT
+      400000000 PUSHINT
       0 PUSHINT
       TRUE
       s0 s6 XCHG
@@ -2043,18 +2043,6 @@ PROGRAM{
     MUL
     10000000000000000 PUSHINT
     DIV
-    s2 s0 PUSH2
-    LESS
-    IFJMP:<{
-      2DROP
-      6 3 BLKDROP2
-      s3 POP
-      s3 POP
-      s4 POP
-      s2 POP
-      5 PUSHINT
-      $Market$_fun_returnTokens INLINECALLDICT
-    }>
     s11 s9 PUSH2
     MUL
     100000000 PUSHINT
@@ -2085,6 +2073,43 @@ PROGRAM{
       4 PUSHINT
       $Market$_fun_returnTokens INLINECALLDICT
     }>
+    s2 s0 PUSH2
+    SUB
+    DUP
+    0 LESSINT
+    IFJMP:<{
+      3 BLKDROP
+      6 3 BLKDROP2
+      s3 POP
+      s3 POP
+      s4 POP
+      s2 POP
+      5 PUSHINT
+      $Market$_fun_returnTokens INLINECALLDICT
+    }>
+    DUP
+    0 GTINT
+    IF:<{
+      48000000 PUSHINT
+      0 PUSHINT
+      TRUE
+      PUSHNULL
+      s2 PUSH
+      $global_emptySlice INLINECALLDICT
+      s11 PUSH
+      s4 s7 XCHG
+      s3 s11 XCPU
+      s3 s10 XCPU
+      s0 s3 XCHG
+      $TokenTransfer$_constructor_amount_query_id_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload INLINECALLDICT
+      $TokenTransfer$_store_cell INLINECALLDICT
+      35 s() PUSH
+      s4 s4 XCHG2
+      $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+      $global_send INLINECALLDICT
+    }>ELSE<{
+      DROP
+    }>
     s8 s8 XCPU
     SUB
     DUP
@@ -2112,7 +2137,7 @@ PROGRAM{
       s9 PUSH
       s4 s8 XCHG
       s3 s11 XCPU
-      s3 s10 XCPU
+      s3 s8 XCPU
       s0 s3 XCHG
       $TokenTransfer$_constructor_amount_query_id_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload INLINECALLDICT
       $TokenTransfer$_store_cell INLINECALLDICT

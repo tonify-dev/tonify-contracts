@@ -1,6 +1,6 @@
 # TACT Compilation Report
 Contract: Market
-BOC Size: 9058 bytes
+BOC Size: 9112 bytes
 
 # Types
 Total Types: 71

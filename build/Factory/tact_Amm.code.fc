@@ -57,7 +57,7 @@
     var ($msg'queryId, $msg'dealId, $msg'amount, $msg'originalGasTo, $msg'oracleAssetData, $msg'oracleTokenData) = $msg;
     raw_reserve(100000000, 0);
     throw_unless(24843, ( __tact_slice_eq_bits($self'market, __tact_context_get_sender()) ));
-    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'jettonWallet, 0, 128, true, $TokenTransfer$_store_cell($TokenTransfer$_constructor_amount_recipient_query_id_response_destination_custom_payload_forward_ton_amount_forward_payload($msg'amount, __tact_context_get_sender(), $msg'queryId, $msg'originalGasTo, null(), 240000000, begin_parse($TakeDealWithOriginalGasTo$_store_cell($TakeDealWithOriginalGasTo$_constructor_data($TakeDealDataWithOriginalGasTo$_store_cell($TakeDealDataWithOriginalGasTo$_constructor_dealId_oracleAssetData_oracleTokenData_originalGasTo($msg'dealId, $msg'oracleAssetData, $msg'oracleTokenData, $msg'originalGasTo)))))))));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'jettonWallet, 0, 128, true, $TokenTransfer$_store_cell($TokenTransfer$_constructor_amount_recipient_query_id_response_destination_custom_payload_forward_ton_amount_forward_payload($msg'amount, __tact_context_get_sender(), $msg'queryId, $msg'originalGasTo, null(), 300000000, begin_parse($TakeDealWithOriginalGasTo$_store_cell($TakeDealWithOriginalGasTo$_constructor_data($TakeDealDataWithOriginalGasTo$_store_cell($TakeDealDataWithOriginalGasTo$_constructor_dealId_oracleAssetData_oracleTokenData_originalGasTo($msg'dealId, $msg'oracleAssetData, $msg'oracleTokenData, $msg'originalGasTo)))))))));
     return (($self'id, $self'factory, $self'owner, $self'market, $self'jettonWallet), ());
 }
 

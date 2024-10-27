@@ -568,7 +568,7 @@ PROGRAM{
     __tact_context_get_sender INLINECALLDICT
     PUSHNULL
     s9 s6 XCHG2
-    240000000 PUSHINT
+    300000000 PUSHINT
     s6 s8 XCPU
     $TakeDealDataWithOriginalGasTo$_constructor_dealId_oracleAssetData_oracleTokenData_originalGasTo INLINECALLDICT
     $TakeDealDataWithOriginalGasTo$_store_cell INLINECALLDICT

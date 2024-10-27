@@ -1,8 +1,0 @@
-;; String "dump(msg.amount)"
-slice __gen_slice_string_a2252b8c87dfe76c7d8bddc89733a6e43004da506cb88a1e527c250bf0eb7936() asm "B{b5ee9c7241010101001200002064756d70286d73672e616d6f756e742958bd4913} B>boc <s PUSHSLICE";
-
-;; String "dump(self.balance)"
-slice __gen_slice_string_b543fff7dc1d7347233a20cf4d2c2cfb4bc2ce96c6c15eee07cbda7713457ec6() asm "B{b5ee9c7241010101001400002464756d702873656c662e62616c616e636529cb9ad5ee} B>boc <s PUSHSLICE";
-
-;; String "dump(1)"
-slice __gen_slice_string_17f22badb508e64718e0e5513fe1bfcbab0e2964f2bbe0ebcd290125efe510fe() asm "B{b5ee9c7241010101000900000e64756d702831298322c0ac} B>boc <s PUSHSLICE";

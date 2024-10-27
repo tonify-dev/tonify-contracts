@@ -322,8 +322,8 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         if(returnAmountToTaker > 0) {
             send(SendParameters{
                 to: self.jettonWallet,
-                value: 0,
-                mode: SendRemainingBalance,
+                value: GAS_TO_SEND_JETTON,
+                mode: 0,
                 bounce: true,
                 body: TokenTransfer{
                     amount: returnAmountToTaker,

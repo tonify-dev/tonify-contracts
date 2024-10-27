@@ -82,7 +82,6 @@ describe('Amm', () => {
         owner = await blockchain.treasury('owner');
         operatorFeeAddress = await blockchain.treasury('operatorFeeAddress');
         serviceFeeAddress = await blockchain.treasury('serviceFeeAddress');
-        blockchain.now = Math.floor(Date.now() / 1000);
         taker = await blockchain.treasury('taker');
         maker = await blockchain.treasury('maker');
         factory = await blockchain.treasury('factory');
@@ -357,7 +356,7 @@ describe('Amm', () => {
         const createDealResult = await jettonWalletMaker.send(
             maker.getSender(),
             {
-                value: toNano('1.5'),
+                value: toNano('0.65'),
             },
             {
                 $$type: 'TokenTransfer',
@@ -366,7 +365,7 @@ describe('Amm', () => {
                 recipient: market.address,
                 response_destination: maker.address,
                 custom_payload: null,
-                forward_ton_amount: toNano('1'),
+                forward_ton_amount: toNano('0.55'),
                 forward_payload: createDealData,
             },
         );
@@ -376,7 +375,7 @@ describe('Amm', () => {
         console.log('User fee :' + fromNano(tonBalanceAfter - tonBalanceBefore));
         deal = blockchain.openContract(await Deal.fromInit(dealId, market.address));
         const dealDataAfterTake = loadDealData((await deal.getData())!.asSlice());
-        console.log('createDealResult', createDealResult.events);
+        // console.log('createDealResult', createDealResult.events);
         // console.log('createDealResult', createDealResult.transactions);
         expect(dealDataAfterTake.status).toEqual(DEAL_STATUS_ACCEPTED);
         verifyTransactions(createDealResult, [maker.address, market.address]);

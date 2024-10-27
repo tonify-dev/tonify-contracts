@@ -416,7 +416,7 @@ describe('Market', () => {
             percent,
             dealId,
         });
-        console.log('takeDealResult', takeDealResult.events);
+        // console.log('takeDealResult', takeDealResult.events);
     }
 
     async function proceedDeal(
