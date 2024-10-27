@@ -367,6 +367,50 @@ describe('Amm', () => {
         expect(dealDataAfterTake.status).toEqual(DEAL_STATUS_ACCEPTED);
         verifyTransactions(createDealResult, [maker.address, market.address]);
     });
+
+    it('should withdraw tokens', async () => {
+        const withdrawResult = await amm.send(
+            owner.getSender(),
+            {
+                value: toNano('0.1'),
+            },
+            {
+                $$type: 'WithdrawToken',
+                amount: toNano('10.01'),
+                queryId: 0n,
+                originalGasTo: owner.address,
+            },
+        );
+
+        verifyTransactions(withdrawResult, [owner.address]);
+
+        const balanceMakerAfter = (await jettonWalletAmm.getGetWalletData()).balance;
+        expect(balanceMakerAfter).toEqual(0n);
+    });
+
+    it('should not withdraw tokens if call not owner', async () => {
+        const withdrawResult = await amm.send(
+            taker.getSender(),
+            {
+                value: toNano('0.1'),
+            },
+            {
+                $$type: 'WithdrawToken',
+                amount: toNano('10.01'),
+                queryId: 0n,
+                originalGasTo: maker.address,
+            },  
+        );
+
+        expect(withdrawResult.transactions).toHaveTransaction({
+            success: false,
+            to: amm.address,
+            exitCode: 132,
+        });
+
+        const balanceMakerAfter = (await jettonWalletAmm.getGetWalletData()).balance;
+        expect(balanceMakerAfter).toEqual(toNano('10.01'));
+    });
     
     async function verifyTransactions(result: any, fromAddresses: Address[]) {
         expect(result.transactions).not.toHaveTransaction({

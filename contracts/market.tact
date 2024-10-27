@@ -299,10 +299,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         }
 
         let collateralAmount: Int = (deal.percent * contextTakeDealAfterDeal.price * contextTakeDealAfterDeal.price2) / COLLATERAL_DENOMINATOR; 
-        if (contextTakeDealAfterDeal.amount < collateralAmount) {
-            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, SMALL_AMOUNT);
-            return;
-        }
+
 
         if ((contextTakeDealAfterDeal.price <=
                 (deal.rateMaker -
@@ -316,22 +313,46 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
             return;
         }
 
-        let returnAmount: Int = deal.collateralAmountMaker - collateralAmount;
-        if(returnAmount < 0) {
+        let returnAmountToTaker: Int = contextTakeDealAfterDeal.amount - collateralAmount;
+        if(returnAmountToTaker < 0) {
+            self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, SMALL_AMOUNT);
+            return;
+        }
+
+        if(returnAmountToTaker > 0) {
+            send(SendParameters{
+                to: self.jettonWallet,
+                value: 0,
+                mode: SendRemainingBalance,
+                bounce: true,
+                body: TokenTransfer{
+                    amount: returnAmountToTaker,
+                    query_id: queryId,
+                    recipient: contextTakeDealAfterDeal.from,
+                    response_destination: contextTakeDealAfterDeal.originalGasTo,
+                    custom_payload: null,
+                    forward_ton_amount: 0,
+                    forward_payload: emptySlice(),
+                }.toCell()
+            }); 
+        }
+
+        let returnAmountToMaker: Int = deal.collateralAmountMaker - collateralAmount;
+        if(returnAmountToMaker < 0) {
             self.returnTokens(queryId, contextTakeDealAfterDeal.amount, contextTakeDealAfterDeal.from, SMALL_AMOUNT_OF_MAKER);
             return;
         }
-        if(returnAmount > 0) {
+        if(returnAmountToMaker > 0) {
             send(SendParameters{
                 to: self.jettonWallet,
                 value: GAS_TO_SEND_JETTON,
                 mode: 0,
                 bounce: true,
                 body: TokenTransfer{
-                    amount: returnAmount,
+                    amount: returnAmountToMaker,
                     query_id: queryId,  
                     recipient: deal.maker,
-                    response_destination: contextTakeDealAfterDeal.from,
+                    response_destination: contextTakeDealAfterDeal.originalGasTo,
                     custom_payload: null,
                     forward_ton_amount: 0,
                     forward_payload: emptySlice(),

@@ -29,7 +29,7 @@ describe('NftItem', () => {
                 query_id: 0n,
                 new_owner: owner.address,
                 response_destination: deployer.address,
-                custom_payload: null,
+                custom_payload: beginCell().storeStringTail('test').endCell(),
                 forward_amount: 0n,
                 forward_payload: beginCell().endCell().asSlice(),
             }

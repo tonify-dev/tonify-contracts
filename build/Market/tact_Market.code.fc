@@ -152,21 +152,25 @@
         return (($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress), ());
     }
     int $collateralAmount = ((($deal'percent * $contextTakeDealAfterDeal'price) * $contextTakeDealAfterDeal'price2) / 10000000000000000);
-    if (($contextTakeDealAfterDeal'amount < $collateralAmount)) {
-        ($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress)~$Market$_fun_returnTokens($queryId, $contextTakeDealAfterDeal'amount, $contextTakeDealAfterDeal'from, 5);
-        return (($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress), ());
-    }
     if (( (($contextTakeDealAfterDeal'price <= ($deal'rateMaker - (($deal'rateMaker * $deal'slippageMaker) / 100000000)))) ? (($contextTakeDealAfterDeal'price >= ($deal'rateMaker + (($deal'rateMaker * $deal'slippageMaker) / 100000000)))) : (false) )) {
         ($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress)~$Market$_fun_returnTokens($queryId, $contextTakeDealAfterDeal'amount, $contextTakeDealAfterDeal'from, 4);
         return (($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress), ());
     }
-    int $returnAmount = ($deal'collateralAmountMaker - $collateralAmount);
-    if (($returnAmount < 0)) {
+    int $returnAmountToTaker = ($contextTakeDealAfterDeal'amount - $collateralAmount);
+    if (($returnAmountToTaker < 0)) {
+        ($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress)~$Market$_fun_returnTokens($queryId, $contextTakeDealAfterDeal'amount, $contextTakeDealAfterDeal'from, 5);
+        return (($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress), ());
+    }
+    if (($returnAmountToTaker > 0)) {
+        $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'jettonWallet, 0, 128, true, $TokenTransfer$_store_cell($TokenTransfer$_constructor_amount_query_id_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload($returnAmountToTaker, $queryId, $contextTakeDealAfterDeal'from, $contextTakeDealAfterDeal'originalGasTo, null(), 0, $global_emptySlice()))));
+    }
+    int $returnAmountToMaker = ($deal'collateralAmountMaker - $collateralAmount);
+    if (($returnAmountToMaker < 0)) {
         ($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress)~$Market$_fun_returnTokens($queryId, $contextTakeDealAfterDeal'amount, $contextTakeDealAfterDeal'from, 9);
         return (($self'id, $self'owner, $self'amm, $self'jettonWallet, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'operatorFeeAddress), ());
     }
-    if (($returnAmount > 0)) {
-        $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'jettonWallet, 48000000, 0, true, $TokenTransfer$_store_cell($TokenTransfer$_constructor_amount_query_id_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload($returnAmount, $queryId, $deal'maker, $contextTakeDealAfterDeal'from, null(), 0, $global_emptySlice()))));
+    if (($returnAmountToMaker > 0)) {
+        $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'jettonWallet, 48000000, 0, true, $TokenTransfer$_store_cell($TokenTransfer$_constructor_amount_query_id_recipient_response_destination_custom_payload_forward_ton_amount_forward_payload($returnAmountToMaker, $queryId, $deal'maker, $contextTakeDealAfterDeal'originalGasTo, null(), 0, $global_emptySlice()))));
     }
     $deal'collateralAmountMaker = $collateralAmount;
     $deal'rate = $contextTakeDealAfterDeal'price;

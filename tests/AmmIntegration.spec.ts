@@ -78,7 +78,6 @@ describe('Amm', () => {
             singleFeedManCode,
             new SingleFeedManInitData('USDT', 2, SIGNERS),
         ).getAdapter();
-        blockchain = await Blockchain.create();
         deployer = await blockchain.treasury('deployer');
         owner = await blockchain.treasury('owner');
         operatorFeeAddress = await blockchain.treasury('operatorFeeAddress');
@@ -282,6 +281,7 @@ describe('Amm', () => {
                 market: market.address,
             },
         );
+        await singleFeedMan.contract.sendDeploy();
         expect(ammDeployResult.transactions).toHaveTransaction({
             from: factory.address,
             to: amm.address,
@@ -357,7 +357,7 @@ describe('Amm', () => {
         const createDealResult = await jettonWalletMaker.send(
             maker.getSender(),
             {
-                value: toNano('2.9'),
+                value: toNano('1.5'),
             },
             {
                 $$type: 'TokenTransfer',
@@ -366,7 +366,7 @@ describe('Amm', () => {
                 recipient: market.address,
                 response_destination: maker.address,
                 custom_payload: null,
-                forward_ton_amount: toNano('2.8'),
+                forward_ton_amount: toNano('1'),
                 forward_payload: createDealData,
             },
         );
@@ -377,7 +377,7 @@ describe('Amm', () => {
         deal = blockchain.openContract(await Deal.fromInit(dealId, market.address));
         const dealDataAfterTake = loadDealData((await deal.getData())!.asSlice());
         console.log('createDealResult', createDealResult.events);
-        console.log('createDealResult', createDealResult.transactions);
+        // console.log('createDealResult', createDealResult.transactions);
         expect(dealDataAfterTake.status).toEqual(DEAL_STATUS_ACCEPTED);
         verifyTransactions(createDealResult, [maker.address, market.address]);
     });
