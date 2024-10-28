@@ -1,11 +1,13 @@
-import { Address, beginCell, toNano } from '@ton/core';
-import { Amm, storeCreateDeal } from '../wrappers/Amm';
-import { Factory } from '../wrappers/Factory';
+import { Address, beginCell, Cell, toNano } from '@ton/core';
+import { storeTakeDeal } from '../wrappers/Market';
+import { Factory, loadTokenTransfer } from '../wrappers/Factory';
 import { NetworkProvider } from '@ton/blueprint';
 import { Market } from '../wrappers/Market';
 import * as data from '../state.json';
 import { calculateJettonDefaultWalletAddress } from './uitls/calculateJettonWalletAddress';
 import { JettonDefaultWallet } from '../wrappers/JettonDefaultWallet';
+import { ContractParamsProvider } from '@redstone-finance/sdk';
+import { createCellFromParamsProvider } from '../tests/helpers/test_helpers';
 
 const jettonMasterAddress = Address.parse('EQAEjTwIDPZDLkPMbzUB5Pdu3BIbKYVdzgSp9wG3VHJL-rWw');
 const oracleAddress = Address.parse('EQD1HG-Y_20MGKGZc_fi-hB_9iIGLJvNf4JVZGXTWG93sRmI');
@@ -13,20 +15,18 @@ const ammAddress = Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ
 const feedAssetId = 4543560n; // ETH
 const feedTokenId = 1431520340n; // USDT
 const marketAddress = Address.parse('EQBt3AXW0hodMq-EbI9wQ085qbXBETdb1UXz12W09pNOYwB6');
-const rateAsset = 248360000000n; // rate asset in 8 decimals
-const rateToken = 100000000n; // rate token in 8 decimals
+const rateAsset = 248921732437n; // rate asset in 8 decimals
+const rateToken = 101000000n; // rate token in 8 decimals
 const percent = toNano('0.01'); // 1%
 const expiration = 60n * 60n * 24n * 30n; // 30 days
 const slippage = toNano('0.1'); // 10%
-
 const SLIPPAGE_DENOMINATOR = 10n ** 25n;
 const COLLATERAL_DENOMINATOR = 10n ** 16n;
 
-function getAmount(rateAsset: bigint, rateToken: bigint, percent: bigint, slippage: bigint): bigint {
-    return (
-        (rateAsset * percent * rateToken) / COLLATERAL_DENOMINATOR +
-        (rateAsset * percent * slippage * rateToken) / SLIPPAGE_DENOMINATOR
-    );
+
+
+function getAmountWithoutSlippage(rateAsset: bigint, rateToken: bigint, percent: bigint): bigint {
+    return (rateAsset * rateToken * percent) / COLLATERAL_DENOMINATOR;
 }
 
 export async function run(provider: NetworkProvider) {
@@ -36,24 +36,35 @@ export async function run(provider: NetworkProvider) {
 
     const jettonDefaultWalletAddressOwner = await calculateJettonDefaultWalletAddress(jettonMasterAddress, owner);
     const walletOwner = provider.open(await JettonDefaultWallet.fromAddress(jettonDefaultWalletAddressOwner));
-
+    // const data  = Cell.fromBoc(Buffer.from('b5ee9c720101010100580000ab0f8a7ea50000000000000000505da86aa4080028976858f438b219d0523705a02aadf60e497940084e1439b272d88d51acb229000512ed0b1e8716433a0a46e0b40555bec1c92f280109c287364e5b11aa3596450011', 'hex'))[0];
+    // const tokenTransfer = loadTokenTransfer(data.beginParse());
+    // console.log('data', tokenTransfer.forward_payload.loadUint(8));
     const createDealData = beginCell()
         .store(
-            storeCreateDeal({
-                $$type: 'CreateDeal',
-                makerPosition: true,
-                rateAsset: rateAsset,
-                rateToken: rateToken,
-                percent: percent,
-                expiration: expiration,
-                slippage: slippage,
-                oracleAssetData: null,
-                oracleTokenData: null,
+            storeTakeDeal({
+                $$type: 'TakeDeal',
+                dealId: 0n,
+                oracleAssetData:  await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['ETH'],
+                        // historicalTimestamp: 1730058590000,
+                    }),
+                ),
+                oracleTokenData: await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['USDT'],
+                        // historicalTimestamp: 1730058590000,
+                    }),
+                ),
             }),
         )
         .asSlice();
 
-    const amount = getAmount(rateAsset, rateToken, percent, slippage);
+    const amount = getAmountWithoutSlippage(rateAsset, rateToken, percent);
     const balanceBefore = (await walletOwner.getGetWalletData()).balance;
     console.log('Amount:', amount);
     console.log('User balance:', balanceBefore);

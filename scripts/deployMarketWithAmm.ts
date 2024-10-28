@@ -10,7 +10,7 @@ const jettonMasterAddress = Address.parse('EQAEjTwIDPZDLkPMbzUB5Pdu3BIbKYVdzgSp9
 const oracleAddress = Address.parse('EQD1HG-Y_20MGKGZc_fi-hB_9iIGLJvNf4JVZGXTWG93sRmI');
 const feedAssetId = 4543560n; // ETH
 const feedTokenId = 1431520340n; // USDT
-const id = 2n;
+const id = 4n;
 const coin = jettonMasterAddress;
 const serviceFee = toNano('0.01'); // 1%
 const operatorFee = toNano('0.01'); // 1%
@@ -30,7 +30,11 @@ export async function run(provider: NetworkProvider) {
         owner,
     );
     console.log('amm', amm.address);
-    const jettonDefaultWalletAddressAmm = await calculateJettonDefaultWalletAddress(jettonMasterAddress, amm.address);
+    const jettonDefaultWalletAddressAmm = await calculateJettonDefaultWalletAddress(
+        jettonMasterAddress,
+        amm.address,
+    );
+    console.log('jettonDefaultWalletAddressAmm', jettonDefaultWalletAddressAmm);
     const market = provider.open(await Market.fromInit(
         id,
         owner,
@@ -49,10 +53,10 @@ export async function run(provider: NetworkProvider) {
     ));
     console.log('market', market.address);
     const jettonDefaultWalletAddressMarket = await calculateJettonDefaultWalletAddress(
-        market.address,
         jettonMasterAddress,
+        market.address,
     );
-
+    console.log('jettonDefaultWalletAddressMarket', jettonDefaultWalletAddressMarket);
     await factory.send(
         provider.sender(),
         {

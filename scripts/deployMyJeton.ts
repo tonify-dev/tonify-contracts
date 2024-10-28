@@ -1,4 +1,4 @@
-import { beginCell, toNano } from '@ton/core';
+import { Address, beginCell, toNano } from '@ton/core';
 import { MyJetton } from '../wrappers/MyJetton';
 import { NetworkProvider } from '@ton/blueprint';
 
@@ -13,7 +13,7 @@ export async function run(provider: NetworkProvider) {
         {
             $$type: 'Mint',
             amount: toNano('1000'),
-            receiver: provider.sender().address!,
+            receiver: Address.parse('EQBRABVvQJ15DNZ3QokMeoeUSlqQycQHPm0mOGz3g-PPyTnE'),
         }
     );
 

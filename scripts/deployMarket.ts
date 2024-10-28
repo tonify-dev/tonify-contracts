@@ -55,7 +55,7 @@ export async function run(provider: NetworkProvider) {
     await factory.send(
         provider.sender(),
         {
-            value: toNano('0.25'),
+            value: toNano('0.35'),
         },
         {
             $$type: 'DeployTokenMarket',

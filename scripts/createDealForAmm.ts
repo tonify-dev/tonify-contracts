@@ -6,13 +6,15 @@ import { Market } from '../wrappers/Market';
 import * as data from '../state.json';
 import { calculateJettonDefaultWalletAddress } from './uitls/calculateJettonWalletAddress';
 import { JettonDefaultWallet } from '../wrappers/JettonDefaultWallet';
+import { createCellFromParamsProvider } from '../tests/helpers/test_helpers';
+import { ContractParamsProvider } from '@redstone-finance/sdk';
 
 const jettonMasterAddress = Address.parse('EQAEjTwIDPZDLkPMbzUB5Pdu3BIbKYVdzgSp9wG3VHJL-rWw');
 const oracleAddress = Address.parse('EQD1HG-Y_20MGKGZc_fi-hB_9iIGLJvNf4JVZGXTWG93sRmI');
 const ammAddress = Address.parse('UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ'); //zero address
 const feedAssetId = 4543560n; // ETH
 const feedTokenId = 1431520340n; // USDT
-const marketAddress = Address.parse('EQBt3AXW0hodMq-EbI9wQ085qbXBETdb1UXz12W09pNOYwB6');
+const marketAddress = Address.parse('EQCWY3EFvhv0NFpKY26iQBmLJ6SXF3sbdj4EkGyhgS6Icwww');
 const rateAsset = 248360000000n; // rate asset in 8 decimals
 const rateToken = 100000000n; // rate token in 8 decimals
 const percent = toNano('0.01'); // 1%
@@ -47,8 +49,20 @@ export async function run(provider: NetworkProvider) {
                 percent: percent,
                 expiration: expiration,
                 slippage: slippage,
-                oracleAssetData: null,
-                oracleTokenData: null,
+                oracleAssetData: await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['ETH'],
+                    }),
+                ),
+                oracleTokenData: await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['USDT'],
+                    }),
+                ),
             }),
         )
         .asSlice();
