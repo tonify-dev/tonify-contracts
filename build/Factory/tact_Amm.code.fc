@@ -24,6 +24,16 @@
     return (($self'id, $self'factory, $self'owner, $self'market, $self'jettonWallet), $self'id);
 }
 
+((int, slice, slice, slice, slice), slice) $Amm$_fun_market((int, slice, slice, slice, slice) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'jettonWallet)) = $self;
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'jettonWallet), $self'market);
+}
+
+((int, slice, slice, slice, slice), int) $Amm$_fun_balance((int, slice, slice, slice, slice) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'jettonWallet)) = $self;
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'jettonWallet), __tact_my_balance());
+}
+
 ((int, slice, slice, slice, slice), ()) $Amm$_fun_requireOwner((int, slice, slice, slice, slice) $self) impure inline_ref {
     var (($self'id, $self'factory, $self'owner, $self'market, $self'jettonWallet)) = $self;
     throw_unless(132, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
@@ -86,6 +96,18 @@
 _ %id() method_id(105872) {
     var self = $Amm$_contract_load();
     var res = self~$Amm$_fun_id();
+    return res;
+}
+
+_ %market() method_id(109725) {
+    var self = $Amm$_contract_load();
+    var res = self~$Amm$_fun_market();
+    return res;
+}
+
+_ %balance() method_id(104128) {
+    var self = $Amm$_contract_load();
+    var res = self~$Amm$_fun_balance();
     return res;
 }
 

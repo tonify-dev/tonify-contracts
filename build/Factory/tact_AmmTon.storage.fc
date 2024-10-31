@@ -1,0 +1,231 @@
+;;
+;; Type: StateInit
+;; TLB: _ code:^cell data:^cell = StateInit
+;;
+
+((cell, cell)) $StateInit$_not_null(tuple v) inline {
+    throw_if(128, null?(v));
+    var (cell vvv'code, cell vvv'data) = __tact_tuple_destroy_2(v);
+    return (vvv'code, vvv'data);
+}
+
+;;
+;; Type: Context
+;; TLB: _ bounced:bool sender:address value:int257 raw:^slice = Context
+;;
+
+_ $Context$_get_value((int, slice, int, slice) v) inline {
+    var (v'bounced, v'sender, v'value, v'raw) = v;
+    return v'value;
+}
+
+;;
+;; Type: SendParameters
+;; TLB: _ bounce:bool to:address value:int257 mode:int257 body:Maybe ^cell code:Maybe ^cell data:Maybe ^cell = SendParameters
+;;
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body(slice $to, int $value, int $mode, int $bounce, cell $body) inline {
+    return ($bounce, $to, $value, $mode, $body, null(), null());
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int $bounce, slice $to, int $value, int $mode, cell $body, cell $code, cell $data) inline {
+    return ($bounce, $to, $value, $mode, $body, $code, $data);
+}
+
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce(slice $to, int $value, int $mode, int $bounce) inline {
+    return ($bounce, $to, $value, $mode, null(), null(), null());
+}
+
+;;
+;; Type: DeployOk
+;; Header: 0xaff90f57
+;; TLB: deploy_ok#aff90f57 queryId:uint64 = DeployOk
+;;
+
+builder $DeployOk$_store(builder build_0, (int) v) inline {
+    var (v'queryId) = v;
+    build_0 = store_uint(build_0, 2952335191, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    return build_0;
+}
+
+cell $DeployOk$_store_cell((int) v) inline {
+    return $DeployOk$_store(begin_cell(), v).end_cell();
+}
+
+((int)) $DeployOk$_constructor_queryId(int $queryId) inline {
+    return ($queryId);
+}
+
+;;
+;; Type: InnerDeployAmmTon
+;; Header: 0xdcc6e19b
+;; TLB: inner_deploy_amm_ton#dcc6e19b queryId:uint64 originalGasTo:address market:address = InnerDeployAmmTon
+;;
+
+(slice, ((int, slice, slice))) $InnerDeployAmmTon$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 3704021403);
+    var v'queryId = sc_0~load_uint(64);
+    var v'originalGasTo = sc_0~__tact_load_address();
+    var v'market = sc_0~__tact_load_address();
+    return (sc_0, (v'queryId, v'originalGasTo, v'market));
+}
+
+;;
+;; Type: WithdrawTon
+;; Header: 0x1b2e75c8
+;; TLB: withdraw_ton#1b2e75c8 queryId:uint64 amount:coins = WithdrawTon
+;;
+
+(slice, ((int, int))) $WithdrawTon$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 456029640);
+    var v'queryId = sc_0~load_uint(64);
+    var v'amount = sc_0~load_coins();
+    return (sc_0, (v'queryId, v'amount));
+}
+
+;;
+;; Type: TakeDealDataWithOriginalGasTo
+;; TLB: _ dealId:uint32 originalGasTo:address oracleAssetData:^cell oracleTokenData:^cell = TakeDealDataWithOriginalGasTo
+;;
+
+builder $TakeDealDataWithOriginalGasTo$_store(builder build_0, (int, slice, cell, cell) v) inline {
+    var (v'dealId, v'originalGasTo, v'oracleAssetData, v'oracleTokenData) = v;
+    build_0 = build_0.store_uint(v'dealId, 32);
+    build_0 = __tact_store_address(build_0, v'originalGasTo);
+    build_0 = build_0.store_ref(v'oracleAssetData);
+    build_0 = build_0.store_ref(v'oracleTokenData);
+    return build_0;
+}
+
+((int, slice, cell, cell)) $TakeDealDataWithOriginalGasTo$_constructor_dealId_oracleAssetData_oracleTokenData_originalGasTo(int $dealId, cell $oracleAssetData, cell $oracleTokenData, slice $originalGasTo) inline {
+    return ($dealId, $originalGasTo, $oracleAssetData, $oracleTokenData);
+}
+
+;;
+;; Type: TakeDealWithOriginalGasToTon
+;; Header: 0x262a9cf7
+;; TLB: take_deal_with_original_gas_to_ton#262a9cf7 queryId:uint64 amount:coins deal:TakeDealDataWithOriginalGasTo{dealId:uint32,originalGasTo:address,oracleAssetData:^cell,oracleTokenData:^cell} = TakeDealWithOriginalGasToTon
+;;
+
+builder $TakeDealWithOriginalGasToTon$_store(builder build_0, (int, int, (int, slice, cell, cell)) v) inline {
+    var (v'queryId, v'amount, (v'deal'dealId, v'deal'originalGasTo, v'deal'oracleAssetData, v'deal'oracleTokenData)) = v;
+    build_0 = store_uint(build_0, 640326903, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_coins(v'amount);
+    build_0 = $TakeDealDataWithOriginalGasTo$_store(build_0, (v'deal'dealId, v'deal'originalGasTo, v'deal'oracleAssetData, v'deal'oracleTokenData));
+    return build_0;
+}
+
+cell $TakeDealWithOriginalGasToTon$_store_cell((int, int, (int, slice, cell, cell)) v) inline {
+    return $TakeDealWithOriginalGasToTon$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, (int, slice, cell, cell))) $TakeDealWithOriginalGasToTon$_constructor_queryId_amount_deal(int $queryId, int $amount, (int, slice, cell, cell) $deal) inline {
+    return ($queryId, $amount, $deal);
+}
+
+;;
+;; Type: TakeDealAmm
+;; Header: 0x70f489e3
+;; TLB: take_deal_amm#70f489e3 queryId:uint64 dealId:uint32 amount:coins originalGasTo:address oracleAssetData:^cell oracleTokenData:^cell = TakeDealAmm
+;;
+
+(slice, ((int, int, int, slice, cell, cell))) $TakeDealAmm$_load(slice sc_0) inline_ref {
+    throw_unless(129, sc_0~load_uint(32) == 1895074275);
+    var v'queryId = sc_0~load_uint(64);
+    var v'dealId = sc_0~load_uint(32);
+    var v'amount = sc_0~load_coins();
+    var v'originalGasTo = sc_0~__tact_load_address();
+    var v'oracleAssetData = sc_0~load_ref();
+    var v'oracleTokenData = sc_0~load_ref();
+    return (sc_0, (v'queryId, v'dealId, v'amount, v'originalGasTo, v'oracleAssetData, v'oracleTokenData));
+}
+
+;;
+;; Type: ChangeOwner
+;; Header: 0x819dbe99
+;; TLB: change_owner#819dbe99 queryId:uint64 newOwner:address = ChangeOwner
+;;
+
+(slice, ((int, slice))) $ChangeOwner$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 2174598809);
+    var v'queryId = sc_0~load_uint(64);
+    var v'newOwner = sc_0~__tact_load_address();
+    return (sc_0, (v'queryId, v'newOwner));
+}
+
+;;
+;; Type: ChangeOwnerOk
+;; Header: 0x327b2b4a
+;; TLB: change_owner_ok#327b2b4a queryId:uint64 newOwner:address = ChangeOwnerOk
+;;
+
+builder $ChangeOwnerOk$_store(builder build_0, (int, slice) v) inline {
+    var (v'queryId, v'newOwner) = v;
+    build_0 = store_uint(build_0, 846932810, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = __tact_store_address(build_0, v'newOwner);
+    return build_0;
+}
+
+cell $ChangeOwnerOk$_store_cell((int, slice) v) inline {
+    return $ChangeOwnerOk$_store(begin_cell(), v).end_cell();
+}
+
+((int, slice)) $ChangeOwnerOk$_constructor_queryId_newOwner(int $queryId, slice $newOwner) inline {
+    return ($queryId, $newOwner);
+}
+
+;;
+;; Type: AmmTon
+;;
+
+builder $AmmTon$_store(builder build_0, (int, slice, slice, slice, int) v) inline {
+    var (v'id, v'factory, v'owner, v'market, v'deposited) = v;
+    build_0 = build_0.store_uint(v'id, 32);
+    build_0 = __tact_store_address(build_0, v'factory);
+    build_0 = __tact_store_address(build_0, v'owner);
+    build_0 = __tact_store_address(build_0, v'market);
+    build_0 = build_0.store_coins(v'deposited);
+    return build_0;
+}
+
+(slice, ((int, slice, slice, slice, int))) $AmmTon$_load(slice sc_0) inline {
+    var v'id = sc_0~load_uint(32);
+    var v'factory = sc_0~__tact_load_address();
+    var v'owner = sc_0~__tact_load_address();
+    var v'market = sc_0~__tact_load_address();
+    var v'deposited = sc_0~load_coins();
+    return (sc_0, (v'id, v'factory, v'owner, v'market, v'deposited));
+}
+
+(slice, ((int, slice, slice))) $AmmTon$init$_load(slice sc_0) inline {
+    var v'id = sc_0~load_int(257);
+    var v'factory = sc_0~__tact_load_address();
+    var v'owner = sc_0~__tact_load_address();
+    return (sc_0, (v'id, v'factory, v'owner));
+}
+
+(int, slice, slice, slice, int) $AmmTon$_contract_load() impure inline_ref {
+    slice $sc = get_data().begin_parse();
+    __tact_context_sys = $sc~load_ref();
+    int $loaded = $sc~load_int(1);
+    if ($loaded) {
+        return $sc~$AmmTon$_load();
+    } else {
+        ;; Allow only workchain deployments
+        throw_unless(137, my_address().preload_uint(11) == 1024);
+        (int $id, slice $factory, slice $owner) = $sc~$AmmTon$init$_load();
+        $sc.end_parse();
+        return $AmmTon$_contract_init($id, $factory, $owner);
+    }
+}
+
+() $AmmTon$_contract_store((int, slice, slice, slice, int) v) impure inline {
+    builder b = begin_cell();
+    b = b.store_ref(__tact_context_sys);
+    b = b.store_int(true, 1);
+    b = $AmmTon$_store(b, v);
+    set_data(b.end_cell());
+}

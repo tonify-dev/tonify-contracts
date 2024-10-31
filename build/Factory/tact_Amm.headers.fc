@@ -120,6 +120,12 @@ slice $global_emptySlice() impure inline;
 ;; $Amm$_fun_id
 ((int, slice, slice, slice, slice), int) $Amm$_fun_id((int, slice, slice, slice, slice) $self) impure inline_ref;
 
+;; $Amm$_fun_market
+((int, slice, slice, slice, slice), slice) $Amm$_fun_market((int, slice, slice, slice, slice) $self) impure inline_ref;
+
+;; $Amm$_fun_balance
+((int, slice, slice, slice, slice), int) $Amm$_fun_balance((int, slice, slice, slice, slice) $self) impure inline_ref;
+
 ;; $Amm$_fun_forward
 ((int, slice, slice, slice, slice), ()) $Amm$_fun_forward((int, slice, slice, slice, slice) $self, slice $to, cell $body, int $bounce, tuple $init) impure inline_ref;
 

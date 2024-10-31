@@ -1,0 +1,224 @@
+#pragma version =0.4.4;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_AmmTon.headers.fc";
+#include "tact_AmmTon.stdlib.fc";
+#include "tact_AmmTon.constants.fc";
+#include "tact_AmmTon.storage.fc";
+
+;;
+;; Contract AmmTon functions
+;;
+
+(int, slice, slice, slice, int) $AmmTon$_contract_init(int $id, slice $factory, slice $owner) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'deposited)) = (null(), null(), null(), __gen_slice_address_61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c(), 0);
+    $self'id = $id;
+    $self'factory = $factory;
+    $self'owner = $owner;
+    return ($self'id, $self'factory, $self'owner, $self'market, $self'deposited);
+}
+
+((int, slice, slice, slice, int), int) $AmmTon$_fun_id((int, slice, slice, slice, int) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'deposited)) = $self;
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), $self'id);
+}
+
+((int, slice, slice, slice, int), slice) $AmmTon$_fun_market((int, slice, slice, slice, int) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'deposited)) = $self;
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), $self'market);
+}
+
+((int, slice, slice, slice, int), int) $AmmTon$_fun_deposited((int, slice, slice, slice, int) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'deposited)) = $self;
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), $self'deposited);
+}
+
+((int, slice, slice, slice, int), int) $AmmTon$_fun_balance((int, slice, slice, slice, int) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'deposited)) = $self;
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), __tact_my_balance());
+}
+
+((int, slice, slice, slice, int), ()) $AmmTon$_fun_requireOwner((int, slice, slice, slice, int) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'deposited)) = $self;
+    throw_unless(132, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), ());
+}
+
+((int, slice, slice, slice, int), slice) $AmmTon$_fun_owner((int, slice, slice, slice, int) $self) impure inline_ref {
+    var (($self'id, $self'factory, $self'owner, $self'market, $self'deposited)) = $self;
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), $self'owner);
+}
+
+;;
+;; Receivers of a Contract AmmTon
+;;
+
+(((int, slice, slice, slice, int)), ()) %$AmmTon$_internal_empty((int, slice, slice, slice, int) $self) impure inline {
+    var ($self'id, $self'factory, $self'owner, $self'market, $self'deposited) = $self;
+    $self'deposited = $self'deposited + $Context$_get_value(__tact_context_get());
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), ());
+}
+
+((int, slice, slice, slice, int), ()) $AmmTon$_internal_any((int, slice, slice, slice, int) $self, slice $slice) impure inline {
+    var ($self'id, $self'factory, $self'owner, $self'market, $self'deposited) = $self;
+    $self'deposited = $self'deposited + $Context$_get_value(__tact_context_get());
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), ());
+}
+
+(((int, slice, slice, slice, int)), ()) $AmmTon$_internal_binary_InnerDeployAmmTon((int, slice, slice, slice, int) $self, (int, slice, slice) $msg) impure inline {
+    var ($self'id, $self'factory, $self'owner, $self'market, $self'deposited) = $self;
+    var ($msg'queryId, $msg'originalGasTo, $msg'market) = $msg;
+    throw_unless(40828, ( __tact_slice_eq_bits($self'factory, __tact_context_get_sender()) ));
+    raw_reserve((100000000 + $self'deposited), 0);
+    throw_unless(29863, ( __tact_slice_eq_bits(__gen_slice_address_61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c(), $self'market) ));
+    $self'market = $msg'market;
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($msg'originalGasTo, 0, 128, false, $DeployOk$_store_cell($DeployOk$_constructor_queryId($msg'queryId))));
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), ());
+}
+
+(((int, slice, slice, slice, int)), ()) $AmmTon$_internal_binary_TakeDealAmm((int, slice, slice, slice, int) $self, (int, int, int, slice, cell, cell) $msg) impure inline {
+    var ($self'id, $self'factory, $self'owner, $self'market, $self'deposited) = $self;
+    var ($msg'queryId, $msg'dealId, $msg'amount, $msg'originalGasTo, $msg'oracleAssetData, $msg'oracleTokenData) = $msg;
+    throw_unless(24843, ( __tact_slice_eq_bits($self'market, __tact_context_get_sender()) ));
+    $self'deposited = $self'deposited - $msg'amount;
+    raw_reserve((100000000 + $self'deposited), 0);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'market, 0, 128, true, $TakeDealWithOriginalGasToTon$_store_cell($TakeDealWithOriginalGasToTon$_constructor_queryId_amount_deal($msg'queryId, $msg'amount, $TakeDealDataWithOriginalGasTo$_constructor_dealId_oracleAssetData_oracleTokenData_originalGasTo($msg'dealId, $msg'oracleAssetData, $msg'oracleTokenData, $msg'originalGasTo)))));
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), ());
+}
+
+(((int, slice, slice, slice, int)), ()) $AmmTon$_internal_binary_WithdrawTon((int, slice, slice, slice, int) $self, (int, int) $msg) impure inline {
+    var ($self'id, $self'factory, $self'owner, $self'market, $self'deposited) = $self;
+    var ($msg'queryId, $msg'amount) = $msg;
+    ($self'id, $self'factory, $self'owner, $self'market, $self'deposited)~$AmmTon$_fun_requireOwner();
+    $self'deposited = $self'deposited - $msg'amount;
+    raw_reserve((100000000 + $self'deposited), 0);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce(__tact_context_get_sender(), 0, 128, true));
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), ());
+}
+
+(((int, slice, slice, slice, int)), ()) $AmmTon$_internal_binary_ChangeOwner((int, slice, slice, slice, int) $self, (int, slice) $msg) impure inline {
+    var ($self'id, $self'factory, $self'owner, $self'market, $self'deposited) = $self;
+    var ($msg'queryId, $msg'newOwner) = $msg;
+    ($self'id, $self'factory, $self'owner, $self'market, $self'deposited)~$AmmTon$_fun_requireOwner();
+    $self'owner = $msg'newOwner;
+    ($self'id, $self'factory, $self'owner, $self'market, $self'deposited)~$AmmTon$_fun_reply($ChangeOwnerOk$_store_cell($ChangeOwnerOk$_constructor_queryId_newOwner($msg'queryId, $msg'newOwner)));
+    return (($self'id, $self'factory, $self'owner, $self'market, $self'deposited), ());
+}
+
+;;
+;; Get methods of a Contract AmmTon
+;;
+
+_ %id() method_id(105872) {
+    var self = $AmmTon$_contract_load();
+    var res = self~$AmmTon$_fun_id();
+    return res;
+}
+
+_ %market() method_id(109725) {
+    var self = $AmmTon$_contract_load();
+    var res = self~$AmmTon$_fun_market();
+    return res;
+}
+
+_ %deposited() method_id(80498) {
+    var self = $AmmTon$_contract_load();
+    var res = self~$AmmTon$_fun_deposited();
+    return res;
+}
+
+_ %balance() method_id(104128) {
+    var self = $AmmTon$_contract_load();
+    var res = self~$AmmTon$_fun_balance();
+    return res;
+}
+
+_ %owner() method_id(83229) {
+    var self = $AmmTon$_contract_load();
+    var res = self~$AmmTon$_fun_owner();
+    return res;
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract AmmTon
+;;
+
+((int, slice, slice, slice, int), int) $AmmTon$_contract_router_internal((int, slice, slice, slice, int) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive empty message
+    if ((op == 0) & (slice_bits(in_msg) <= 32)) {
+        self~%$AmmTon$_internal_empty();
+        return (self, true);
+    }
+    
+    ;; Receive InnerDeployAmmTon message
+    if (op == 3704021403) {
+        var msg = in_msg~$InnerDeployAmmTon$_load();
+        self~$AmmTon$_internal_binary_InnerDeployAmmTon(msg);
+        return (self, true);
+    }
+    
+    ;; Receive TakeDealAmm message
+    if (op == 1895074275) {
+        var msg = in_msg~$TakeDealAmm$_load();
+        self~$AmmTon$_internal_binary_TakeDealAmm(msg);
+        return (self, true);
+    }
+    
+    ;; Receive WithdrawTon message
+    if (op == 456029640) {
+        var msg = in_msg~$WithdrawTon$_load();
+        self~$AmmTon$_internal_binary_WithdrawTon(msg);
+        return (self, true);
+    }
+    
+    ;; Receive ChangeOwner message
+    if (op == 2174598809) {
+        var msg = in_msg~$ChangeOwner$_load();
+        self~$AmmTon$_internal_binary_ChangeOwner(msg);
+        return (self, true);
+    }
+    
+    ;; Receiver fallback
+    self~$AmmTon$_internal_any(in_msg);
+    return (self, true);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $AmmTon$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$AmmTon$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $AmmTon$_contract_store(self);
+}

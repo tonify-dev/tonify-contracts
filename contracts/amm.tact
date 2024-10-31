@@ -96,4 +96,11 @@ contract Amm with OwnableTransferable {
     get fun id(): Int {
         return self.id;
     }
+    get fun market(): Address {
+        return self.market;
+    }
+    
+    get fun balance(): Int {
+        return myBalance();
+    }
 }

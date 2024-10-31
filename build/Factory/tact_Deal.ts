@@ -890,6 +890,187 @@ function dictValueParserAmm$Data(): DictionaryValue<Amm$Data> {
     }
 }
 
+export type InnerDeployAmmTon = {
+    $$type: 'InnerDeployAmmTon';
+    queryId: bigint;
+    originalGasTo: Address;
+    market: Address;
+}
+
+export function storeInnerDeployAmmTon(src: InnerDeployAmmTon) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(3704021403, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeAddress(src.originalGasTo);
+        b_0.storeAddress(src.market);
+    };
+}
+
+export function loadInnerDeployAmmTon(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 3704021403) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _originalGasTo = sc_0.loadAddress();
+    let _market = sc_0.loadAddress();
+    return { $$type: 'InnerDeployAmmTon' as const, queryId: _queryId, originalGasTo: _originalGasTo, market: _market };
+}
+
+function loadTupleInnerDeployAmmTon(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _originalGasTo = source.readAddress();
+    let _market = source.readAddress();
+    return { $$type: 'InnerDeployAmmTon' as const, queryId: _queryId, originalGasTo: _originalGasTo, market: _market };
+}
+
+function loadGetterTupleInnerDeployAmmTon(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _originalGasTo = source.readAddress();
+    let _market = source.readAddress();
+    return { $$type: 'InnerDeployAmmTon' as const, queryId: _queryId, originalGasTo: _originalGasTo, market: _market };
+}
+
+function storeTupleInnerDeployAmmTon(source: InnerDeployAmmTon) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeAddress(source.originalGasTo);
+    builder.writeAddress(source.market);
+    return builder.build();
+}
+
+function dictValueParserInnerDeployAmmTon(): DictionaryValue<InnerDeployAmmTon> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeInnerDeployAmmTon(src)).endCell());
+        },
+        parse: (src) => {
+            return loadInnerDeployAmmTon(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type WithdrawTon = {
+    $$type: 'WithdrawTon';
+    queryId: bigint;
+    amount: bigint;
+}
+
+export function storeWithdrawTon(src: WithdrawTon) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(456029640, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeCoins(src.amount);
+    };
+}
+
+export function loadWithdrawTon(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 456029640) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _amount = sc_0.loadCoins();
+    return { $$type: 'WithdrawTon' as const, queryId: _queryId, amount: _amount };
+}
+
+function loadTupleWithdrawTon(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _amount = source.readBigNumber();
+    return { $$type: 'WithdrawTon' as const, queryId: _queryId, amount: _amount };
+}
+
+function loadGetterTupleWithdrawTon(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _amount = source.readBigNumber();
+    return { $$type: 'WithdrawTon' as const, queryId: _queryId, amount: _amount };
+}
+
+function storeTupleWithdrawTon(source: WithdrawTon) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeNumber(source.amount);
+    return builder.build();
+}
+
+function dictValueParserWithdrawTon(): DictionaryValue<WithdrawTon> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeWithdrawTon(src)).endCell());
+        },
+        parse: (src) => {
+            return loadWithdrawTon(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type AmmTon$Data = {
+    $$type: 'AmmTon$Data';
+    id: bigint;
+    factory: Address;
+    owner: Address;
+    market: Address;
+    deposited: bigint;
+}
+
+export function storeAmmTon$Data(src: AmmTon$Data) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(src.id, 32);
+        b_0.storeAddress(src.factory);
+        b_0.storeAddress(src.owner);
+        b_0.storeAddress(src.market);
+        b_0.storeCoins(src.deposited);
+    };
+}
+
+export function loadAmmTon$Data(slice: Slice) {
+    let sc_0 = slice;
+    let _id = sc_0.loadUintBig(32);
+    let _factory = sc_0.loadAddress();
+    let _owner = sc_0.loadAddress();
+    let _market = sc_0.loadAddress();
+    let _deposited = sc_0.loadCoins();
+    return { $$type: 'AmmTon$Data' as const, id: _id, factory: _factory, owner: _owner, market: _market, deposited: _deposited };
+}
+
+function loadTupleAmmTon$Data(source: TupleReader) {
+    let _id = source.readBigNumber();
+    let _factory = source.readAddress();
+    let _owner = source.readAddress();
+    let _market = source.readAddress();
+    let _deposited = source.readBigNumber();
+    return { $$type: 'AmmTon$Data' as const, id: _id, factory: _factory, owner: _owner, market: _market, deposited: _deposited };
+}
+
+function loadGetterTupleAmmTon$Data(source: TupleReader) {
+    let _id = source.readBigNumber();
+    let _factory = source.readAddress();
+    let _owner = source.readAddress();
+    let _market = source.readAddress();
+    let _deposited = source.readBigNumber();
+    return { $$type: 'AmmTon$Data' as const, id: _id, factory: _factory, owner: _owner, market: _market, deposited: _deposited };
+}
+
+function storeTupleAmmTon$Data(source: AmmTon$Data) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.id);
+    builder.writeAddress(source.factory);
+    builder.writeAddress(source.owner);
+    builder.writeAddress(source.market);
+    builder.writeNumber(source.deposited);
+    return builder.build();
+}
+
+function dictValueParserAmmTon$Data(): DictionaryValue<AmmTon$Data> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeAmmTon$Data(src)).endCell());
+        },
+        parse: (src) => {
+            return loadAmmTon$Data(src.loadRef().beginParse());
+        }
+    }
+}
+
 export type TakeDeal = {
     $$type: 'TakeDeal';
     dealId: bigint;
@@ -5192,6 +5373,512 @@ function dictValueParserMarketDeployedEventWithAmm(): DictionaryValue<MarketDepl
     }
 }
 
+export type DeployTonMarket = {
+    $$type: 'DeployTonMarket';
+    queryId: bigint;
+    id: bigint;
+    owner: Address;
+    underlyingAssetName: string;
+    duration: bigint;
+    collection_content: Cell;
+    operatorFee: bigint;
+    serviceFee: bigint;
+    oracle: Address;
+    feedIdAsset: bigint;
+    feedIdToken: bigint;
+    operatorFeeAddress: Address;
+    originalGasTo: Address;
+}
+
+export function storeDeployTonMarket(src: DeployTonMarket) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(4267639384, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeUint(src.id, 32);
+        b_0.storeAddress(src.owner);
+        b_0.storeStringRefTail(src.underlyingAssetName);
+        b_0.storeUint(src.duration, 32);
+        b_0.storeRef(src.collection_content);
+        b_0.storeCoins(src.operatorFee);
+        b_0.storeCoins(src.serviceFee);
+        b_0.storeAddress(src.oracle);
+        let b_1 = new Builder();
+        b_1.storeUint(src.feedIdAsset, 256);
+        b_1.storeUint(src.feedIdToken, 256);
+        b_1.storeAddress(src.operatorFeeAddress);
+        let b_2 = new Builder();
+        b_2.storeAddress(src.originalGasTo);
+        b_1.storeRef(b_2.endCell());
+        b_0.storeRef(b_1.endCell());
+    };
+}
+
+export function loadDeployTonMarket(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 4267639384) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _id = sc_0.loadUintBig(32);
+    let _owner = sc_0.loadAddress();
+    let _underlyingAssetName = sc_0.loadStringRefTail();
+    let _duration = sc_0.loadUintBig(32);
+    let _collection_content = sc_0.loadRef();
+    let _operatorFee = sc_0.loadCoins();
+    let _serviceFee = sc_0.loadCoins();
+    let _oracle = sc_0.loadAddress();
+    let sc_1 = sc_0.loadRef().beginParse();
+    let _feedIdAsset = sc_1.loadUintBig(256);
+    let _feedIdToken = sc_1.loadUintBig(256);
+    let _operatorFeeAddress = sc_1.loadAddress();
+    let sc_2 = sc_1.loadRef().beginParse();
+    let _originalGasTo = sc_2.loadAddress();
+    return { $$type: 'DeployTonMarket' as const, queryId: _queryId, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress, originalGasTo: _originalGasTo };
+}
+
+function loadTupleDeployTonMarket(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    let _originalGasTo = source.readAddress();
+    return { $$type: 'DeployTonMarket' as const, queryId: _queryId, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress, originalGasTo: _originalGasTo };
+}
+
+function loadGetterTupleDeployTonMarket(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    let _originalGasTo = source.readAddress();
+    return { $$type: 'DeployTonMarket' as const, queryId: _queryId, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress, originalGasTo: _originalGasTo };
+}
+
+function storeTupleDeployTonMarket(source: DeployTonMarket) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeNumber(source.id);
+    builder.writeAddress(source.owner);
+    builder.writeString(source.underlyingAssetName);
+    builder.writeNumber(source.duration);
+    builder.writeCell(source.collection_content);
+    builder.writeNumber(source.operatorFee);
+    builder.writeNumber(source.serviceFee);
+    builder.writeAddress(source.oracle);
+    builder.writeNumber(source.feedIdAsset);
+    builder.writeNumber(source.feedIdToken);
+    builder.writeAddress(source.operatorFeeAddress);
+    builder.writeAddress(source.originalGasTo);
+    return builder.build();
+}
+
+function dictValueParserDeployTonMarket(): DictionaryValue<DeployTonMarket> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeDeployTonMarket(src)).endCell());
+        },
+        parse: (src) => {
+            return loadDeployTonMarket(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type MarketTonDeployedEvent = {
+    $$type: 'MarketTonDeployedEvent';
+    queryId: bigint;
+    marketAddress: Address;
+    id: bigint;
+    owner: Address;
+    underlyingAssetName: string;
+    duration: bigint;
+    collection_content: Cell;
+    operatorFee: bigint;
+    serviceFee: bigint;
+    oracle: Address;
+    feedIdAsset: bigint;
+    feedIdToken: bigint;
+    operatorFeeAddress: Address;
+}
+
+export function storeMarketTonDeployedEvent(src: MarketTonDeployedEvent) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(4135699990, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeAddress(src.marketAddress);
+        b_0.storeUint(src.id, 32);
+        b_0.storeAddress(src.owner);
+        b_0.storeStringRefTail(src.underlyingAssetName);
+        b_0.storeUint(src.duration, 32);
+        b_0.storeRef(src.collection_content);
+        b_0.storeCoins(src.operatorFee);
+        b_0.storeCoins(src.serviceFee);
+        let b_1 = new Builder();
+        b_1.storeAddress(src.oracle);
+        b_1.storeUint(src.feedIdAsset, 256);
+        b_1.storeUint(src.feedIdToken, 256);
+        let b_2 = new Builder();
+        b_2.storeAddress(src.operatorFeeAddress);
+        b_1.storeRef(b_2.endCell());
+        b_0.storeRef(b_1.endCell());
+    };
+}
+
+export function loadMarketTonDeployedEvent(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 4135699990) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _marketAddress = sc_0.loadAddress();
+    let _id = sc_0.loadUintBig(32);
+    let _owner = sc_0.loadAddress();
+    let _underlyingAssetName = sc_0.loadStringRefTail();
+    let _duration = sc_0.loadUintBig(32);
+    let _collection_content = sc_0.loadRef();
+    let _operatorFee = sc_0.loadCoins();
+    let _serviceFee = sc_0.loadCoins();
+    let sc_1 = sc_0.loadRef().beginParse();
+    let _oracle = sc_1.loadAddress();
+    let _feedIdAsset = sc_1.loadUintBig(256);
+    let _feedIdToken = sc_1.loadUintBig(256);
+    let sc_2 = sc_1.loadRef().beginParse();
+    let _operatorFeeAddress = sc_2.loadAddress();
+    return { $$type: 'MarketTonDeployedEvent' as const, queryId: _queryId, marketAddress: _marketAddress, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress };
+}
+
+function loadTupleMarketTonDeployedEvent(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _marketAddress = source.readAddress();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    return { $$type: 'MarketTonDeployedEvent' as const, queryId: _queryId, marketAddress: _marketAddress, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress };
+}
+
+function loadGetterTupleMarketTonDeployedEvent(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _marketAddress = source.readAddress();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    return { $$type: 'MarketTonDeployedEvent' as const, queryId: _queryId, marketAddress: _marketAddress, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress };
+}
+
+function storeTupleMarketTonDeployedEvent(source: MarketTonDeployedEvent) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeAddress(source.marketAddress);
+    builder.writeNumber(source.id);
+    builder.writeAddress(source.owner);
+    builder.writeString(source.underlyingAssetName);
+    builder.writeNumber(source.duration);
+    builder.writeCell(source.collection_content);
+    builder.writeNumber(source.operatorFee);
+    builder.writeNumber(source.serviceFee);
+    builder.writeAddress(source.oracle);
+    builder.writeNumber(source.feedIdAsset);
+    builder.writeNumber(source.feedIdToken);
+    builder.writeAddress(source.operatorFeeAddress);
+    return builder.build();
+}
+
+function dictValueParserMarketTonDeployedEvent(): DictionaryValue<MarketTonDeployedEvent> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeMarketTonDeployedEvent(src)).endCell());
+        },
+        parse: (src) => {
+            return loadMarketTonDeployedEvent(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type DeployTonMarketWithAmm = {
+    $$type: 'DeployTonMarketWithAmm';
+    queryId: bigint;
+    id: bigint;
+    owner: Address;
+    underlyingAssetName: string;
+    duration: bigint;
+    collection_content: Cell;
+    operatorFee: bigint;
+    serviceFee: bigint;
+    oracle: Address;
+    feedIdAsset: bigint;
+    feedIdToken: bigint;
+    operatorFeeAddress: Address;
+    originalGasTo: Address;
+}
+
+export function storeDeployTonMarketWithAmm(src: DeployTonMarketWithAmm) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(2976600156, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeUint(src.id, 32);
+        b_0.storeAddress(src.owner);
+        b_0.storeStringRefTail(src.underlyingAssetName);
+        b_0.storeUint(src.duration, 32);
+        b_0.storeRef(src.collection_content);
+        b_0.storeCoins(src.operatorFee);
+        b_0.storeCoins(src.serviceFee);
+        b_0.storeAddress(src.oracle);
+        let b_1 = new Builder();
+        b_1.storeUint(src.feedIdAsset, 256);
+        b_1.storeUint(src.feedIdToken, 256);
+        b_1.storeAddress(src.operatorFeeAddress);
+        let b_2 = new Builder();
+        b_2.storeAddress(src.originalGasTo);
+        b_1.storeRef(b_2.endCell());
+        b_0.storeRef(b_1.endCell());
+    };
+}
+
+export function loadDeployTonMarketWithAmm(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 2976600156) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _id = sc_0.loadUintBig(32);
+    let _owner = sc_0.loadAddress();
+    let _underlyingAssetName = sc_0.loadStringRefTail();
+    let _duration = sc_0.loadUintBig(32);
+    let _collection_content = sc_0.loadRef();
+    let _operatorFee = sc_0.loadCoins();
+    let _serviceFee = sc_0.loadCoins();
+    let _oracle = sc_0.loadAddress();
+    let sc_1 = sc_0.loadRef().beginParse();
+    let _feedIdAsset = sc_1.loadUintBig(256);
+    let _feedIdToken = sc_1.loadUintBig(256);
+    let _operatorFeeAddress = sc_1.loadAddress();
+    let sc_2 = sc_1.loadRef().beginParse();
+    let _originalGasTo = sc_2.loadAddress();
+    return { $$type: 'DeployTonMarketWithAmm' as const, queryId: _queryId, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress, originalGasTo: _originalGasTo };
+}
+
+function loadTupleDeployTonMarketWithAmm(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    let _originalGasTo = source.readAddress();
+    return { $$type: 'DeployTonMarketWithAmm' as const, queryId: _queryId, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress, originalGasTo: _originalGasTo };
+}
+
+function loadGetterTupleDeployTonMarketWithAmm(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    let _originalGasTo = source.readAddress();
+    return { $$type: 'DeployTonMarketWithAmm' as const, queryId: _queryId, id: _id, owner: _owner, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress, originalGasTo: _originalGasTo };
+}
+
+function storeTupleDeployTonMarketWithAmm(source: DeployTonMarketWithAmm) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeNumber(source.id);
+    builder.writeAddress(source.owner);
+    builder.writeString(source.underlyingAssetName);
+    builder.writeNumber(source.duration);
+    builder.writeCell(source.collection_content);
+    builder.writeNumber(source.operatorFee);
+    builder.writeNumber(source.serviceFee);
+    builder.writeAddress(source.oracle);
+    builder.writeNumber(source.feedIdAsset);
+    builder.writeNumber(source.feedIdToken);
+    builder.writeAddress(source.operatorFeeAddress);
+    builder.writeAddress(source.originalGasTo);
+    return builder.build();
+}
+
+function dictValueParserDeployTonMarketWithAmm(): DictionaryValue<DeployTonMarketWithAmm> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeDeployTonMarketWithAmm(src)).endCell());
+        },
+        parse: (src) => {
+            return loadDeployTonMarketWithAmm(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type MarketTonDeployedEventWithAmm = {
+    $$type: 'MarketTonDeployedEventWithAmm';
+    queryId: bigint;
+    marketAddress: Address;
+    id: bigint;
+    owner: Address;
+    amm: Address;
+    underlyingAssetName: string;
+    duration: bigint;
+    collection_content: Cell;
+    operatorFee: bigint;
+    serviceFee: bigint;
+    oracle: Address;
+    feedIdAsset: bigint;
+    feedIdToken: bigint;
+    operatorFeeAddress: Address;
+}
+
+export function storeMarketTonDeployedEventWithAmm(src: MarketTonDeployedEventWithAmm) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(158221594, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeAddress(src.marketAddress);
+        b_0.storeUint(src.id, 32);
+        b_0.storeAddress(src.owner);
+        b_0.storeAddress(src.amm);
+        b_0.storeStringRefTail(src.underlyingAssetName);
+        b_0.storeUint(src.duration, 32);
+        b_0.storeRef(src.collection_content);
+        let b_1 = new Builder();
+        b_1.storeCoins(src.operatorFee);
+        b_1.storeCoins(src.serviceFee);
+        b_1.storeAddress(src.oracle);
+        b_1.storeUint(src.feedIdAsset, 256);
+        let b_2 = new Builder();
+        b_2.storeUint(src.feedIdToken, 256);
+        b_2.storeAddress(src.operatorFeeAddress);
+        b_1.storeRef(b_2.endCell());
+        b_0.storeRef(b_1.endCell());
+    };
+}
+
+export function loadMarketTonDeployedEventWithAmm(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 158221594) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _marketAddress = sc_0.loadAddress();
+    let _id = sc_0.loadUintBig(32);
+    let _owner = sc_0.loadAddress();
+    let _amm = sc_0.loadAddress();
+    let _underlyingAssetName = sc_0.loadStringRefTail();
+    let _duration = sc_0.loadUintBig(32);
+    let _collection_content = sc_0.loadRef();
+    let sc_1 = sc_0.loadRef().beginParse();
+    let _operatorFee = sc_1.loadCoins();
+    let _serviceFee = sc_1.loadCoins();
+    let _oracle = sc_1.loadAddress();
+    let _feedIdAsset = sc_1.loadUintBig(256);
+    let sc_2 = sc_1.loadRef().beginParse();
+    let _feedIdToken = sc_2.loadUintBig(256);
+    let _operatorFeeAddress = sc_2.loadAddress();
+    return { $$type: 'MarketTonDeployedEventWithAmm' as const, queryId: _queryId, marketAddress: _marketAddress, id: _id, owner: _owner, amm: _amm, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress };
+}
+
+function loadTupleMarketTonDeployedEventWithAmm(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _marketAddress = source.readAddress();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _amm = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    return { $$type: 'MarketTonDeployedEventWithAmm' as const, queryId: _queryId, marketAddress: _marketAddress, id: _id, owner: _owner, amm: _amm, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress };
+}
+
+function loadGetterTupleMarketTonDeployedEventWithAmm(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _marketAddress = source.readAddress();
+    let _id = source.readBigNumber();
+    let _owner = source.readAddress();
+    let _amm = source.readAddress();
+    let _underlyingAssetName = source.readString();
+    let _duration = source.readBigNumber();
+    let _collection_content = source.readCell();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    let _oracle = source.readAddress();
+    let _feedIdAsset = source.readBigNumber();
+    let _feedIdToken = source.readBigNumber();
+    let _operatorFeeAddress = source.readAddress();
+    return { $$type: 'MarketTonDeployedEventWithAmm' as const, queryId: _queryId, marketAddress: _marketAddress, id: _id, owner: _owner, amm: _amm, underlyingAssetName: _underlyingAssetName, duration: _duration, collection_content: _collection_content, operatorFee: _operatorFee, serviceFee: _serviceFee, oracle: _oracle, feedIdAsset: _feedIdAsset, feedIdToken: _feedIdToken, operatorFeeAddress: _operatorFeeAddress };
+}
+
+function storeTupleMarketTonDeployedEventWithAmm(source: MarketTonDeployedEventWithAmm) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeAddress(source.marketAddress);
+    builder.writeNumber(source.id);
+    builder.writeAddress(source.owner);
+    builder.writeAddress(source.amm);
+    builder.writeString(source.underlyingAssetName);
+    builder.writeNumber(source.duration);
+    builder.writeCell(source.collection_content);
+    builder.writeNumber(source.operatorFee);
+    builder.writeNumber(source.serviceFee);
+    builder.writeAddress(source.oracle);
+    builder.writeNumber(source.feedIdAsset);
+    builder.writeNumber(source.feedIdToken);
+    builder.writeAddress(source.operatorFeeAddress);
+    return builder.build();
+}
+
+function dictValueParserMarketTonDeployedEventWithAmm(): DictionaryValue<MarketTonDeployedEventWithAmm> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeMarketTonDeployedEventWithAmm(src)).endCell());
+        },
+        parse: (src) => {
+            return loadMarketTonDeployedEventWithAmm(src.loadRef().beginParse());
+        }
+    }
+}
+
 export type Factory$Data = {
     $$type: 'Factory$Data';
     id: bigint;
@@ -5323,6 +6010,9 @@ const Deal_types: ABIType[] = [
     {"name":"InnerDeployAmm","header":2078977111,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":false}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}},{"name":"market","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"WithdrawToken","header":1740151130,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"Amm$Data","header":null,"fields":[{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"factory","type":{"kind":"simple","type":"address","optional":false}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"market","type":{"kind":"simple","type":"address","optional":false}},{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"InnerDeployAmmTon","header":3704021403,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}},{"name":"market","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"WithdrawTon","header":456029640,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}}]},
+    {"name":"AmmTon$Data","header":null,"fields":[{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"factory","type":{"kind":"simple","type":"address","optional":false}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"market","type":{"kind":"simple","type":"address","optional":false}},{"name":"deposited","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}}]},
     {"name":"TakeDeal","header":955300085,"fields":[{"name":"dealId","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"oracleAssetData","type":{"kind":"simple","type":"cell","optional":false}},{"name":"oracleTokenData","type":{"kind":"simple","type":"cell","optional":false}}]},
     {"name":"TakeDealTon","header":3886765728,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"deal","type":{"kind":"simple","type":"TakeDealData","optional":false}}]},
     {"name":"TakeDealData","header":null,"fields":[{"name":"dealId","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"oracleAssetData","type":{"kind":"simple","type":"cell","optional":false}},{"name":"oracleTokenData","type":{"kind":"simple","type":"cell","optional":false}}]},
@@ -5387,6 +6077,10 @@ const Deal_types: ABIType[] = [
     {"name":"MarketDeployedEvent","header":4087132332,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"marketAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"coin","type":{"kind":"simple","type":"address","optional":false}},{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":false}},{"name":"underlyingAssetName","type":{"kind":"simple","type":"string","optional":false}},{"name":"duration","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"oracle","type":{"kind":"simple","type":"address","optional":false}},{"name":"feedIdAsset","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"feedIdToken","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"operatorFeeAddress","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"DeployTokenMarketWithAmm","header":1684562987,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"coin","type":{"kind":"simple","type":"address","optional":false}},{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":false}},{"name":"jettonWalletAmm","type":{"kind":"simple","type":"address","optional":false}},{"name":"underlyingAssetName","type":{"kind":"simple","type":"string","optional":false}},{"name":"duration","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"oracle","type":{"kind":"simple","type":"address","optional":false}},{"name":"feedIdAsset","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"feedIdToken","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"operatorFeeAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"MarketDeployedEventWithAmm","header":3042373849,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"marketAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"coin","type":{"kind":"simple","type":"address","optional":false}},{"name":"amm","type":{"kind":"simple","type":"address","optional":false}},{"name":"jettonWallet","type":{"kind":"simple","type":"address","optional":false}},{"name":"jettonWalletAmm","type":{"kind":"simple","type":"address","optional":false}},{"name":"underlyingAssetName","type":{"kind":"simple","type":"string","optional":false}},{"name":"duration","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"oracle","type":{"kind":"simple","type":"address","optional":false}},{"name":"feedIdAsset","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"feedIdToken","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"operatorFeeAddress","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"DeployTonMarket","header":4267639384,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"underlyingAssetName","type":{"kind":"simple","type":"string","optional":false}},{"name":"duration","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"oracle","type":{"kind":"simple","type":"address","optional":false}},{"name":"feedIdAsset","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"feedIdToken","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"operatorFeeAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"MarketTonDeployedEvent","header":4135699990,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"marketAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"underlyingAssetName","type":{"kind":"simple","type":"string","optional":false}},{"name":"duration","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"oracle","type":{"kind":"simple","type":"address","optional":false}},{"name":"feedIdAsset","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"feedIdToken","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"operatorFeeAddress","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"DeployTonMarketWithAmm","header":2976600156,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"underlyingAssetName","type":{"kind":"simple","type":"string","optional":false}},{"name":"duration","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"oracle","type":{"kind":"simple","type":"address","optional":false}},{"name":"feedIdAsset","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"feedIdToken","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"operatorFeeAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}}]},
+    {"name":"MarketTonDeployedEventWithAmm","header":158221594,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"marketAddress","type":{"kind":"simple","type":"address","optional":false}},{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"amm","type":{"kind":"simple","type":"address","optional":false}},{"name":"underlyingAssetName","type":{"kind":"simple","type":"string","optional":false}},{"name":"duration","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"collection_content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"oracle","type":{"kind":"simple","type":"address","optional":false}},{"name":"feedIdAsset","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"feedIdToken","type":{"kind":"simple","type":"uint","optional":false,"format":256}},{"name":"operatorFeeAddress","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"Factory$Data","header":null,"fields":[{"name":"id","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
 ]
 

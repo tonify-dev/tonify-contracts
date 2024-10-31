@@ -4,37 +4,40 @@ import "./market_messages.tact";
 import "./jetton/jetton_messages.tact";
 import "./imports/constants.tact";
 
-message InnerDeployAmm {
+message InnerDeployAmmTon {
     queryId: Int as uint64;
-    jettonWallet: Address;
     originalGasTo: Address;
     market: Address;
 }
-message WithdrawToken {
+message WithdrawTon {
     queryId: Int as uint64;
     amount: Int as coins;
-    originalGasTo: Address;
 }
 
-contract Amm with OwnableTransferable {
+contract AmmTon with OwnableTransferable {
     id: Int as uint32;
     factory: Address;
     owner: Address;
     market: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"); // ZERO_ADDRESS
-    jettonWallet: Address = address("UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJKZ"); // ZERO_ADDRESS
+    deposited: Int as coins = 0;
 
     init(id: Int, factory: Address, owner: Address) {
         self.id = id;
         self.factory = factory;
         self.owner = owner;
     }
+    
+    receive() {
+        self.deposited += context().value;
+    }
+    receive(slice: Slice) {
+        self.deposited += context().value;
+    }
 
-    receive(msg: InnerDeployAmm) {
+    receive(msg: InnerDeployAmmTon) {
         require(sender() == self.factory, "Only factory can call this function");
-        nativeReserve(STORAGE_INIT_VALUE, 0);
+        nativeReserve(STORAGE_INIT_VALUE + self.deposited, 0);
         require(self.market == ZERO_ADDRESS, "Market already set");
-        require(self.jettonWallet == ZERO_ADDRESS, "Jetton wallet already set");
-        self.jettonWallet = msg.jettonWallet;
         self.market = msg.market;   
         send(SendParameters{
             to: msg.originalGasTo,
@@ -48,52 +51,53 @@ contract Amm with OwnableTransferable {
     }
 
     receive(msg: TakeDealAmm) {
-        nativeReserve(STORAGE_INIT_VALUE, 0);
         require(sender() == self.market, "Only market can call this function");
+        self.deposited -= msg.amount;
+        nativeReserve(STORAGE_INIT_VALUE + self.deposited, 0);
         send(SendParameters{
-            to: self.jettonWallet,
+            to: self.market,
             value: 0,
             mode: SendRemainingBalance,
             bounce: true,
-            body: TokenTransfer{
+            body: TakeDealWithOriginalGasToTon{
+                queryId: msg.queryId,
                 amount: msg.amount,
-                recipient: sender(),
-                query_id: msg.queryId,
-                response_destination: msg.originalGasTo,
-                custom_payload: null,
-                forward_ton_amount: TO_TAKE_TO_MARKET,
-                forward_payload: TakeDealWithOriginalGasTo{
-                    data: TakeDealDataWithOriginalGasTo{
-                        dealId: msg.dealId,
-                        oracleAssetData: msg.oracleAssetData,
-                        oracleTokenData: msg.oracleTokenData,
-                        originalGasTo: msg.originalGasTo,
-                    }.toCell(),
-                }.toCell().beginParse(),
+                deal: TakeDealDataWithOriginalGasTo{
+                    dealId: msg.dealId,
+                    oracleAssetData: msg.oracleAssetData,
+                    oracleTokenData: msg.oracleTokenData,
+                    originalGasTo: msg.originalGasTo,
+                },
             }.toCell(),
         });
     }
 
-    receive(msg: WithdrawToken) {
+    receive(msg: WithdrawTon) {
         self.requireOwner();
-        nativeReserve(STORAGE_INIT_VALUE, 0);
+        self.deposited -= msg.amount;
+        nativeReserve(STORAGE_INIT_VALUE + self.deposited, 0);
+
         send(SendParameters{
-            to: self.jettonWallet,
+            to: sender(),
             value: 0,
             mode: SendRemainingBalance,
             bounce: true,
-            body: TokenTransfer{
-                amount: msg.amount,
-                recipient: sender(),
-                query_id: msg.queryId,
-                response_destination: msg.originalGasTo,
-                custom_payload: null,
-                forward_ton_amount: 0,
-                forward_payload: emptySlice(),
-            }.toCell(),
         });
     }
     get fun id(): Int {
         return self.id;
     }
+
+    get fun market(): Address {
+        return self.market;
+    }
+
+    get fun deposited(): Int {
+        return self.deposited;
+    }   
+    
+    get fun balance(): Int {
+        return myBalance();
+    }
+
 }

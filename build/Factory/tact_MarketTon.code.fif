@@ -2093,6 +2093,25 @@ PROGRAM{
     DUP
     50000000 PUSHINT
     LESS
+    IF:<{
+      s3 s1 PUSH2
+      __tact_slice_eq_bits INLINECALLDICT
+    }>ELSE<{
+      FALSE
+    }>
+    IF:<{
+      TRUE
+    }>ELSE<{
+      DUP
+      0 LESSINT
+      IF:<{
+        s3 s1 PUSH2
+        __tact_slice_eq_bits INLINECALLDICT
+        NOT
+      }>ELSE<{
+        FALSE
+      }>
+    }>
     IFJMP:<{
       3 BLKDROP
       10 2 BLKDROP2

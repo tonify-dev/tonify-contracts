@@ -312,20 +312,20 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
             self.returnTon(queryId, contextTakeDealAfterDeal.from, MAKER_OUT_OF_RANGE);
             return;
         }
-
+       
         let returnAmountToTaker: Int = contextTakeDealAfterDeal.amount - collateralAmount;
-        if(returnAmountToTaker < TO_TAKE_TO_MARKET_MIN_GAS) {
+
+        if (returnAmountToTaker < TO_TAKE_TO_MARKET_MIN_GAS && contextTakeDealAfterDeal.originalGasTo == contextTakeDealAfterDeal.from ||
+            returnAmountToTaker < 0 && contextTakeDealAfterDeal.originalGasTo != contextTakeDealAfterDeal.from) {
             self.returnTon(queryId, contextTakeDealAfterDeal.from, SMALL_AMOUNT);
             return;
         }
-
 
         let returnAmountToMaker: Int = deal.collateralAmountMaker - collateralAmount;
         if(returnAmountToMaker < 0) {
             self.returnTon(queryId, contextTakeDealAfterDeal.from, SMALL_AMOUNT_OF_MAKER);
             return;
         }
-
         self.addTonDepositBalance(collateralAmount - returnAmountToMaker);
 
         if(returnAmountToMaker > 0) {

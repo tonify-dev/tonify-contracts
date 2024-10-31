@@ -1,6 +1,6 @@
 # TACT Compilation Report
-Contract: Amm
-BOC Size: 1777 bytes
+Contract: AmmTon
+BOC Size: 1452 bytes
 
 # Types
 Total Types: 83
@@ -338,11 +338,13 @@ TLB: `null`
 Signature: `null`
 
 # Get Methods
-Total Get Methods: 4
+Total Get Methods: 5
 
 ## id
 
 ## market
+
+## deposited
 
 ## balance
 
@@ -400,18 +402,18 @@ Total Get Methods: 4
 
 ```mermaid
 graph TD
-Amm
-Amm --> BaseTrait
-Amm --> OwnableTransferable
+AmmTon
+AmmTon --> BaseTrait
+AmmTon --> OwnableTransferable
 OwnableTransferable --> BaseTrait
 OwnableTransferable --> Ownable
 Ownable --> BaseTrait
-Amm --> Ownable
+AmmTon --> Ownable
 ```
 
 # Contract Dependency Diagram
 
 ```mermaid
 graph TD
-Amm
+AmmTon
 ```

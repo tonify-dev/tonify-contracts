@@ -3,7 +3,7 @@ Contract: Deal
 BOC Size: 845 bytes
 
 # Types
-Total Types: 76
+Total Types: 83
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -46,6 +46,18 @@ TLB: `withdraw_token#67b8995a queryId:uint64 amount:coins originalGasTo:address 
 Signature: `WithdrawToken{queryId:uint64,amount:coins,originalGasTo:address}`
 
 ## Amm$Data
+TLB: `null`
+Signature: `null`
+
+## InnerDeployAmmTon
+TLB: `inner_deploy_amm_ton#dcc6e19b queryId:uint64 originalGasTo:address market:address = InnerDeployAmmTon`
+Signature: `InnerDeployAmmTon{queryId:uint64,originalGasTo:address,market:address}`
+
+## WithdrawTon
+TLB: `withdraw_ton#1b2e75c8 queryId:uint64 amount:coins = WithdrawTon`
+Signature: `WithdrawTon{queryId:uint64,amount:coins}`
+
+## AmmTon$Data
 TLB: `null`
 Signature: `null`
 
@@ -304,6 +316,22 @@ Signature: `DeployTokenMarketWithAmm{queryId:uint64,id:uint32,owner:address,coin
 ## MarketDeployedEventWithAmm
 TLB: `market_deployed_event_with_amm#b556f0d9 queryId:uint64 marketAddress:address id:uint32 owner:address coin:address amm:address jettonWallet:address jettonWalletAmm:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address = MarketDeployedEventWithAmm`
 Signature: `MarketDeployedEventWithAmm{queryId:uint64,marketAddress:address,id:uint32,owner:address,coin:address,amm:address,jettonWallet:address,jettonWalletAmm:address,underlyingAssetName:^string,duration:uint32,collection_content:^cell,operatorFee:coins,serviceFee:coins,oracle:address,feedIdAsset:uint256,feedIdToken:uint256,operatorFeeAddress:address}`
+
+## DeployTonMarket
+TLB: `deploy_ton_market#fe5f0258 queryId:uint64 id:uint32 owner:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address originalGasTo:address = DeployTonMarket`
+Signature: `DeployTonMarket{queryId:uint64,id:uint32,owner:address,underlyingAssetName:^string,duration:uint32,collection_content:^cell,operatorFee:coins,serviceFee:coins,oracle:address,feedIdAsset:uint256,feedIdToken:uint256,operatorFeeAddress:address,originalGasTo:address}`
+
+## MarketTonDeployedEvent
+TLB: `market_ton_deployed_event#f681c616 queryId:uint64 marketAddress:address id:uint32 owner:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address = MarketTonDeployedEvent`
+Signature: `MarketTonDeployedEvent{queryId:uint64,marketAddress:address,id:uint32,owner:address,underlyingAssetName:^string,duration:uint32,collection_content:^cell,operatorFee:coins,serviceFee:coins,oracle:address,feedIdAsset:uint256,feedIdToken:uint256,operatorFeeAddress:address}`
+
+## DeployTonMarketWithAmm
+TLB: `deploy_ton_market_with_amm#b16b505c queryId:uint64 id:uint32 owner:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address originalGasTo:address = DeployTonMarketWithAmm`
+Signature: `DeployTonMarketWithAmm{queryId:uint64,id:uint32,owner:address,underlyingAssetName:^string,duration:uint32,collection_content:^cell,operatorFee:coins,serviceFee:coins,oracle:address,feedIdAsset:uint256,feedIdToken:uint256,operatorFeeAddress:address,originalGasTo:address}`
+
+## MarketTonDeployedEventWithAmm
+TLB: `market_ton_deployed_event_with_amm#096e451a queryId:uint64 marketAddress:address id:uint32 owner:address amm:address underlyingAssetName:^string duration:uint32 collection_content:^cell operatorFee:coins serviceFee:coins oracle:address feedIdAsset:uint256 feedIdToken:uint256 operatorFeeAddress:address = MarketTonDeployedEventWithAmm`
+Signature: `MarketTonDeployedEventWithAmm{queryId:uint64,marketAddress:address,id:uint32,owner:address,amm:address,underlyingAssetName:^string,duration:uint32,collection_content:^cell,operatorFee:coins,serviceFee:coins,oracle:address,feedIdAsset:uint256,feedIdToken:uint256,operatorFeeAddress:address}`
 
 ## Factory$Data
 TLB: `null`

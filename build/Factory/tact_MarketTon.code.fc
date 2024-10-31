@@ -167,7 +167,7 @@
         return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
     }
     int $returnAmountToTaker = ($contextTakeDealAfterDeal'amount - $collateralAmount);
-    if (($returnAmountToTaker < 50000000)) {
+    if (( (( (($returnAmountToTaker < 50000000)) ? (( __tact_slice_eq_bits($contextTakeDealAfterDeal'from, $contextTakeDealAfterDeal'originalGasTo) )) : (false) )) ? (true) : (( (($returnAmountToTaker < 0)) ? (( ~ __tact_slice_eq_bits($contextTakeDealAfterDeal'from, $contextTakeDealAfterDeal'originalGasTo) )) : (false) )) )) {
         ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 5);
         return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
     }

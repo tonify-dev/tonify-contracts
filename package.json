@@ -16,6 +16,7 @@
         "test-factory": "npm run build && jest ./tests/Factory.spec.ts --verbose",
         "test-amm": "npm run build && jest ./tests/Amm.spec.ts --verbose",
         "test-amm-integration": "npm run build && jest ./tests/AmmIntegration.spec.ts --verbose",
+        "test-amm-ton": "npm run build && jest ./tests/AmmTon.spec.ts --verbose",
         "test-nft": "npm run build && jest ./tests/NftItem.spec.ts --verbose",
         "postinstall": "npm run build-full"
     },

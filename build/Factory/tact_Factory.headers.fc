@@ -54,11 +54,23 @@ builder $InnerDeployAmm$_store(builder build_0, (int, slice, slice, slice) v) in
 ;; $InnerDeployAmm$_store_cell
 cell $InnerDeployAmm$_store_cell((int, slice, slice, slice) v) inline;
 
+;; $InnerDeployAmmTon$_store
+builder $InnerDeployAmmTon$_store(builder build_0, (int, slice, slice) v) inline;
+
+;; $InnerDeployAmmTon$_store_cell
+cell $InnerDeployAmmTon$_store_cell((int, slice, slice) v) inline;
+
 ;; $InnerDeployMarket$_store
 builder $InnerDeployMarket$_store(builder build_0, (int, slice, slice) v) inline;
 
 ;; $InnerDeployMarket$_store_cell
 cell $InnerDeployMarket$_store_cell((int, slice, slice) v) inline;
+
+;; $InnerDeployMarketTon$_store
+builder $InnerDeployMarketTon$_store(builder build_0, (int, slice) v) inline;
+
+;; $InnerDeployMarketTon$_store_cell
+cell $InnerDeployMarketTon$_store_cell((int, slice) v) inline;
 
 ;; $DeployTokenMarket$_load
 (slice, ((int, int, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice, slice))) $DeployTokenMarket$_load(slice sc_0) inline_ref;
@@ -78,6 +90,24 @@ builder $MarketDeployedEventWithAmm$_store(builder build_0, (int, slice, int, sl
 ;; $MarketDeployedEventWithAmm$_store_cell
 cell $MarketDeployedEventWithAmm$_store_cell((int, slice, int, slice, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline;
 
+;; $DeployTonMarket$_load
+(slice, ((int, int, slice, slice, int, cell, int, int, slice, int, int, slice, slice))) $DeployTonMarket$_load(slice sc_0) inline_ref;
+
+;; $MarketTonDeployedEvent$_store
+builder $MarketTonDeployedEvent$_store(builder build_0, (int, slice, int, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline_ref;
+
+;; $MarketTonDeployedEvent$_store_cell
+cell $MarketTonDeployedEvent$_store_cell((int, slice, int, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline;
+
+;; $DeployTonMarketWithAmm$_load
+(slice, ((int, int, slice, slice, int, cell, int, int, slice, int, int, slice, slice))) $DeployTonMarketWithAmm$_load(slice sc_0) inline_ref;
+
+;; $MarketTonDeployedEventWithAmm$_store
+builder $MarketTonDeployedEventWithAmm$_store(builder build_0, (int, slice, int, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline_ref;
+
+;; $MarketTonDeployedEventWithAmm$_store_cell
+cell $MarketTonDeployedEventWithAmm$_store_cell((int, slice, int, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline;
+
 ;; $Factory$_store
 builder $Factory$_store(builder build_0, (int) v) inline;
 
@@ -90,8 +120,14 @@ builder $Factory$_store(builder build_0, (int) v) inline;
 ;; $Market$init$_store
 builder $Market$init$_store(builder build_0, (int, slice, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline;
 
+;; $MarketTon$init$_store
+builder $MarketTon$init$_store(builder build_0, (int, slice, slice, slice, slice, int, cell, int, int, slice, int, int, slice) v) inline;
+
 ;; $Amm$init$_store
 builder $Amm$init$_store(builder build_0, (int, slice, slice) v) inline;
+
+;; $AmmTon$init$_store
+builder $AmmTon$init$_store(builder build_0, (int, slice, slice) v) inline;
 
 ;; $Factory$init$_load
 (slice, ((int))) $Factory$init$_load(slice sc_0) inline;
@@ -123,8 +159,14 @@ slice $global_contractAddress((cell, cell) $s) impure inline;
 ;; $SendParameters$_constructor_bounce_to_value_mode_body_code_data
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_bounce_to_value_mode_body_code_data(int $bounce, slice $to, int $value, int $mode, cell $body, cell $code, cell $data) inline;
 
+;; $MarketTon$_init_child
+(cell, cell) $MarketTon$_init_child(cell sys', int $id, slice $owner, slice $amm, slice $factory, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) inline_ref;
+
 ;; $Amm$_init_child
 (cell, cell) $Amm$_init_child(cell sys', int $id, slice $factory, slice $owner) inline_ref;
+
+;; $AmmTon$_init_child
+(cell, cell) $AmmTon$_init_child(cell sys', int $id, slice $factory, slice $owner) inline_ref;
 
 ;; $Factory$_fun_id
 ((int), int) $Factory$_fun_id((int) $self) impure inline_ref;
@@ -146,6 +188,18 @@ slice $global_contractAddress((cell, cell) $s) impure inline;
 
 ;; $InnerDeployAmm$_constructor_queryId_jettonWallet_market_originalGasTo
 ((int, slice, slice, slice)) $InnerDeployAmm$_constructor_queryId_jettonWallet_market_originalGasTo(int $queryId, slice $jettonWallet, slice $market, slice $originalGasTo) inline;
+
+;; $MarketTonDeployedEvent$_constructor_queryId_marketAddress_id_owner_underlyingAssetName_duration_collection_content_operatorFee_serviceFee_oracle_feedIdAsset_feedIdToken_operatorFeeAddress
+((int, slice, int, slice, slice, int, cell, int, int, slice, int, int, slice)) $MarketTonDeployedEvent$_constructor_queryId_marketAddress_id_owner_underlyingAssetName_duration_collection_content_operatorFee_serviceFee_oracle_feedIdAsset_feedIdToken_operatorFeeAddress(int $queryId, slice $marketAddress, int $id, slice $owner, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) inline;
+
+;; $InnerDeployMarketTon$_constructor_queryId_originalGasTo
+((int, slice)) $InnerDeployMarketTon$_constructor_queryId_originalGasTo(int $queryId, slice $originalGasTo) inline;
+
+;; $MarketTonDeployedEventWithAmm$_constructor_queryId_marketAddress_id_owner_amm_underlyingAssetName_duration_collection_content_operatorFee_serviceFee_oracle_feedIdAsset_feedIdToken_operatorFeeAddress
+((int, slice, int, slice, slice, slice, int, cell, int, int, slice, int, int, slice)) $MarketTonDeployedEventWithAmm$_constructor_queryId_marketAddress_id_owner_amm_underlyingAssetName_duration_collection_content_operatorFee_serviceFee_oracle_feedIdAsset_feedIdToken_operatorFeeAddress(int $queryId, slice $marketAddress, int $id, slice $owner, slice $amm, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) inline;
+
+;; $InnerDeployAmmTon$_constructor_queryId_market_originalGasTo
+((int, slice, slice)) $InnerDeployAmmTon$_constructor_queryId_market_originalGasTo(int $queryId, slice $market, slice $originalGasTo) inline;
 
 ;; $DeployOk$_constructor_queryId
 ((int)) $DeployOk$_constructor_queryId(int $queryId) inline;
