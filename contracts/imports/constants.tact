@@ -10,6 +10,13 @@ const TO_TAKE_TO_MARKET: Int = ton("0.3");
 const GAS_TO_SEND_JETTON: Int = ton("0.048");
 const GAS_TO_FETCH_OWNER: Int = ton("0.02") + GAS_TO_SEND_JETTON;
 const GAS_MIN_VALUE: Int = ton("0.05") + GAS_TO_SEND_JETTON;
+const GAS_MIN_VALUE_CANCEL_DEAL: Int = ton("0.05");
+const GAS_MIN_VALUE_PROCESS_DEAL: Int = ton("0.1");
+const GAS_MIN_VALUE_TAKE_DEAL: Int = ton("0.1");
+const GAS_MIN_VALUE_CREATE_DEAL: Int = ton("0.05");
+const CREATE_DEAL_TON_GAS_AMOUNT: Int = ton("0.05");
+const TO_TAKE_TO_MARKET_MIN_GAS: Int = ton("0.05");
+const GAS_MIN_VALUE_CREATE_DEAL_WITH_AMM: Int = GAS_MIN_VALUE_TAKE_DEAL + CREATE_DEAL_TON_GAS_AMOUNT;
 
 const TIME_SLIPPAGE: Int = 60*5;
 
@@ -36,3 +43,4 @@ const BAD_FEED_ID: Int = 6;
 const BAD_STATUS: Int = 7;
 const TRANSACTION_FROM_MAKER: Int = 8;
 const SMALL_AMOUNT_OF_MAKER: Int = 9;
+const ORACLE_PRICE_TOO_OLD_2: Int = 10;

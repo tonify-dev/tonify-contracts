@@ -1,5 +1,6 @@
 import "@stdlib/deploy";
 import "./market.tact";
+import "./market_ton.tact";
 import "./amm.tact";
 
 message DeployTokenMarket {

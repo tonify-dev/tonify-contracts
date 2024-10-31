@@ -7,6 +7,10 @@ message(0x38f0b8f5) TakeDeal {
     oracleAssetData: Cell;
     oracleTokenData: Cell;
 }
+message TakeDealTon {
+    queryId: Int as uint64;
+    deal: TakeDealData;
+}
 struct TakeDealData {
     dealId: Int as uint32;
     oracleAssetData: Cell;
@@ -15,7 +19,12 @@ struct TakeDealData {
 message(0x78d830b2) TakeDealWithOriginalGasTo {
     data: Cell;
 }
-struct TakeDealDataWithOriginalGasTo {
+message TakeDealWithOriginalGasToTon {
+    queryId: Int as uint64;
+    amount: Int as coins;
+    deal: TakeDealDataWithOriginalGasTo;
+}
+struct TakeDealDataWithOriginalGasTo {  
     dealId: Int as uint32;
     originalGasTo: Address;
     oracleAssetData: Cell;
@@ -36,6 +45,10 @@ message InnerDeployMarket {
     jettonWallet: Address;
     originalGasTo: Address;
 }
+message InnerDeployMarketTon {
+    queryId: Int as uint64;
+    originalGasTo: Address;
+}
 message WithdrawOperatorFee {
     queryId: Int as uint64;
     amount: Int as coins;
@@ -46,7 +59,10 @@ message WithdrawServiceFee {
     amount: Int as coins;
     to: Address;
 }
-
+message CreateDealTon {
+    queryId: Int as uint64;
+    deal: CreateDealData;
+}
 struct CreateDealData {
     makerPosition: Bool;
     rateAsset: Int as coins;

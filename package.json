@@ -11,6 +11,7 @@
         "test": "jest --verbose",
         "test-oracle": "npm run build-oracle && jest ./tests/SingleFeedMan.spec.ts --verbose",
         "test-market": "npm run build && jest ./tests/Market.spec.ts --verbose",
+        "test-market-ton": "npm run build && jest ./tests/MarketTon.spec.ts --verbose",
         "test-market-integration": "npm run build && jest ./tests/MarketIntegration.spec.ts --verbose",
         "test-factory": "npm run build && jest ./tests/Factory.spec.ts --verbose",
         "test-amm": "npm run build && jest ./tests/Amm.spec.ts --verbose",

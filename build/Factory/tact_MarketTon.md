@@ -1,6 +1,6 @@
 # TACT Compilation Report
-Contract: Market
-BOC Size: 9112 bytes
+Contract: MarketTon
+BOC Size: 9010 bytes
 
 # Types
 Total Types: 76
@@ -316,8 +316,6 @@ Total Get Methods: 25
 
 ## amm
 
-## jettonWallet
-
 ## underlyingAssetName
 
 ## duration
@@ -349,6 +347,8 @@ Total Get Methods: 25
 ## operatorFeeAddress
 
 ## mapQueriesToContext
+
+## tonDepositBalance
 
 ## stopped
 
@@ -418,20 +418,20 @@ Argument: individual_content
 
 ```mermaid
 graph TD
-Market
-Market --> BaseTrait
-Market --> Resumable
+MarketTon
+MarketTon --> BaseTrait
+MarketTon --> Resumable
 Resumable --> BaseTrait
 Resumable --> Stoppable
 Stoppable --> BaseTrait
 Stoppable --> Ownable
 Ownable --> BaseTrait
 Resumable --> Ownable
-Market --> Stoppable
-Market --> Ownable
-Market --> NftCollection
+MarketTon --> Stoppable
+MarketTon --> Ownable
+MarketTon --> NftCollection
 NftCollection --> BaseTrait
-Market --> RedstoneOracleConsumerBase
+MarketTon --> RedstoneOracleConsumerBase
 RedstoneOracleConsumerBase --> BaseTrait
 ```
 
@@ -439,7 +439,7 @@ RedstoneOracleConsumerBase --> BaseTrait
 
 ```mermaid
 graph TD
-Market
-Market --> Deal
-Market --> NftItem
+MarketTon
+MarketTon --> Deal
+MarketTon --> NftItem
 ```

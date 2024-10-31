@@ -66,6 +66,9 @@ builder $Deal$_store(builder build_0, (int, slice, cell) v) inline;
 ;; $SendParameters$_constructor_to_value_mode_bounce_body
 ((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce_body(slice $to, int $value, int $mode, int $bounce, cell $body) inline;
 
+;; $SendParameters$_constructor_to_value_mode_bounce
+((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce(slice $to, int $value, int $mode, int $bounce) inline;
+
 ;; $Deal$_fun_id
 ((int, slice, cell), int) $Deal$_fun_id((int, slice, cell) $self) impure inline_ref;
 
@@ -77,9 +80,6 @@ builder $Deal$_store(builder build_0, (int, slice, cell) v) inline;
 
 ;; $Deal$_fun_owner
 ((int, slice, cell), slice) $Deal$_fun_owner((int, slice, cell) $self) impure inline_ref;
-
-;; $SendParameters$_constructor_to_value_mode_bounce
-((int, slice, int, int, cell, cell, cell)) $SendParameters$_constructor_to_value_mode_bounce(slice $to, int $value, int $mode, int $bounce) inline;
 
 ;; $ReportData$_constructor_queryId_id_data
 ((int, int, cell)) $ReportData$_constructor_queryId_id_data(int $queryId, int $id, cell $data) inline;

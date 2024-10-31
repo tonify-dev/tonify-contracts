@@ -3,7 +3,7 @@ Contract: Deal
 BOC Size: 845 bytes
 
 # Types
-Total Types: 71
+Total Types: 76
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -33,6 +33,10 @@ Signature: `FactoryDeploy{queryId:uint64,cashback:address}`
 TLB: `null`
 Signature: `null`
 
+## MarketTon$Data
+TLB: `null`
+Signature: `null`
+
 ## InnerDeployAmm
 TLB: `inner_deploy_amm#7beaac57 queryId:uint64 jettonWallet:address originalGasTo:address market:address = InnerDeployAmm`
 Signature: `InnerDeployAmm{queryId:uint64,jettonWallet:address,originalGasTo:address,market:address}`
@@ -49,6 +53,10 @@ Signature: `null`
 TLB: `take_deal#38f0b8f5 dealId:uint32 oracleAssetData:^cell oracleTokenData:^cell = TakeDeal`
 Signature: `TakeDeal{dealId:uint32,oracleAssetData:^cell,oracleTokenData:^cell}`
 
+## TakeDealTon
+TLB: `take_deal_ton#e7ab56a0 queryId:uint64 deal:TakeDealData{dealId:uint32,oracleAssetData:^cell,oracleTokenData:^cell} = TakeDealTon`
+Signature: `TakeDealTon{queryId:uint64,deal:TakeDealData{dealId:uint32,oracleAssetData:^cell,oracleTokenData:^cell}}`
+
 ## TakeDealData
 TLB: `_ dealId:uint32 oracleAssetData:^cell oracleTokenData:^cell = TakeDealData`
 Signature: `TakeDealData{dealId:uint32,oracleAssetData:^cell,oracleTokenData:^cell}`
@@ -56,6 +64,10 @@ Signature: `TakeDealData{dealId:uint32,oracleAssetData:^cell,oracleTokenData:^ce
 ## TakeDealWithOriginalGasTo
 TLB: `take_deal_with_original_gas_to#78d830b2 data:^cell = TakeDealWithOriginalGasTo`
 Signature: `TakeDealWithOriginalGasTo{data:^cell}`
+
+## TakeDealWithOriginalGasToTon
+TLB: `take_deal_with_original_gas_to_ton#262a9cf7 queryId:uint64 amount:coins deal:TakeDealDataWithOriginalGasTo{dealId:uint32,originalGasTo:address,oracleAssetData:^cell,oracleTokenData:^cell} = TakeDealWithOriginalGasToTon`
+Signature: `TakeDealWithOriginalGasToTon{queryId:uint64,amount:coins,deal:TakeDealDataWithOriginalGasTo{dealId:uint32,originalGasTo:address,oracleAssetData:^cell,oracleTokenData:^cell}}`
 
 ## TakeDealDataWithOriginalGasTo
 TLB: `_ dealId:uint32 originalGasTo:address oracleAssetData:^cell oracleTokenData:^cell = TakeDealDataWithOriginalGasTo`
@@ -69,6 +81,10 @@ Signature: `CreateDeal{makerPosition:bool,rateAsset:coins,rateToken:coins,percen
 TLB: `inner_deploy_market#690d7fe0 queryId:uint64 jettonWallet:address originalGasTo:address = InnerDeployMarket`
 Signature: `InnerDeployMarket{queryId:uint64,jettonWallet:address,originalGasTo:address}`
 
+## InnerDeployMarketTon
+TLB: `inner_deploy_market_ton#a0b21ae3 queryId:uint64 originalGasTo:address = InnerDeployMarketTon`
+Signature: `InnerDeployMarketTon{queryId:uint64,originalGasTo:address}`
+
 ## WithdrawOperatorFee
 TLB: `withdraw_operator_fee#d3212f13 queryId:uint64 amount:coins to:address = WithdrawOperatorFee`
 Signature: `WithdrawOperatorFee{queryId:uint64,amount:coins,to:address}`
@@ -76,6 +92,10 @@ Signature: `WithdrawOperatorFee{queryId:uint64,amount:coins,to:address}`
 ## WithdrawServiceFee
 TLB: `withdraw_service_fee#e90cd09b queryId:uint64 amount:coins to:address = WithdrawServiceFee`
 Signature: `WithdrawServiceFee{queryId:uint64,amount:coins,to:address}`
+
+## CreateDealTon
+TLB: `create_deal_ton#f2ba0052 queryId:uint64 deal:CreateDealData{makerPosition:bool,rateAsset:coins,rateToken:coins,percent:coins,expiration:uint32,slippage:coins,oracleAssetData:Maybe ^cell,oracleTokenData:Maybe ^cell} = CreateDealTon`
+Signature: `CreateDealTon{queryId:uint64,deal:CreateDealData{makerPosition:bool,rateAsset:coins,rateToken:coins,percent:coins,expiration:uint32,slippage:coins,oracleAssetData:Maybe ^cell,oracleTokenData:Maybe ^cell}}`
 
 ## CreateDealData
 TLB: `_ makerPosition:bool rateAsset:coins rateToken:coins percent:coins expiration:uint32 slippage:coins oracleAssetData:Maybe ^cell oracleTokenData:Maybe ^cell = CreateDealData`
@@ -331,6 +351,7 @@ Total Get Methods: 3
 24843: Only market can call this function
 27499: initialized tx need from collection
 29863: Market already set
+37488: Value must be positive
 40368: Contract stopped
 40476: Amount must be greater than 0
 40828: Only factory can call this function

@@ -20,11 +20,11 @@ PROGRAM{
   DECLPROC $Deal$_contract_store
   DECLPROC $global_send
   DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce
   DECLPROC $Deal$_fun_id
   DECLPROC $Deal$_fun_data
   DECLPROC $Deal$_fun_requireOwner
   DECLPROC $Deal$_fun_owner
-  DECLPROC $SendParameters$_constructor_to_value_mode_bounce
   DECLPROC $ReportData$_constructor_queryId_id_data
   DECLPROC $Deal$_internal_binary_SaveData
   DECLPROC $Deal$_internal_binary_DeleteData
@@ -315,6 +315,12 @@ PROGRAM{
     PUSHNULL
     PUSHNULL
   }>
+  $SendParameters$_constructor_to_value_mode_bounce PROCINLINE:<{
+    3 -ROLL
+    PUSHNULL
+    PUSHNULL
+    PUSHNULL
+  }>
   $Deal$_fun_id PROCREF:<{
     s2 PUSH
   }>
@@ -329,12 +335,6 @@ PROGRAM{
   }>
   $Deal$_fun_owner PROCREF:<{
     OVER
-  }>
-  $SendParameters$_constructor_to_value_mode_bounce PROCINLINE:<{
-    3 -ROLL
-    PUSHNULL
-    PUSHNULL
-    PUSHNULL
   }>
   $ReportData$_constructor_queryId_id_data PROCINLINE:<{
   }>

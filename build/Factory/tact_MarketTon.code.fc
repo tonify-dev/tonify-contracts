@@ -1,0 +1,993 @@
+#pragma version =0.4.4;
+#pragma allow-post-modification;
+#pragma compute-asm-ltr;
+
+#include "tact_MarketTon.headers.fc";
+#include "tact_MarketTon.stdlib.fc";
+#include "tact_MarketTon.constants.fc";
+#include "tact_MarketTon.storage.fc";
+
+;;
+;; Contract MarketTon functions
+;;
+
+(int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $MarketTon$_contract_init(int $id, slice $owner, slice $amm, slice $factory, slice $underlyingAssetName, int $duration, cell $collection_content, int $operatorFee, int $serviceFee, slice $oracle, int $feedIdAsset, int $feedIdToken, slice $operatorFeeAddress) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = (null(), null(), null(), null(), null(), null(), null(), null(), false, 0, 0, null(), null(), null(), null(), null(), 0, 0, 0, null());
+    throw_unless(4321, ( __tact_slice_eq_bits($factory, __tact_context_get_sender()) ));
+    $self'id = $id;
+    $self'owner = $owner;
+    $self'amm = $amm;
+    $self'factory = $factory;
+    $self'underlyingAssetName = $underlyingAssetName;
+    $self'duration = $duration;
+    $self'operatorFee = $operatorFee;
+    $self'serviceFee = $serviceFee;
+    $self'collection_content = $collection_content;
+    $self'oracle = $oracle;
+    $self'feedIdAsset = $feedIdAsset;
+    $self'feedIdToken = $feedIdToken;
+    $self'operatorFeeAddress = $operatorFeeAddress;
+    return ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_returnTon((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, slice $to, int $reason) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($to, 0, 128, true, end_cell(store_uint(begin_cell(), $reason, 8))));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_addTonDepositBalance((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $value) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    throw_unless(37488, ($value > 0));
+    $self'tonDepositBalance = $self'tonDepositBalance + $value;
+    raw_reserve($value, 0);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_saveDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, int $dealId, (int, int, int, int, int, int, int, int, int, int, int, int, int, slice) $deal, slice $originalGasTo) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker)) = $deal;
+    var ($winit'code, $winit'data) = $Deal$_init_child(__tact_context_sys, $dealId, my_address());
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body_code_data($global_contractAddress(($winit'code, $winit'data)), 0, 128, false, $SaveData$_store_cell($SaveData$_constructor_queryId_originalGasTo_data($queryId, $originalGasTo, $DealData$_store_cell(($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker)))), $winit'code, $winit'data));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_handleCreateDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, (int, int, int, int, int, int, cell, cell) $deal, int $amount, slice $from) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($deal'makerPosition, $deal'rateAsset, $deal'rateToken, $deal'percent, $deal'expiration, $deal'slippage, $deal'oracleAssetData, $deal'oracleTokenData)) = $deal;
+    int $dealId = $self'countDeal;
+    int $slippageAmount = (((($deal'rateAsset * $deal'rateToken) * $deal'percent) * $deal'slippage) / 10000000000000000000000000);
+    int $collateralAmountMaker = (((($deal'rateAsset * $deal'rateToken) * $deal'percent) / 10000000000000000) + $slippageAmount);
+    if (($amount < ($collateralAmountMaker + 50000000))) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $from, 2);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_addTonDepositBalance($collateralAmountMaker);
+    $self'countDeal = $self'countDeal + 1;
+    if (( ~ __tact_slice_eq_bits(__gen_slice_address_61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c(), $self'amm) )) {
+        $global_send($SendParameters$_constructor_to_value_mode_bounce_body($self'amm, 400000000, 0, true, $TakeDealAmm$_store_cell($TakeDealAmm$_constructor_dealId_queryId_amount_originalGasTo_oracleAssetData_oracleTokenData($dealId, $queryId, $collateralAmountMaker, $from, __tact_not_null($deal'oracleAssetData), __tact_not_null($deal'oracleTokenData)))));
+    }
+    var ($newDeal'status, $newDeal'isSeller, $newDeal'rate, $newDeal'rateMaker, $newDeal'percent, $newDeal'slippageMaker, $newDeal'collateralAmountMaker, $newDeal'dateOrderCreation, $newDeal'dateOrderExpiration, $newDeal'dateStart, $newDeal'dateStop, $newDeal'buyerTokenId, $newDeal'sellerTokenId, $newDeal'maker) = $DealData$_constructor_rate_rateMaker_percent_slippageMaker_collateralAmountMaker_dateOrderCreation_dateOrderExpiration_dateStart_dateStop_buyerTokenId_sellerTokenId_maker_isSeller_status(0, $deal'rateAsset, $deal'percent, $deal'slippage, $collateralAmountMaker, now(), (now() + $deal'expiration), 0, 0, 0, 0, $from, (~ $deal'makerPosition), 1);
+    $global_emit($DealCreatedEvent$_store_cell($DealCreatedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker($queryId, $dealId, $from, $collateralAmountMaker)));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_saveDeal($queryId, $dealId, ($newDeal'status, $newDeal'isSeller, $newDeal'rate, $newDeal'rateMaker, $newDeal'percent, $newDeal'slippageMaker, $newDeal'collateralAmountMaker, $newDeal'dateOrderCreation, $newDeal'dateOrderExpiration, $newDeal'dateStart, $newDeal'dateStop, $newDeal'buyerTokenId, $newDeal'sellerTokenId, $newDeal'maker), $from);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_fetchPrice((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, cell $firstOracleData, cell $secondOracleData) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    slice $slice = begin_parse($firstOracleData);
+    slice $slice_2 = begin_parse($secondOracleData);
+    $slice_2~load_uint(32);
+    cell $_oracleData = end_cell(store_ref(store_slice(store_slice(store_uint(store_uint(begin_cell(), $slice~load_uint(32), 32), $queryId, 64), $slice), $slice_2), end_cell(begin_cell())));
+    $global_send($SendParameters$_constructor_to_value_mode_body($self'oracle, 0, 128, $_oracleData));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_fetchPriceWithSaveContext((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, cell $oracleAssetData, cell $oracleTokenData, cell $saveContext) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    throw_unless(3607, null?(__tact_dict_get_int_cell($self'mapQueriesToContext, 257, $queryId)));
+    $self'mapQueriesToContext~__tact_dict_set_int_cell(257, $queryId, $saveContext);
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_fetchPrice($queryId, $oracleAssetData, $oracleTokenData);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_handleTakeDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, (int, cell, cell) $takeDeal, int $amount, slice $from, slice $originalGasTo) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($takeDeal'dealId, $takeDeal'oracleAssetData, $takeDeal'oracleTokenData)) = $takeDeal;
+    cell $contextProcessDeal = end_cell(store_ref(store_uint(begin_cell(), 10, 8), $ContextTakeDealForPriceReceived$_store_cell($ContextTakeDealForPriceReceived$_constructor_from_amount_dealId_originalGasTo($from, $amount, $takeDeal'dealId, $originalGasTo))));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_fetchPriceWithSaveContext($queryId, $takeDeal'oracleAssetData, $takeDeal'oracleTokenData, $contextProcessDeal);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_fetchDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, int $dealId, cell $saveContext) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    throw_unless(3607, null?(__tact_dict_get_int_cell($self'mapQueriesToContext, 257, $queryId)));
+    $self'mapQueriesToContext~__tact_dict_set_int_cell(257, $queryId, $saveContext);
+    var ($winit'code, $winit'data) = $Deal$_init_child(__tact_context_sys, $dealId, my_address());
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($global_contractAddress(($winit'code, $winit'data)), 0, 128, true, $GetData$_store_cell($GetData$_constructor_queryId($queryId))));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_takeDealAfterRecievedPrice((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, cell $query, (int, slice, int, slice) $ctx, int $queryId, int $feedId, int $price, int $timestamp, int $feedId2, int $price2, int $timestamp2) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw)) = $ctx;
+    var ($contextTakeDealAfterPrice'from, $contextTakeDealAfterPrice'amount, $contextTakeDealAfterPrice'dealId, $contextTakeDealAfterPrice'originalGasTo) = $ContextTakeDealForPriceReceived$_load_not_mut($query.begin_parse());
+    cell $contextProcessDeal = end_cell(store_ref(store_uint(begin_cell(), 20, 8), $ContextTakeDealForDealReceived$_store_cell($ContextTakeDealForDealReceived$_constructor_from_amount_originalGasTo_feedId_price_timestamp_feedId2_price2_timestamp2($contextTakeDealAfterPrice'from, $contextTakeDealAfterPrice'amount, $contextTakeDealAfterPrice'originalGasTo, $feedId, $price, ($timestamp / 1000), $feedId2, $price2, ($timestamp2 / 1000)))));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_fetchDeal($queryId, $contextTakeDealAfterPrice'dealId, $contextProcessDeal);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_processDealAfterRecievedPrice((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, cell $query, (int, slice, int, slice) $ctx, int $queryId, int $feedId, int $price, int $timestamp, int $feedId2, int $price2, int $timestamp2) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw)) = $ctx;
+    var ($contextProcessDealAfterPrice'from, $contextProcessDealAfterPrice'dealId) = $ContextProcessDealForPriceReceived$_load_not_mut($query.begin_parse());
+    cell $contextProcessDeal = end_cell(store_ref(store_uint(begin_cell(), 22, 8), $ContextProcessDealForDealReceived$_store_cell($ContextProcessDealForDealReceived$_constructor_from_feedId_price_timestamp_feedId2_price2_timestamp2($contextProcessDealAfterPrice'from, $feedId, $price, ($timestamp / 1000), $feedId2, $price2, ($timestamp2 / 1000)))));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_fetchDeal($queryId, $contextProcessDealAfterPrice'dealId, $contextProcessDeal);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), (cell, cell)) $MarketTon$_fun_getNftItemInit((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $item_index) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $NftItem$_init_child(__tact_context_sys, my_address(), $item_index));
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_mint((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $query_id, slice $new_owner, int $msgValue, slice $response_destination) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var ($nft_init'code, $nft_init'data) = ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_getNftItemInit($self'next_item_index);
+    $global_send($SendParameters$_constructor_to_value_bounce_mode_body_code_data($global_contractAddress(($nft_init'code, $nft_init'data)), $msgValue, true, 1, $Transfer$_store_cell($Transfer$_constructor_query_id_new_owner_response_destination_custom_payload_forward_amount_forward_payload($query_id, $new_owner, $response_destination, $self'collection_content, 0, $global_emptySlice())), $nft_init'code, $nft_init'data));
+    $self'next_item_index = ($self'next_item_index + 1);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ($self'next_item_index - 1));
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_takeDealAfterRecievedDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, int, int, int, int, int, int, int, int, int, int, int, slice) $deal, cell $query, (int, slice, int, slice) $ctx, int $queryId, int $dealId) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker)) = $deal;
+    var (($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw)) = $ctx;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    var ($contextTakeDealAfterDeal'from, $contextTakeDealAfterDeal'amount, $contextTakeDealAfterDeal'originalGasTo, $contextTakeDealAfterDeal'feedId, $contextTakeDealAfterDeal'price, $contextTakeDealAfterDeal'timestamp, $contextTakeDealAfterDeal'feedId2, $contextTakeDealAfterDeal'price2, $contextTakeDealAfterDeal'timestamp2) = $ContextTakeDealForDealReceived$_load_not_mut($query.begin_parse());
+    if (( __tact_slice_eq_bits($contextTakeDealAfterDeal'from, $deal'maker) )) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 8);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    if (($deal'status != 1)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 7);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    if (( (($contextTakeDealAfterDeal'feedId != $self'feedIdAsset)) ? (true) : (($contextTakeDealAfterDeal'feedId2 != $self'feedIdToken)) )) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 6);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    if (($contextTakeDealAfterDeal'timestamp < (now() - 300))) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 3);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    int $collateralAmount = ((($deal'percent * $contextTakeDealAfterDeal'price) * $contextTakeDealAfterDeal'price2) / 10000000000000000);
+    if (( (($contextTakeDealAfterDeal'price <= ($deal'rateMaker - (($deal'rateMaker * $deal'slippageMaker) / 100000000)))) ? (($contextTakeDealAfterDeal'price >= ($deal'rateMaker + (($deal'rateMaker * $deal'slippageMaker) / 100000000)))) : (false) )) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 4);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    int $returnAmountToTaker = ($contextTakeDealAfterDeal'amount - $collateralAmount);
+    if (($returnAmountToTaker < 50000000)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 5);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    int $returnAmountToMaker = ($deal'collateralAmountMaker - $collateralAmount);
+    if (($returnAmountToMaker < 0)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextTakeDealAfterDeal'from, 9);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_addTonDepositBalance(($collateralAmount - $returnAmountToMaker));
+    if (($returnAmountToMaker > 0)) {
+        $global_send($SendParameters$_constructor_to_value_mode_bounce($deal'maker, $returnAmountToMaker, 1, true));
+    }
+    if (( (($returnAmountToTaker > 0)) ? (( ~ __tact_slice_eq_bits($contextTakeDealAfterDeal'from, $contextTakeDealAfterDeal'originalGasTo) )) : (false) )) {
+        $global_send($SendParameters$_constructor_to_value_mode_bounce($contextTakeDealAfterDeal'from, $returnAmountToTaker, 1, true));
+    }
+    $deal'collateralAmountMaker = $collateralAmount;
+    $deal'rate = $contextTakeDealAfterDeal'price;
+    $deal'dateStart = now();
+    $deal'dateStop = (now() + $self'duration);
+    $deal'status = 2;
+    if ($deal'isSeller) {
+        $deal'buyerTokenId = ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_mint($queryId, $contextTakeDealAfterDeal'from, 30000000, $contextTakeDealAfterDeal'originalGasTo);
+        $deal'sellerTokenId = ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_mint($queryId, $deal'maker, 30000000, $contextTakeDealAfterDeal'originalGasTo);
+    } else {
+        $deal'sellerTokenId = ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_mint($queryId, $contextTakeDealAfterDeal'from, 30000000, $contextTakeDealAfterDeal'originalGasTo);
+        $deal'buyerTokenId = ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_mint($queryId, $deal'maker, 30000000, $contextTakeDealAfterDeal'originalGasTo);
+    }
+    $global_emit($DealAcceptedEvent$_store_cell($DealAcceptedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker($queryId, $dealId, $deal'maker, $deal'collateralAmountMaker)));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_saveDeal($queryId, $dealId, ($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker), $contextTakeDealAfterDeal'originalGasTo);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_deleteDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, int $dealId, slice $originalGasTo) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var ($winit'code, $winit'data) = $Deal$_init_child(__tact_context_sys, $dealId, my_address());
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body_code_data($global_contractAddress(($winit'code, $winit'data)), 0, 128, false, $DeleteData$_store_cell($DeleteData$_constructor_queryId_originalGasTo($queryId, $originalGasTo)), $winit'code, $winit'data));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun__cancelDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, int, int, int, int, int, int, int, int, int, int, int, slice) $deal, slice $originalGasTo, int $queryId, int $dealId) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker)) = $deal;
+    throw_unless(57951, ($deal'status == 1));
+    $self'tonDepositBalance = $self'tonDepositBalance - $deal'collateralAmountMaker;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce($deal'maker, $deal'collateralAmountMaker, 1, true));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_deleteDeal($queryId, $dealId, $originalGasTo);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_cancelDealAfterRecievedDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, int, int, int, int, int, int, int, int, int, int, int, slice) $deal, cell $query, (int, slice, int, slice) $ctx, int $queryId, int $dealId) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker)) = $deal;
+    var (($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw)) = $ctx;
+    var ($contextCancelDealAfterDeal'from) = $ContextCancelDealForDealReceived$_load_not_mut($query.begin_parse());
+    if (( ~ __tact_slice_eq_bits($contextCancelDealAfterDeal'from, $deal'maker) )) {
+        raw_reserve(($self'tonDepositBalance + 100000000), 0);
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextCancelDealAfterDeal'from, 8);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    $global_emit($CancelEvent$_store_cell($CancelEvent$_constructor_queryId_dealId_maker_collateralAmountMaker($queryId, $dealId, $deal'maker, $deal'collateralAmountMaker)));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun__cancelDeal(($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker), $contextCancelDealAfterDeal'from, $queryId, $dealId);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_fetchOwnerByIndex((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $query_id, int $item_index, int $value) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var ($initCode'code, $initCode'data) = ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_getNftItemInit($item_index);
+    $global_send($SendParameters$_constructor_to_value_bounce_mode_body($global_contractAddress(($initCode'code, $initCode'data)), $value, true, 0, $GetOwner$_store_cell($GetOwner$_constructor_query_id($query_id))));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_sendReward((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $tokenId, int $amount, int $queryId, slice $originalGasTo) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    throw_unless(3607, null?(__tact_dict_get_int_cell($self'mapQueriesToContext, 257, $queryId)));
+    var ($contextForGetOwner'amount, $contextForGetOwner'originalGasTo) = $ContextForGetOwner$_constructor_amount_originalGasTo($amount, $originalGasTo);
+    $self'mapQueriesToContext~__tact_dict_set_int_cell(257, $queryId, $ContextForGetOwner$_store_cell(($contextForGetOwner'amount, $contextForGetOwner'originalGasTo)));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_fetchOwnerByIndex($queryId, $tokenId, 68000000);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_processDealAfterRecievedDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, int, int, int, int, int, int, int, int, int, int, int, slice) $deal, cell $query, (int, slice, int, slice) $ctx, int $queryId, int $dealId) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var (($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker)) = $deal;
+    var (($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw)) = $ctx;
+    var ($contextProcessDealAfterDeal'from, $contextProcessDealAfterDeal'feedId, $contextProcessDealAfterDeal'price, $contextProcessDealAfterDeal'timestamp, $contextProcessDealAfterDeal'feedId2, $contextProcessDealAfterDeal'price2, $contextProcessDealAfterDeal'timestamp2) = $ContextProcessDealForDealReceived$_load_not_mut($query.begin_parse());
+    if (( (($deal'status == 1)) ? (($deal'dateOrderExpiration <= now())) : (false) )) {
+        $global_emit($DealExpiredEvent$_store_cell($DealExpiredEvent$_constructor_queryId_dealId_maker_collateralAmountMaker($queryId, $dealId, $deal'maker, $deal'collateralAmountMaker)));
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun__cancelDeal(($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker), $contextProcessDealAfterDeal'from, $queryId, $dealId);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    if ((~ ( (($deal'status == 2)) ? (($deal'dateStop <= now())) : (false) ))) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextProcessDealAfterDeal'from, 7);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    if (( (($contextProcessDealAfterDeal'feedId != $self'feedIdAsset)) ? (true) : (($contextProcessDealAfterDeal'feedId2 != $self'feedIdToken)) )) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextProcessDealAfterDeal'from, 6);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    if (( (($contextProcessDealAfterDeal'timestamp < ($deal'dateStop - 300))) ? (true) : (($contextProcessDealAfterDeal'timestamp > $deal'dateStop)) )) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextProcessDealAfterDeal'from, 3);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    if (( (($contextProcessDealAfterDeal'timestamp2 < ($deal'dateStop - 300))) ? (true) : (($contextProcessDealAfterDeal'timestamp2 > $deal'dateStop)) )) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_returnTon($queryId, $contextProcessDealAfterDeal'from, 10);
+        return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+    }
+    int $collateralAmount = $deal'collateralAmountMaker;
+    int $payoutBuyer = 0;
+    int $payoutSeller = 0;
+    int $delta = ((($deal'rate - $contextProcessDealAfterDeal'price) * $contextProcessDealAfterDeal'price2) / 100000000);
+    if ((abs($delta) >= $collateralAmount)) {
+        if (($delta > 0)) {
+            $payoutSeller = ($collateralAmount * 2);
+        } else {
+            $payoutBuyer = ($collateralAmount * 2);
+        }
+    } else {
+        $payoutSeller = ($collateralAmount + $delta);
+        $payoutBuyer = ($collateralAmount - $delta);
+    }
+    int $operatorFee = 0;
+    int $serviceFee = 0;
+    if (($payoutBuyer > 0)) {
+        if (($payoutBuyer > $collateralAmount)) {
+            $operatorFee = ((($payoutBuyer - $collateralAmount) * $self'operatorFee) / 1000000000);
+            $serviceFee = ((($payoutBuyer - $collateralAmount) * $self'serviceFee) / 1000000000);
+            $payoutBuyer = (($payoutBuyer - $operatorFee) - $serviceFee);
+        }
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_sendReward($deal'buyerTokenId, $payoutBuyer, $queryId, $contextProcessDealAfterDeal'from);
+    }
+    if (($payoutSeller > 0)) {
+        if (($payoutSeller > $collateralAmount)) {
+            $operatorFee = ((($payoutSeller - $collateralAmount) * $self'operatorFee) / 1000000000);
+            $serviceFee = ((($payoutSeller - $collateralAmount) * $self'serviceFee) / 1000000000);
+            $payoutSeller = (($payoutSeller - $operatorFee) - $serviceFee);
+        }
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_sendReward($deal'sellerTokenId, $payoutSeller, ($queryId + 1), $contextProcessDealAfterDeal'from);
+    }
+    $self'operatorFeeSum = $self'operatorFeeSum + $operatorFee;
+    $self'serviceFeeSum = $self'serviceFeeSum + $serviceFee;
+    $global_emit($DealCompletedEvent$_store_cell($DealCompletedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker($queryId, $dealId, $deal'maker, $deal'collateralAmountMaker)));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_deleteDeal($queryId, $dealId, $contextProcessDealAfterDeal'from);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_onPriceReceived((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, int $feedId, int $price, int $timestamp, int $feedId2, int $price2, int $timestamp2) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    slice $query = begin_parse(__tact_not_null(__tact_dict_get_int_cell($self'mapQueriesToContext, 257, $queryId)));
+    $self'mapQueriesToContext~__tact_dict_delete_int(257, $queryId);
+    int $opcode = $query~load_uint(8);
+    if (($opcode == 10)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_takeDealAfterRecievedPrice($query~load_ref(), ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw), $queryId, $feedId, $price, $timestamp, $feedId2, $price2, $timestamp2);
+    } elseif (($opcode == 12)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_processDealAfterRecievedPrice($query~load_ref(), ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw), $queryId, $feedId, $price, $timestamp, $feedId2, $price2, $timestamp2);
+    }
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_onOracleErrorReceived((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId, slice $error) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    $self'mapQueriesToContext~__tact_dict_delete_int(257, $queryId);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_onBouncedGetOwner((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $queryId) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    $self'mapQueriesToContext~__tact_dict_delete_int(257, $queryId);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_id((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'id);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), slice) $MarketTon$_fun_amm((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'amm);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), slice) $MarketTon$_fun_underlyingAssetName((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'underlyingAssetName);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_duration((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'duration);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_operatorFee((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'operatorFee);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_balance((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), __tact_my_balance());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_serviceFee((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'serviceFee);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_countDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'countDeal);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_next_item_index((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'next_item_index);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), cell) $MarketTon$_fun_collection_content((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'collection_content);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), slice) $MarketTon$_fun_oracle((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'oracle);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), slice) $MarketTon$_fun_factory((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'factory);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_feedIdAsset((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'feedIdAsset);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_feedIdToken((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'feedIdToken);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_operatorFeeSum((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'operatorFeeSum);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_serviceFeeSum((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'serviceFeeSum);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), slice) $MarketTon$_fun_operatorFeeAddress((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'operatorFeeAddress);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), cell) $MarketTon$_fun_mapQueriesToContext((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'mapQueriesToContext);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_tonDepositBalance((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'tonDepositBalance);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_requireNotStopped((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    throw_unless(40368, (~ $self'stopped));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_requireStopped((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    throw_unless(53296, $self'stopped);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_fun_stopped((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'stopped);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_fun_requireOwner((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    throw_unless(132, ( __tact_slice_eq_bits($self'owner, __tact_context_get_sender()) ));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), slice) $MarketTon$_fun_owner((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $self'owner);
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), (int, cell, slice)) $MarketTon$_fun_get_collection_data((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    tuple $b = __tact_string_builder_start_string();
+    slice $collectionDataString = __tact_slice_to_str($Cell$_fun_asSlice($self'collection_content));
+    $b~__tact_string_builder_append($collectionDataString);
+    $b~__tact_string_builder_append(__gen_slice_string_7ca4179185a84c879806ec30a1f5fa692451a7fb8dfcf32a967a2cb475822481());
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $CollectionData$_constructor_next_item_index_collection_content_owner_address($self'next_item_index, __tact_string_builder_end($b), __gen_slice_address_61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c()));
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), slice) $MarketTon$_fun_get_nft_address_by_index((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $item_index) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    var ($initCode'code, $initCode'data) = ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_getNftItemInit($item_index);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), $global_contractAddress(($initCode'code, $initCode'data)));
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), cell) $MarketTon$_fun_get_nft_content((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, int $index, cell $individual_content) impure inline_ref {
+    var (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)) = $self;
+    tuple $b = __tact_string_builder_start_string();
+    slice $ic = __tact_slice_to_str($Cell$_fun_asSlice($individual_content));
+    $b~__tact_string_builder_append($ic);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), __tact_string_builder_end($b));
+}
+
+;;
+;; Receivers of a Contract MarketTon
+;;
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_InnerDeployMarketTon((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, slice) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'originalGasTo) = $msg;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce_body($msg'originalGasTo, 0, 128, false, $DeployOk$_store_cell($DeployOk$_constructor_queryId($msg'queryId))));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_WithdrawServiceFee((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, slice) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'amount, $msg'to) = $msg;
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_requireOwner();
+    throw_unless(40476, ($msg'amount > 0));
+    throw_unless(44278, ($msg'amount <= $self'serviceFeeSum));
+    $self'serviceFeeSum = $self'serviceFeeSum - $msg'amount;
+    $self'tonDepositBalance = $self'tonDepositBalance - $msg'amount;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce($msg'to, $msg'amount, 1, false));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce(__tact_context_get_sender(), 0, 128, true));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_WithdrawOperatorFee((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, slice) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'amount, $msg'to) = $msg;
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(51559, ( __tact_slice_eq_bits($self'operatorFeeAddress, $ctx'sender) ));
+    throw_unless(40476, ($msg'amount > 0));
+    throw_unless(59867, ($msg'amount <= $self'operatorFeeSum));
+    $self'operatorFeeSum = $self'operatorFeeSum - $msg'amount;
+    $self'tonDepositBalance = $self'tonDepositBalance - $msg'amount;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce($msg'to, $msg'amount, 1, false));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce(__tact_context_get_sender(), 0, 128, true));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_CreateDealTon((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, (int, int, int, int, int, int, cell, cell)) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, ($msg'deal'makerPosition, $msg'deal'rateAsset, $msg'deal'rateToken, $msg'deal'percent, $msg'deal'expiration, $msg'deal'slippage, $msg'deal'oracleAssetData, $msg'deal'oracleTokenData)) = $msg;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(16059, ( (( (( __tact_slice_eq_bits(__gen_slice_address_61ab4641fa30d9310391025086eec65d200d79268e1b7cd402565e01ba64be3c(), $self'amm) )) ? (($ctx'value >= 50000000)) : (false) )) ? (true) : (($ctx'value >= 150000000)) ));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_handleCreateDeal($msg'queryId, ($msg'deal'makerPosition, $msg'deal'rateAsset, $msg'deal'rateToken, $msg'deal'percent, $msg'deal'expiration, $msg'deal'slippage, $msg'deal'oracleAssetData, $msg'deal'oracleTokenData), $ctx'value, $ctx'sender);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_TakeDealTon((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, (int, cell, cell)) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, ($msg'deal'dealId, $msg'deal'oracleAssetData, $msg'deal'oracleTokenData)) = $msg;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(16059, ($ctx'value >= 100000000));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_handleTakeDeal($msg'queryId, ($msg'deal'dealId, $msg'deal'oracleAssetData, $msg'deal'oracleTokenData), $ctx'value, $ctx'sender, $ctx'sender);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_TakeDealWithOriginalGasToTon((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, (int, slice, cell, cell)) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'amount, ($msg'deal'dealId, $msg'deal'originalGasTo, $msg'deal'oracleAssetData, $msg'deal'oracleTokenData)) = $msg;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(16059, ($ctx'value >= 100000000));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_handleTakeDeal($msg'queryId, $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData($msg'deal'dealId, $msg'deal'oracleAssetData, $msg'deal'oracleTokenData), $msg'amount, $ctx'sender, $msg'deal'originalGasTo);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_CancelDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'dealId) = $msg;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(16059, ($ctx'value >= 50000000));
+    cell $contextCancelDeal = end_cell(store_ref(store_uint(begin_cell(), 21, 8), $ContextCancelDealForDealReceived$_store_cell($ContextCancelDealForDealReceived$_constructor_from($ctx'sender))));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_fetchDeal($msg'queryId, $msg'dealId, $contextCancelDeal);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_ProcessDeal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, cell, cell) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'dealId, $msg'oracleAssetData, $msg'oracleTokenData) = $msg;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    throw_unless(16059, ($ctx'value >= 100000000));
+    cell $contextProcessDeal = end_cell(store_ref(store_uint(begin_cell(), 12, 8), $ContextProcessDealForPriceReceived$_store_cell($ContextProcessDealForPriceReceived$_constructor_from_dealId($ctx'sender, $msg'dealId))));
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_fetchPriceWithSaveContext($msg'queryId, $msg'oracleAssetData, $msg'oracleTokenData, $contextProcessDeal);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_ReportOwner((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, slice) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'query_id, $msg'index_id, $msg'owner) = $msg;
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    var ($winit'code, $winit'data) = $NftItem$_init_child(__tact_context_sys, my_address(), $msg'index_id);
+    throw_unless(14154, ( __tact_slice_eq_bits($global_contractAddress(($winit'code, $winit'data)), $ctx'sender) ));
+    var ($contextForGetOwner'amount, $contextForGetOwner'originalGasTo) = $ContextForGetOwner$_load_not_mut(__tact_dict_get_int_cell($self'mapQueriesToContext, 257, $msg'query_id).begin_parse());
+    $self'mapQueriesToContext~__tact_dict_delete_int(257, $msg'query_id);
+    $self'tonDepositBalance = $self'tonDepositBalance - $contextForGetOwner'amount;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    $global_send($SendParameters$_constructor_to_value_mode_bounce($msg'owner, $contextForGetOwner'amount, 1, true));
+    $global_send($SendParameters$_constructor_to_value_mode_bounce($contextForGetOwner'originalGasTo, 0, 130, true));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_ReportData((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, cell) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'id, $msg'data) = $msg;
+    var ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw) = __tact_context_get();
+    var ($winit'code, $winit'data) = $Deal$_init_child(__tact_context_sys, $msg'id, my_address());
+    throw_unless(48542, ( __tact_slice_eq_bits($global_contractAddress(($winit'code, $winit'data)), $ctx'sender) ));
+    var ($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker) = $DealData$_load_not_mut($msg'data.begin_parse());
+    slice $query = begin_parse(__tact_not_null(__tact_dict_get_int_cell($self'mapQueriesToContext, 257, $msg'queryId)));
+    $self'mapQueriesToContext~__tact_dict_delete_int(257, $msg'queryId);
+    int $opcode = $query~load_uint(8);
+    if (($opcode == 20)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_takeDealAfterRecievedDeal(($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker), $query~load_ref(), ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw), $msg'queryId, $msg'id);
+    } elseif (($opcode == 21)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_cancelDealAfterRecievedDeal(($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker), $query~load_ref(), ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw), $msg'queryId, $msg'id);
+    } elseif (($opcode == 22)) {
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_processDealAfterRecievedDeal(($deal'status, $deal'isSeller, $deal'rate, $deal'rateMaker, $deal'percent, $deal'slippageMaker, $deal'collateralAmountMaker, $deal'dateOrderCreation, $deal'dateOrderExpiration, $deal'dateStart, $deal'dateStop, $deal'buyerTokenId, $deal'sellerTokenId, $deal'maker), $query~load_ref(), ($ctx'bounced, $ctx'sender, $ctx'value, $ctx'raw), $msg'queryId, $msg'id);
+    }
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_receive_binary_bounce_GetData((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId) = $msg;
+    $self'mapQueriesToContext~__tact_dict_delete_int(257, $msg'queryId);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_requireOwner();
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_requireStopped();
+    $self'stopped = false;
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_reply(__gen_cell_comment_514f593ead485926515219a03034c6b162f1c29390f83f2f1bd70b8b77731ec3());
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_internal_text_bcfaf776907c719cc8d379d8f194aaaa27e8ca2871cd591781721f215a454501((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_requireOwner();
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_requireNotStopped();
+    $self'stopped = true;
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_reply(__gen_cell_comment_8f4b6a166554b4f282855d0333c627d5b58d281ea4ba11e4def91a1053193b2d());
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_receive_binary_bounce_GetOwner((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'query_id) = $msg;
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_onBouncedGetOwner($msg'query_id);
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_internal_any((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, slice $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    int $op = $msg~load_uint(32);
+    if (($op == 2472520145)) {
+        throw_unless(7021, ( __tact_slice_eq_bits($self'oracle, __tact_context_get_sender()) ));
+        int $queryId = $msg~load_uint(64);
+        slice $slice = begin_parse($msg~load_ref());
+        slice $slice_2 = begin_parse($msg~load_ref());
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_onPriceReceived($queryId, $slice~load_uint(256), $slice~load_uint(256), $slice~load_uint(48), $slice_2~load_uint(256), $slice_2~load_uint(256), $slice_2~load_uint(48));
+    }
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_receive_bounce((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, slice $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    int $op = $msg~load_uint(32);
+    if (($op == 64984234)) {
+        int $queryId = $msg~load_uint(64);
+        ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_onOracleErrorReceived($queryId, $msg);
+    }
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
+;;
+;; Get methods of a Contract MarketTon
+;;
+
+_ %id() method_id(105872) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_id();
+    return res;
+}
+
+_ %amm() method_id(93222) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_amm();
+    return res;
+}
+
+_ %underlyingAssetName() method_id(89805) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_underlyingAssetName();
+    return res;
+}
+
+_ %duration() method_id(72000) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_duration();
+    return res;
+}
+
+_ %operatorFee() method_id(128753) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_operatorFee();
+    return res;
+}
+
+_ %balance() method_id(104128) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_balance();
+    return res;
+}
+
+_ %serviceFee() method_id(104955) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_serviceFee();
+    return res;
+}
+
+_ %countDeal() method_id(95777) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_countDeal();
+    return res;
+}
+
+_ %next_item_index() method_id(96513) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_next_item_index();
+    return res;
+}
+
+_ %collection_content() method_id(79650) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_collection_content();
+    return res;
+}
+
+_ %oracle() method_id(89095) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_oracle();
+    return res;
+}
+
+_ %factory() method_id(82386) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_factory();
+    return res;
+}
+
+_ %feedIdAsset() method_id(73117) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_feedIdAsset();
+    return res;
+}
+
+_ %feedIdToken() method_id(79804) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_feedIdToken();
+    return res;
+}
+
+_ %operatorFeeSum() method_id(80955) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_operatorFeeSum();
+    return res;
+}
+
+_ %serviceFeeSum() method_id(91306) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_serviceFeeSum();
+    return res;
+}
+
+_ %operatorFeeAddress() method_id(80439) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_operatorFeeAddress();
+    return res;
+}
+
+_ %mapQueriesToContext() method_id(97210) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_mapQueriesToContext();
+    return res;
+}
+
+_ %tonDepositBalance() method_id(130874) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_tonDepositBalance();
+    return res;
+}
+
+_ %stopped() method_id(74107) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_stopped();
+    return res;
+}
+
+_ %owner() method_id(83229) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_owner();
+    return res;
+}
+
+_ %get_collection_data() method_id(102491) {
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_get_collection_data();
+    return $CollectionData$_to_external(res);
+}
+
+_ %get_nft_address_by_index(int $item_index) method_id(92067) {
+    int $item_index = $item_index;
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_get_nft_address_by_index($item_index);
+    return res;
+}
+
+_ %getNftItemInit(int $item_index) method_id(81078) {
+    int $item_index = $item_index;
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_getNftItemInit($item_index);
+    return $StateInit$_to_external(res);
+}
+
+_ %get_nft_content(int $index, cell $individual_content) method_id(68445) {
+    int $index = $index;
+    cell $individual_content = $individual_content;
+    var self = $MarketTon$_contract_load();
+    var res = self~$MarketTon$_fun_get_nft_content($index, $individual_content);
+    return res;
+}
+
+_ lazy_deployment_completed() method_id {
+    return get_data().begin_parse().load_int(1);
+}
+
+;;
+;; Routing of a Contract MarketTon
+;;
+
+((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), int) $MarketTon$_contract_router_internal((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) self, int msg_bounced, slice in_msg) impure inline_ref {
+    ;; Handle bounced messages
+    if (msg_bounced) {
+        
+        ;; Skip 0xFFFFFFFF
+        in_msg~skip_bits(32);
+        
+        ;; Parse op
+        int op = 0;
+        if (slice_bits(in_msg) >= 32) {
+            op = in_msg.preload_uint(32);
+        }
+        
+        ;; Bounced handler for GetData message
+        if (op == 3858888933) {
+            var msg = in_msg~$GetData$_load();
+            self~$MarketTon$_receive_binary_bounce_GetData(msg);
+            return (self, true);
+        }
+        
+        ;; Bounced handler for GetOwner message
+        if (op == 3156669640) {
+            var msg = in_msg~$GetOwner$_load();
+            self~$MarketTon$_receive_binary_bounce_GetOwner(msg);
+            return (self, true);
+        }
+        
+        ;; Fallback bounce receiver
+        self~$MarketTon$_receive_bounce(in_msg);
+        
+        return (self, true);
+    }
+    
+    ;; Parse incoming message
+    int op = 0;
+    if (slice_bits(in_msg) >= 32) {
+        op = in_msg.preload_uint(32);
+    }
+    
+    
+    ;; Receive InnerDeployMarketTon message
+    if (op == 2696026851) {
+        var msg = in_msg~$InnerDeployMarketTon$_load();
+        self~$MarketTon$_internal_binary_InnerDeployMarketTon(msg);
+        return (self, true);
+    }
+    
+    ;; Receive WithdrawServiceFee message
+    if (op == 3909931163) {
+        var msg = in_msg~$WithdrawServiceFee$_load();
+        self~$MarketTon$_internal_binary_WithdrawServiceFee(msg);
+        return (self, true);
+    }
+    
+    ;; Receive WithdrawOperatorFee message
+    if (op == 3542167315) {
+        var msg = in_msg~$WithdrawOperatorFee$_load();
+        self~$MarketTon$_internal_binary_WithdrawOperatorFee(msg);
+        return (self, true);
+    }
+    
+    ;; Receive CreateDealTon message
+    if (op == 4072276050) {
+        var msg = in_msg~$CreateDealTon$_load();
+        self~$MarketTon$_internal_binary_CreateDealTon(msg);
+        return (self, true);
+    }
+    
+    ;; Receive TakeDealTon message
+    if (op == 3886765728) {
+        var msg = in_msg~$TakeDealTon$_load();
+        self~$MarketTon$_internal_binary_TakeDealTon(msg);
+        return (self, true);
+    }
+    
+    ;; Receive TakeDealWithOriginalGasToTon message
+    if (op == 640326903) {
+        var msg = in_msg~$TakeDealWithOriginalGasToTon$_load();
+        self~$MarketTon$_internal_binary_TakeDealWithOriginalGasToTon(msg);
+        return (self, true);
+    }
+    
+    ;; Receive CancelDeal message
+    if (op == 2166842366) {
+        var msg = in_msg~$CancelDeal$_load();
+        self~$MarketTon$_internal_binary_CancelDeal(msg);
+        return (self, true);
+    }
+    
+    ;; Receive ProcessDeal message
+    if (op == 3915542458) {
+        var msg = in_msg~$ProcessDeal$_load();
+        self~$MarketTon$_internal_binary_ProcessDeal(msg);
+        return (self, true);
+    }
+    
+    ;; Receive ReportOwner message
+    if (op == 704662021) {
+        var msg = in_msg~$ReportOwner$_load();
+        self~$MarketTon$_internal_binary_ReportOwner(msg);
+        return (self, true);
+    }
+    
+    ;; Receive ReportData message
+    if (op == 3062344471) {
+        var msg = in_msg~$ReportData$_load();
+        self~$MarketTon$_internal_binary_ReportData(msg);
+        return (self, true);
+    }
+    
+    ;; Text Receivers
+    if (op == 0) {
+        var text_op = slice_hash(in_msg);
+        
+        ;; Receive "Resume" message
+        if (text_op == 0x6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df) {
+            self~$MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df();
+            return (self, true);
+        }
+        
+        ;; Receive "Stop" message
+        if (text_op == 0xbcfaf776907c719cc8d379d8f194aaaa27e8ca2871cd591781721f215a454501) {
+            self~$MarketTon$_internal_text_bcfaf776907c719cc8d379d8f194aaaa27e8ca2871cd591781721f215a454501();
+            return (self, true);
+        }
+    }
+    
+    ;; Receiver fallback
+    self~$MarketTon$_internal_any(in_msg);
+    return (self, true);
+}
+
+() recv_internal(int msg_value, cell in_msg_cell, slice in_msg) impure {
+    
+    ;; Context
+    var cs = in_msg_cell.begin_parse();
+    var msg_flags = cs~load_uint(4);
+    var msg_bounced = -(msg_flags & 1);
+    slice msg_sender_addr = __tact_verify_address(cs~load_msg_addr());
+    __tact_context = (msg_bounced, msg_sender_addr, msg_value, cs);
+    __tact_context_sender = msg_sender_addr;
+    
+    ;; Load contract data
+    var self = $MarketTon$_contract_load();
+    
+    ;; Handle operation
+    int handled = self~$MarketTon$_contract_router_internal(msg_bounced, in_msg);
+    
+    ;; Throw if not handled
+    throw_unless(130, handled);
+    
+    ;; Persist state
+    $MarketTon$_contract_store(self);
+}

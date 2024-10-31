@@ -1,0 +1,3788 @@
+PROGRAM{
+  DECLPROC __tact_verify_address
+  DECLPROC __tact_load_address
+  DECLPROC __tact_store_address
+  DECLPROC __tact_store_address_opt
+  DECLPROC __tact_create_address
+  DECLPROC __tact_compute_contract_address
+  DECLPROC __tact_my_balance
+  DECLPROC __tact_not_null
+  DECLPROC __tact_context_get
+  DECLPROC __tact_context_get_sender
+  DECLPROC __tact_store_bool
+  DECLPROC __tact_dict_set_int_cell
+  DECLPROC __tact_dict_get_int_cell
+  DECLPROC __tact_slice_eq_bits
+  DECLPROC __tact_dict_set_code
+  DECLPROC __tact_dict_get_code
+  DECLPROC __tact_string_builder_start
+  DECLPROC __tact_string_builder_start_string
+  DECLPROC __tact_string_builder_end
+  DECLPROC __tact_string_builder_append
+  DECLPROC $DeployOk$_store
+  DECLPROC $DeployOk$_store_cell
+  DECLPROC $TakeDealData$_load
+  DECLPROC $TakeDealTon$_load
+  DECLPROC $TakeDealDataWithOriginalGasTo$_load
+  DECLPROC $TakeDealWithOriginalGasToTon$_load
+  DECLPROC $InnerDeployMarketTon$_load
+  DECLPROC $WithdrawOperatorFee$_load
+  DECLPROC $WithdrawServiceFee$_load
+  DECLPROC $CreateDealData$_load
+  DECLPROC $CreateDealTon$_load
+  DECLPROC $CancelDeal$_load
+  DECLPROC $ProcessDeal$_load
+  DECLPROC $DealData$_store
+  DECLPROC $DealData$_store_cell
+  DECLPROC $DealData$_load
+  DECLPROC $DealData$_load_not_mut
+  DECLPROC $CancelEvent$_store
+  DECLPROC $CancelEvent$_store_cell
+  DECLPROC $DealAcceptedEvent$_store
+  DECLPROC $DealAcceptedEvent$_store_cell
+  DECLPROC $DealCreatedEvent$_store
+  DECLPROC $DealCreatedEvent$_store_cell
+  DECLPROC $DealCompletedEvent$_store
+  DECLPROC $DealCompletedEvent$_store_cell
+  DECLPROC $DealExpiredEvent$_store
+  DECLPROC $DealExpiredEvent$_store_cell
+  DECLPROC $ContextCancelDealForDealReceived$_store
+  DECLPROC $ContextCancelDealForDealReceived$_store_cell
+  DECLPROC $ContextCancelDealForDealReceived$_load
+  DECLPROC $ContextCancelDealForDealReceived$_load_not_mut
+  DECLPROC $ContextTakeDealForDealReceived$_store
+  DECLPROC $ContextTakeDealForDealReceived$_store_cell
+  DECLPROC $ContextTakeDealForDealReceived$_load
+  DECLPROC $ContextTakeDealForDealReceived$_load_not_mut
+  DECLPROC $ContextProcessDealForDealReceived$_store
+  DECLPROC $ContextProcessDealForDealReceived$_store_cell
+  DECLPROC $ContextProcessDealForDealReceived$_load
+  DECLPROC $ContextProcessDealForDealReceived$_load_not_mut
+  DECLPROC $ContextTakeDealForPriceReceived$_store
+  DECLPROC $ContextTakeDealForPriceReceived$_store_cell
+  DECLPROC $ContextTakeDealForPriceReceived$_load
+  DECLPROC $ContextTakeDealForPriceReceived$_load_not_mut
+  DECLPROC $ContextProcessDealForPriceReceived$_store
+  DECLPROC $ContextProcessDealForPriceReceived$_store_cell
+  DECLPROC $ContextProcessDealForPriceReceived$_load
+  DECLPROC $ContextProcessDealForPriceReceived$_load_not_mut
+  DECLPROC $ContextForGetOwner$_store
+  DECLPROC $ContextForGetOwner$_store_cell
+  DECLPROC $ContextForGetOwner$_load
+  DECLPROC $ContextForGetOwner$_load_not_mut
+  DECLPROC $TakeDealAmm$_store
+  DECLPROC $TakeDealAmm$_store_cell
+  DECLPROC $GetData$_store
+  DECLPROC $GetData$_store_cell
+  DECLPROC $GetData$_load
+  DECLPROC $ReportData$_load
+  DECLPROC $SaveData$_store
+  DECLPROC $SaveData$_store_cell
+  DECLPROC $DeleteData$_store
+  DECLPROC $DeleteData$_store_cell
+  DECLPROC $Transfer$_store
+  DECLPROC $Transfer$_store_cell
+  DECLPROC $GetOwner$_store
+  DECLPROC $GetOwner$_store_cell
+  DECLPROC $GetOwner$_load
+  DECLPROC $ReportOwner$_load
+  DECLPROC $MarketTon$_store
+  DECLPROC $MarketTon$_load
+  DECLPROC $StateInit$_not_null
+  DECLPROC $StateInit$_to_external
+  DECLPROC $CollectionData$_to_external
+  DECLPROC $MarketTon$init$_load
+  DECLPROC $Deal$init$_store
+  DECLPROC $NftItem$init$_store
+  DECLPROC $MarketTon$_contract_init
+  DECLPROC $MarketTon$_contract_load
+  DECLPROC $MarketTon$_contract_store
+  DECLPROC $global_emptyCell
+  DECLPROC $Cell$_fun_asSlice
+  DECLPROC $global_emptySlice
+  DECLPROC $global_contractAddress
+  DECLPROC $global_send
+  DECLPROC $global_emit
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body
+  DECLPROC $TakeDealAmm$_constructor_dealId_queryId_amount_originalGasTo_oracleAssetData_oracleTokenData
+  DECLPROC $DealData$_constructor_rate_rateMaker_percent_slippageMaker_collateralAmountMaker_dateOrderCreation_dateOrderExpiration_dateStart_dateStop_buyerTokenId_sellerTokenId_maker_isSeller_status
+  DECLPROC $DealCreatedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker
+  DECLPROC $ContextTakeDealForPriceReceived$_constructor_from_amount_dealId_originalGasTo
+  DECLPROC $ContextTakeDealForDealReceived$_constructor_from_amount_originalGasTo_feedId_price_timestamp_feedId2_price2_timestamp2
+  DECLPROC $ContextProcessDealForDealReceived$_constructor_from_feedId_price_timestamp_feedId2_price2_timestamp2
+  DECLPROC $DealAcceptedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker
+  DECLPROC $CancelEvent$_constructor_queryId_dealId_maker_collateralAmountMaker
+  DECLPROC $DealExpiredEvent$_constructor_queryId_dealId_maker_collateralAmountMaker
+  DECLPROC $DealCompletedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker
+  DECLPROC $ContextForGetOwner$_constructor_amount_originalGasTo
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce_body_code_data
+  DECLPROC $SaveData$_constructor_queryId_originalGasTo_data
+  DECLPROC $DeleteData$_constructor_queryId_originalGasTo
+  DECLPROC $GetData$_constructor_queryId
+  DECLPROC $SendParameters$_constructor_bounce_to_value_mode_body_code_data
+  DECLPROC $SendParameters$_constructor_to_value_bounce_mode_body_code_data
+  DECLPROC $Transfer$_constructor_query_id_new_owner_response_destination_custom_payload_forward_amount_forward_payload
+  DECLPROC $SendParameters$_constructor_to_value_bounce_mode_body
+  DECLPROC $GetOwner$_constructor_query_id
+  DECLPROC $CollectionData$_constructor_next_item_index_collection_content_owner_address
+  DECLPROC $SendParameters$_constructor_to_value_mode_body
+  DECLPROC $MarketTon$_fun_returnTon
+  DECLPROC $MarketTon$_fun_addTonDepositBalance
+  DECLPROC $Deal$_init_child
+  DECLPROC $MarketTon$_fun_saveDeal
+  DECLPROC $MarketTon$_fun_handleCreateDeal
+  DECLPROC $MarketTon$_fun_fetchPrice
+  DECLPROC $MarketTon$_fun_fetchPriceWithSaveContext
+  DECLPROC $MarketTon$_fun_handleTakeDeal
+  DECLPROC $MarketTon$_fun_fetchDeal
+  DECLPROC $MarketTon$_fun_takeDealAfterRecievedPrice
+  DECLPROC $MarketTon$_fun_processDealAfterRecievedPrice
+  DECLPROC $SendParameters$_constructor_to_value_mode_bounce
+  DECLPROC $NftItem$_init_child
+  DECLPROC $MarketTon$_fun_getNftItemInit
+  DECLPROC $MarketTon$_fun_mint
+  DECLPROC $MarketTon$_fun_takeDealAfterRecievedDeal
+  DECLPROC $MarketTon$_fun_deleteDeal
+  DECLPROC $MarketTon$_fun__cancelDeal
+  DECLPROC $MarketTon$_fun_cancelDealAfterRecievedDeal
+  DECLPROC $MarketTon$_fun_fetchOwnerByIndex
+  DECLPROC $MarketTon$_fun_sendReward
+  DECLPROC $MarketTon$_fun_processDealAfterRecievedDeal
+  DECLPROC $MarketTon$_fun_onPriceReceived
+  DECLPROC $MarketTon$_fun_onOracleErrorReceived
+  DECLPROC $MarketTon$_fun_onBouncedGetOwner
+  DECLPROC $MarketTon$_fun_id
+  DECLPROC $MarketTon$_fun_amm
+  DECLPROC $MarketTon$_fun_underlyingAssetName
+  DECLPROC $MarketTon$_fun_duration
+  DECLPROC $MarketTon$_fun_operatorFee
+  DECLPROC $MarketTon$_fun_balance
+  DECLPROC $MarketTon$_fun_serviceFee
+  DECLPROC $MarketTon$_fun_countDeal
+  DECLPROC $MarketTon$_fun_next_item_index
+  DECLPROC $MarketTon$_fun_collection_content
+  DECLPROC $MarketTon$_fun_oracle
+  DECLPROC $MarketTon$_fun_factory
+  DECLPROC $MarketTon$_fun_feedIdAsset
+  DECLPROC $MarketTon$_fun_feedIdToken
+  DECLPROC $MarketTon$_fun_operatorFeeSum
+  DECLPROC $MarketTon$_fun_serviceFeeSum
+  DECLPROC $MarketTon$_fun_operatorFeeAddress
+  DECLPROC $MarketTon$_fun_mapQueriesToContext
+  DECLPROC $MarketTon$_fun_tonDepositBalance
+  DECLPROC $MarketTon$_fun_forward
+  DECLPROC $MarketTon$_fun_reply
+  DECLPROC $MarketTon$_fun_requireNotStopped
+  DECLPROC $MarketTon$_fun_requireStopped
+  DECLPROC $MarketTon$_fun_stopped
+  DECLPROC $MarketTon$_fun_requireOwner
+  DECLPROC $MarketTon$_fun_owner
+  DECLPROC $MarketTon$_fun_get_collection_data
+  DECLPROC $MarketTon$_fun_get_nft_address_by_index
+  DECLPROC $MarketTon$_fun_get_nft_content
+  DECLPROC $DeployOk$_constructor_queryId
+  DECLPROC $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData
+  DECLPROC $ContextCancelDealForDealReceived$_constructor_from
+  DECLPROC $ContextProcessDealForPriceReceived$_constructor_from_dealId
+  DECLPROC $MarketTon$_internal_binary_InnerDeployMarketTon
+  DECLPROC $MarketTon$_internal_binary_WithdrawServiceFee
+  DECLPROC $MarketTon$_internal_binary_WithdrawOperatorFee
+  DECLPROC $MarketTon$_internal_binary_CreateDealTon
+  DECLPROC $MarketTon$_internal_binary_TakeDealTon
+  DECLPROC $MarketTon$_internal_binary_TakeDealWithOriginalGasToTon
+  DECLPROC $MarketTon$_internal_binary_CancelDeal
+  DECLPROC $MarketTon$_internal_binary_ProcessDeal
+  DECLPROC $MarketTon$_internal_binary_ReportOwner
+  DECLPROC $MarketTon$_internal_binary_ReportData
+  DECLPROC $MarketTon$_receive_binary_bounce_GetData
+  DECLPROC $MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df
+  DECLPROC $MarketTon$_internal_text_bcfaf776907c719cc8d379d8f194aaaa27e8ca2871cd591781721f215a454501
+  DECLPROC $MarketTon$_receive_binary_bounce_GetOwner
+  DECLPROC $MarketTon$_internal_any
+  DECLPROC $MarketTon$_receive_bounce
+  105872 DECLMETHOD %id
+  93222 DECLMETHOD %amm
+  89805 DECLMETHOD %underlyingAssetName
+  72000 DECLMETHOD %duration
+  128753 DECLMETHOD %operatorFee
+  104128 DECLMETHOD %balance
+  104955 DECLMETHOD %serviceFee
+  95777 DECLMETHOD %countDeal
+  96513 DECLMETHOD %next_item_index
+  79650 DECLMETHOD %collection_content
+  89095 DECLMETHOD %oracle
+  82386 DECLMETHOD %factory
+  73117 DECLMETHOD %feedIdAsset
+  79804 DECLMETHOD %feedIdToken
+  80955 DECLMETHOD %operatorFeeSum
+  91306 DECLMETHOD %serviceFeeSum
+  80439 DECLMETHOD %operatorFeeAddress
+  97210 DECLMETHOD %mapQueriesToContext
+  130874 DECLMETHOD %tonDepositBalance
+  74107 DECLMETHOD %stopped
+  83229 DECLMETHOD %owner
+  102491 DECLMETHOD %get_collection_data
+  92067 DECLMETHOD %get_nft_address_by_index
+  81078 DECLMETHOD %getNftItemInit
+  68445 DECLMETHOD %get_nft_content
+  115390 DECLMETHOD lazy_deployment_completed
+  DECLPROC $MarketTon$_contract_router_internal
+  DECLPROC recv_internal
+  DECLGLOBVAR __tact_context
+  DECLGLOBVAR __tact_context_sender
+  DECLGLOBVAR __tact_context_sys
+  DECLGLOBVAR __tact_randomized
+  __tact_verify_address PROCINLINE:<{
+    DUP
+    SBITS
+    267 PUSHINT
+    EQUAL
+    136 THROWIFNOT
+    DUP
+    11 PLDU
+    DUP
+    1279 PUSHINT
+    EQUAL
+    137 THROWIF
+    10 PUSHPOW2
+    EQUAL
+    136 THROWIFNOT
+  }>
+  __tact_load_address PROCINLINE:<{
+    LDMSGADDR
+    SWAP
+    __tact_verify_address INLINECALLDICT
+  }>
+  __tact_store_address PROCINLINE:<{
+    __tact_verify_address INLINECALLDICT
+    STSLICER
+  }>
+  __tact_store_address_opt PROCINLINE:<{
+    DUP
+    ISNULL
+    IF:<{
+      DROP
+      0 PUSHINT
+      SWAP
+      2 STU
+    }>ELSE<{
+      __tact_store_address INLINECALLDICT
+    }>
+  }>
+  __tact_create_address PROCINLINE:<{
+    NEWC
+    2 PUSHINT
+    SWAP
+    2 STU
+    0 PUSHINT
+    SWAP
+    1 STU
+    s1 s2 XCHG
+    8 STI
+    256 STU
+    ENDC
+    CTOS
+    __tact_verify_address INLINECALLDICT
+  }>
+  __tact_compute_contract_address PROCINLINE:<{
+    NEWC
+    0 PUSHINT
+    SWAP
+    2 STU
+    3 PUSHINT
+    SWAP
+    2 STU
+    0 PUSHINT
+    SWAP
+    1 STU
+    s1 s2 XCHG
+    STREF
+    STREF
+    ENDC
+    HASHCU
+    __tact_create_address INLINECALLDICT
+  }>
+  __tact_my_balance PROCINLINE:<{
+    BALANCE
+    FIRST
+  }>
+  __tact_not_null PROCINLINE:<{
+    DUP
+    ISNULL
+    128 THROWIF
+  }>
+  __tact_context_get PROCINLINE:<{
+    __tact_context GETGLOB
+    4 UNTUPLE
+  }>
+  __tact_context_get_sender PROCINLINE:<{
+    __tact_context_sender GETGLOB
+  }>
+  __tact_store_bool PROCINLINE:<{
+    SWAP
+    1 STI
+  }>
+  __tact_dict_set_int_cell PROCINLINE:<{
+    DUP
+    ISNULL
+    IF:<{
+      DROP
+      -ROT
+      DICTIDEL
+      DROP
+    }>ELSE<{
+      s1 s3 s3 XCHG3
+      DICTISETREF
+    }>
+  }>
+  __tact_dict_get_int_cell PROCINLINE:<{
+    -ROT
+    DICTIGETREF
+    NULLSWAPIFNOT
+    IF:<{
+    }>ELSE<{
+      DROP
+      PUSHNULL
+    }>
+  }>
+  __tact_slice_eq_bits PROCINLINE:<{
+    SDEQ
+  }>
+  __tact_dict_set_code PROCINLINE:<{
+    s0 s2 XCHG
+    16 PUSHINT
+    DICTUSETREF
+  }>
+  __tact_dict_get_code PROCINLINE:<{
+    SWAP
+    16 PUSHINT
+    DICTUGETREF
+    NULLSWAPIFNOT
+    135 THROWIFNOT
+  }>
+  __tact_string_builder_start PROCINLINE:<{
+    NIL
+    SWAP
+    TPUSH
+    PUSHNULL
+    TPUSH
+  }>
+  __tact_string_builder_start_string PROCINLINE:<{
+    NEWC
+    __tact_string_builder_start INLINECALLDICT
+  }>
+  __tact_string_builder_end PROCINLINE:<{
+    UNCONS
+    SWAP
+    ENDC
+    WHILE:<{
+      OVER
+      ISNULL
+      NOT
+    }>DO<{
+      SWAP
+      UNCONS
+      -ROT
+      STREF
+      ENDC
+    }>
+    NIP
+  }>
+  __tact_string_builder_append PROCREF:<{
+    DUP
+    SREFS
+    OVER
+    SBITS
+    WHILE:<{
+      DUP
+      0 GTINT
+      s2 PUSH
+      0 GTINT
+      OR
+    }>DO<{
+      s0 s3 XCHG
+      UNCONS
+      127 PUSHINT
+      s2 PUSH
+      BBITS
+      3 RSHIFT#
+      SUB
+      s0 s5 XCHG
+      3 RSHIFT#
+      s5 s5 XCPU
+      MIN
+      DUP
+      0 GTINT
+      IF:<{
+        DUP
+        3 LSHIFT#
+        s1 s5 XCHG
+        LDSLICEX
+        s3 s3 XCHG2
+        STSLICER
+        s0 s1 s4 XCHG3
+      }>
+      -ROT
+      CONS
+      s4 s1 PUSH2
+      SUB
+      0 GTINT
+      IF:<{
+        NEWC
+        SWAP
+        CONS
+        s4 s4 XCHG2
+        SUB
+        3 LSHIFT#
+      }>ELSE<{
+        NIP
+        s3 POP
+        0 GTINT
+        IF:<{
+          LDREF
+          DROP
+          CTOS
+          DUP
+          SREFS
+          OVER
+          SBITS
+        }>ELSE<{
+          0 PUSHINT
+          DUP
+        }>
+      }>
+    }>
+    3 BLKDROP
+  }>
+  $DeployOk$_store PROCINLINE:<{
+    2952335191 PUSHINT
+    ROT
+    32 STU
+    64 STU
+  }>
+  $DeployOk$_store_cell PROCINLINE:<{
+    NEWC
+    SWAP
+    $DeployOk$_store INLINECALLDICT
+    ENDC
+  }>
+  $TakeDealData$_load PROCINLINE:<{
+    32 LDU
+    LDREF
+    LDREF
+    3 -ROLL
+  }>
+  $TakeDealTon$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    3886765728 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    $TakeDealData$_load INLINECALLDICT
+    s3 s4 XCHG
+  }>
+  $TakeDealDataWithOriginalGasTo$_load PROCINLINE:<{
+    32 LDU
+    __tact_load_address INLINECALLDICT
+    SWAP
+    LDREF
+    LDREF
+    4 -ROLL
+  }>
+  $TakeDealWithOriginalGasToTon$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    640326903 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    LDGRAMS
+    $TakeDealDataWithOriginalGasTo$_load INLINECALLDICT
+    s4 s6 XCHG
+    s4 s5 XCHG
+  }>
+  $InnerDeployMarketTon$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    2696026851 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    __tact_load_address INLINECALLDICT
+    s1 s2 XCHG
+  }>
+  $WithdrawOperatorFee$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    3542167315 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    LDGRAMS
+    __tact_load_address INLINECALLDICT
+    s3 s3 s0 XCHG3
+  }>
+  $WithdrawServiceFee$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    3909931163 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    LDGRAMS
+    __tact_load_address INLINECALLDICT
+    s3 s3 s0 XCHG3
+  }>
+  $CreateDealData$_load PROCREF:<{
+    1 LDI
+    LDGRAMS
+    LDGRAMS
+    LDGRAMS
+    32 LDU
+    LDGRAMS
+    1 LDI
+    SWAP
+    IF:<{
+      LDREF
+    }>ELSE<{
+      PUSHNULL
+      SWAP
+    }>
+    1 LDI
+    SWAP
+    IF:<{
+      LDREF
+    }>ELSE<{
+      PUSHNULL
+      SWAP
+    }>
+    8 -ROLL
+  }>
+  $CreateDealTon$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    4072276050 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    $CreateDealData$_load INLINECALLDICT
+    s8 s9 XCHG
+  }>
+  $CancelDeal$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    2166842366 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    32 LDU
+    -ROT
+  }>
+  $ProcessDeal$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    3915542458 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    32 LDU
+    LDREF
+    LDREF
+    4 -ROLL
+  }>
+  $DealData$_store PROCREF:<{
+    s13 s14 XCHG2
+    8 STU
+    s1 s11 XCHG
+    1 STI
+    s0 s9 XCHG2
+    STGRAMS
+    s0 s7 XCHG2
+    STGRAMS
+    s0 s5 XCHG2
+    STGRAMS
+    s0 s3 XCHG2
+    STGRAMS
+    SWAP
+    STGRAMS
+    32 STU
+    32 STU
+    32 STU
+    32 STU
+    32 STU
+    32 STU
+    NEWC
+    ROT
+    __tact_store_address INLINECALLDICT
+    ENDC
+    SWAP
+    STREF
+  }>
+  $DealData$_store_cell PROCINLINE:<{
+    NEWC
+    14 -ROLL
+    $DealData$_store INLINECALLDICT
+    ENDC
+  }>
+  $DealData$_load PROCREF:<{
+    8 LDU
+    1 LDI
+    LDGRAMS
+    LDGRAMS
+    LDGRAMS
+    LDGRAMS
+    LDGRAMS
+    32 LDU
+    32 LDU
+    32 LDU
+    32 LDU
+    32 LDU
+    32 LDU
+    LDREF
+    SWAP
+    CTOS
+    __tact_load_address INLINECALLDICT
+    NIP
+    s1 s14 XCHG
+    s1 s13 XCHG
+    s1 s12 XCHG
+    s1 s11 XCHG
+    s1 s10 XCHG
+    s1 s9 XCHG
+    s1 s8 XCHG
+    s1 s7 XCHG
+    s1 s6 XCHG
+    s1 s5 XCHG
+    s1 s4 XCHG
+    s3 s3 s0 XCHG3
+  }>
+  $DealData$_load_not_mut PROCREF:<{
+    $DealData$_load INLINECALLDICT
+    s0 s14 XCHG
+    ENDS
+    13 ROLL
+  }>
+  $CancelEvent$_store PROCINLINE:<{
+    3409203741 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+    SWAP
+    STGRAMS
+  }>
+  $CancelEvent$_store_cell PROCINLINE:<{
+    NEWC
+    4 -ROLL
+    $CancelEvent$_store INLINECALLDICT
+    ENDC
+  }>
+  $DealAcceptedEvent$_store PROCINLINE:<{
+    73313137 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+    SWAP
+    STGRAMS
+  }>
+  $DealAcceptedEvent$_store_cell PROCINLINE:<{
+    NEWC
+    4 -ROLL
+    $DealAcceptedEvent$_store INLINECALLDICT
+    ENDC
+  }>
+  $DealCreatedEvent$_store PROCINLINE:<{
+    17345355 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+    SWAP
+    STGRAMS
+  }>
+  $DealCreatedEvent$_store_cell PROCINLINE:<{
+    NEWC
+    4 -ROLL
+    $DealCreatedEvent$_store INLINECALLDICT
+    ENDC
+  }>
+  $DealCompletedEvent$_store PROCINLINE:<{
+    2339190802 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+    SWAP
+    STGRAMS
+  }>
+  $DealCompletedEvent$_store_cell PROCINLINE:<{
+    NEWC
+    4 -ROLL
+    $DealCompletedEvent$_store INLINECALLDICT
+    ENDC
+  }>
+  $DealExpiredEvent$_store PROCINLINE:<{
+    292536636 PUSHINT
+    s0 s5 XCHG2
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+    SWAP
+    STGRAMS
+  }>
+  $DealExpiredEvent$_store_cell PROCINLINE:<{
+    NEWC
+    4 -ROLL
+    $DealExpiredEvent$_store INLINECALLDICT
+    ENDC
+  }>
+  $ContextCancelDealForDealReceived$_store PROCINLINE:<{
+    __tact_store_address INLINECALLDICT
+  }>
+  $ContextCancelDealForDealReceived$_store_cell PROCINLINE:<{
+    NEWC
+    SWAP
+    $ContextCancelDealForDealReceived$_store INLINECALLDICT
+    ENDC
+  }>
+  $ContextCancelDealForDealReceived$_load PROCINLINE:<{
+    __tact_load_address INLINECALLDICT
+  }>
+  $ContextCancelDealForDealReceived$_load_not_mut PROCINLINE:<{
+    $ContextCancelDealForDealReceived$_load INLINECALLDICT
+    SWAP
+    ENDS
+  }>
+  $ContextTakeDealForDealReceived$_store PROCREF:<{
+    s9 s8 XCHG2
+    __tact_store_address INLINECALLDICT
+    s0 s6 XCHG2
+    STGRAMS
+    s0 s4 XCHG2
+    __tact_store_address INLINECALLDICT
+    s1 s2 XCHG
+    32 STU
+    128 STU
+    32 STU
+    32 STU
+    s1 s2 XCHG
+    128 STU
+    SWAP
+    NEWC
+    32 STU
+    ENDC
+    SWAP
+    STREF
+  }>
+  $ContextTakeDealForDealReceived$_store_cell PROCINLINE:<{
+    NEWC
+    9 -ROLL
+    $ContextTakeDealForDealReceived$_store INLINECALLDICT
+    ENDC
+  }>
+  $ContextTakeDealForDealReceived$_load PROCREF:<{
+    __tact_load_address INLINECALLDICT
+    SWAP
+    LDGRAMS
+    __tact_load_address INLINECALLDICT
+    SWAP
+    32 LDU
+    128 LDU
+    32 LDU
+    32 LDU
+    128 LDU
+    LDREF
+    SWAP
+    CTOS
+    32 LDU
+    DROP
+    s1 s9 XCHG
+    s1 s8 XCHG
+    s1 s7 XCHG
+    s1 s6 XCHG
+    s1 s5 XCHG
+    s1 s4 XCHG
+    s3 s3 s0 XCHG3
+  }>
+  $ContextTakeDealForDealReceived$_load_not_mut PROCREF:<{
+    $ContextTakeDealForDealReceived$_load INLINECALLDICT
+    s0 s9 XCHG
+    ENDS
+    8 ROLL
+  }>
+  $ContextProcessDealForDealReceived$_store PROCREF:<{
+    s7 s6 XCHG2
+    __tact_store_address INLINECALLDICT
+    s1 s4 XCHG
+    32 STU
+    s1 s2 XCHG
+    128 STU
+    32 STU
+    32 STU
+    s1 s2 XCHG
+    128 STU
+    32 STU
+  }>
+  $ContextProcessDealForDealReceived$_store_cell PROCINLINE:<{
+    NEWC
+    7 -ROLL
+    $ContextProcessDealForDealReceived$_store INLINECALLDICT
+    ENDC
+  }>
+  $ContextProcessDealForDealReceived$_load PROCREF:<{
+    __tact_load_address INLINECALLDICT
+    SWAP
+    32 LDU
+    128 LDU
+    32 LDU
+    32 LDU
+    128 LDU
+    32 LDU
+    7 -ROLL
+  }>
+  $ContextProcessDealForDealReceived$_load_not_mut PROCREF:<{
+    $ContextProcessDealForDealReceived$_load INLINECALLDICT
+    s0 s7 XCHG
+    ENDS
+    6 ROLL
+  }>
+  $ContextTakeDealForPriceReceived$_store PROCINLINE:<{
+    s4 s3 XCHG2
+    __tact_store_address INLINECALLDICT
+    SWAP
+    STGRAMS
+    s1 s2 XCHG
+    32 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+  }>
+  $ContextTakeDealForPriceReceived$_store_cell PROCINLINE:<{
+    NEWC
+    4 -ROLL
+    $ContextTakeDealForPriceReceived$_store INLINECALLDICT
+    ENDC
+  }>
+  $ContextTakeDealForPriceReceived$_load PROCINLINE:<{
+    __tact_load_address INLINECALLDICT
+    SWAP
+    LDGRAMS
+    32 LDU
+    __tact_load_address INLINECALLDICT
+    s1 s4 XCHG
+    s3 s3 s0 XCHG3
+  }>
+  $ContextTakeDealForPriceReceived$_load_not_mut PROCINLINE:<{
+    $ContextTakeDealForPriceReceived$_load INLINECALLDICT
+    s0 s4 XCHG
+    ENDS
+    3 ROLL
+  }>
+  $ContextProcessDealForPriceReceived$_store PROCINLINE:<{
+    -ROT
+    __tact_store_address INLINECALLDICT
+    32 STU
+  }>
+  $ContextProcessDealForPriceReceived$_store_cell PROCINLINE:<{
+    NEWC
+    -ROT
+    $ContextProcessDealForPriceReceived$_store INLINECALLDICT
+    ENDC
+  }>
+  $ContextProcessDealForPriceReceived$_load PROCINLINE:<{
+    __tact_load_address INLINECALLDICT
+    SWAP
+    32 LDU
+    -ROT
+  }>
+  $ContextProcessDealForPriceReceived$_load_not_mut PROCINLINE:<{
+    $ContextProcessDealForPriceReceived$_load INLINECALLDICT
+    s0 s2 XCHG
+    ENDS
+    SWAP
+  }>
+  $ContextForGetOwner$_store PROCINLINE:<{
+    -ROT
+    STGRAMS
+    SWAP
+    __tact_store_address INLINECALLDICT
+  }>
+  $ContextForGetOwner$_store_cell PROCINLINE:<{
+    NEWC
+    -ROT
+    $ContextForGetOwner$_store INLINECALLDICT
+    ENDC
+  }>
+  $ContextForGetOwner$_load PROCINLINE:<{
+    LDGRAMS
+    __tact_load_address INLINECALLDICT
+    s1 s2 XCHG
+  }>
+  $ContextForGetOwner$_load_not_mut PROCINLINE:<{
+    $ContextForGetOwner$_load INLINECALLDICT
+    s0 s2 XCHG
+    ENDS
+    SWAP
+  }>
+  $TakeDealAmm$_store PROCREF:<{
+    1895074275 PUSHINT
+    s0 s7 XCHG2
+    32 STU
+    s1 s5 XCHG
+    64 STU
+    s1 s3 XCHG
+    32 STU
+    SWAP
+    STGRAMS
+    SWAP
+    __tact_store_address INLINECALLDICT
+    STREF
+    STREF
+  }>
+  $TakeDealAmm$_store_cell PROCINLINE:<{
+    NEWC
+    6 -ROLL
+    $TakeDealAmm$_store INLINECALLDICT
+    ENDC
+  }>
+  $GetData$_store PROCINLINE:<{
+    3858888933 PUSHINT
+    ROT
+    32 STU
+    64 STU
+  }>
+  $GetData$_store_cell PROCINLINE:<{
+    NEWC
+    SWAP
+    $GetData$_store INLINECALLDICT
+    ENDC
+  }>
+  $GetData$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    3858888933 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    SWAP
+  }>
+  $ReportData$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    3062344471 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    32 LDU
+    LDREF
+    3 -ROLL
+  }>
+  $SaveData$_store PROCINLINE:<{
+    2951296309 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    s1 s2 XCHG
+    64 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+    STREF
+  }>
+  $SaveData$_store_cell PROCINLINE:<{
+    NEWC
+    3 -ROLL
+    $SaveData$_store INLINECALLDICT
+    ENDC
+  }>
+  $DeleteData$_store PROCINLINE:<{
+    3097733652 PUSHINT
+    s0 s3 XCHG2
+    32 STU
+    64 STU
+    SWAP
+    __tact_store_address INLINECALLDICT
+  }>
+  $DeleteData$_store_cell PROCINLINE:<{
+    NEWC
+    -ROT
+    $DeleteData$_store INLINECALLDICT
+    ENDC
+  }>
+  $Transfer$_store PROCREF:<{
+    1607220500 PUSHINT
+    s0 s7 XCHG2
+    32 STU
+    s1 s5 XCHG
+    64 STU
+    s0 s3 XCHG2
+    __tact_store_address INLINECALLDICT
+    SWAP
+    __tact_store_address_opt INLINECALLDICT
+    OVER
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+      SWAP
+      1 STI
+      STREF
+    }>ELSE<{
+      FALSE
+      s2 POP
+      1 STI
+    }>
+    SWAP
+    STGRAMS
+    SWAP
+    STSLICER
+  }>
+  $Transfer$_store_cell PROCINLINE:<{
+    NEWC
+    6 -ROLL
+    $Transfer$_store INLINECALLDICT
+    ENDC
+  }>
+  $GetOwner$_store PROCINLINE:<{
+    3156669640 PUSHINT
+    ROT
+    32 STU
+    64 STU
+  }>
+  $GetOwner$_store_cell PROCINLINE:<{
+    NEWC
+    SWAP
+    $GetOwner$_store INLINECALLDICT
+    ENDC
+  }>
+  $GetOwner$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    3156669640 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    SWAP
+  }>
+  $ReportOwner$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    704662021 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    257 PUSHINT
+    LDIX
+    __tact_load_address INLINECALLDICT
+    s3 s3 s0 XCHG3
+  }>
+  $MarketTon$_store PROCINLINE:<{
+    s1 19 s() XCHG
+    s0 20 s() XCHG
+    32 STU
+    SWAP
+    s0 17 s() XCHG
+    __tact_store_address INLINECALLDICT
+    s0 s15 XCHG2
+    __tact_store_address INLINECALLDICT
+    NEWC
+    s0 s14 XCHG2
+    STSLICER
+    ENDC
+    s0 s13 XCHG2
+    STREF
+    s1 s11 XCHG
+    32 STU
+    s1 s9 XCHG
+    32 STU
+    s1 s7 XCHG
+    32 STU
+    s0 s5 XCHG2
+    __tact_store_address INLINECALLDICT
+    s1 s3 XCHG
+    1 STI
+    32 STU
+    32 STU
+    SWAP
+    NEWC
+    STREF
+    s1 s2 XCHG
+    STDICT
+    ROT
+    __tact_store_address INLINECALLDICT
+    s1 s2 XCHG
+    256 STU
+    s1 s2 XCHG
+    256 STU
+    ROT
+    STGRAMS
+    NEWC
+    s0 s3 XCHG2
+    STGRAMS
+    s0 s3 XCHG2
+    STGRAMS
+    s0 s3 XCHG2
+    __tact_store_address INLINECALLDICT
+    ENDC
+    ROT
+    STREF
+    ENDC
+    SWAP
+    STREF
+  }>
+  $MarketTon$_load PROCINLINE:<{
+    32 LDU
+    __tact_load_address INLINECALLDICT
+    SWAP
+    __tact_load_address INLINECALLDICT
+    SWAP
+    LDREF
+    SWAP
+    CTOS
+    SWAP
+    32 LDU
+    32 LDU
+    32 LDU
+    __tact_load_address INLINECALLDICT
+    SWAP
+    1 LDI
+    32 LDU
+    32 LDU
+    LDREF
+    SWAP
+    CTOS
+    LDREF
+    LDDICT
+    __tact_load_address INLINECALLDICT
+    SWAP
+    256 LDU
+    256 LDU
+    LDGRAMS
+    LDREF
+    DROP
+    CTOS
+    LDGRAMS
+    LDGRAMS
+    __tact_load_address INLINECALLDICT
+    NIP
+    s9 20 s() XCHG
+    s9 19 s() XCHG
+    s9 18 s() XCHG
+    s9 17 s() XCHG
+    s9 16 s() XCHG
+    s9 s15 XCHG
+    s9 s14 XCHG
+    s9 s13 XCHG
+    s9 s12 XCHG
+    s9 s11 XCHG
+    s9 s10 XCHG
+  }>
+  $StateInit$_not_null PROCINLINE:<{
+    DUP
+    ISNULL
+    128 THROWIF
+    2 UNTUPLE
+  }>
+  $StateInit$_to_external PROCINLINE:<{
+  }>
+  $CollectionData$_to_external PROCINLINE:<{
+  }>
+  $MarketTon$init$_load PROCREF:<{
+    257 PUSHINT
+    LDIX
+    __tact_load_address INLINECALLDICT
+    SWAP
+    __tact_load_address INLINECALLDICT
+    SWAP
+    LDREF
+    SWAP
+    CTOS
+    __tact_load_address INLINECALLDICT
+    SWAP
+    LDREF
+    SWAP
+    CTOS
+    SWAP
+    257 PUSHINT
+    LDIX
+    LDREF
+    257 PUSHINT
+    LDIX
+    LDREF
+    DROP
+    CTOS
+    257 PUSHINT
+    LDIX
+    __tact_load_address INLINECALLDICT
+    SWAP
+    257 PUSHINT
+    LDIX
+    LDREF
+    DROP
+    CTOS
+    257 PUSHINT
+    LDIX
+    __tact_load_address INLINECALLDICT
+    NIP
+    s10 s13 XCHG
+    s10 s12 XCHG
+    s10 s11 XCHG
+  }>
+  $Deal$init$_store PROCINLINE:<{
+    s0 s2 XCHG
+    257 PUSHINT
+    STIX
+    SWAP
+    __tact_store_address INLINECALLDICT
+  }>
+  $NftItem$init$_store PROCINLINE:<{
+    -ROT
+    __tact_store_address INLINECALLDICT
+    257 PUSHINT
+    STIX
+  }>
+  $MarketTon$_contract_init PROCREF:<{
+    FALSE
+    0 PUSHINT
+    DUP
+    PUSHNULL
+    s1 s1 s1 PUSH3
+    4321 PUSHINT
+    __tact_context_get_sender INLINECALLDICT
+    18 s() PUSH
+    SWAP
+    __tact_slice_eq_bits INLINECALLDICT
+    THROWANYIFNOT
+    s15 16 s() XCHG
+    s14 s15 XCHG
+    s12 s14 XCHG
+    s11 s13 XCHG
+    s6 s11 XCHG
+    s5 s10 XCHG
+    s4 s9 XCHG
+    s6 s8 XCHG
+    s3 s7 XCHG
+    s5 s6 XCHG
+    s4 s5 XCHG
+    3 ROLL
+  }>
+  $MarketTon$_contract_load PROCREF:<{
+    c4 PUSH
+    CTOS
+    LDREF
+    SWAP
+    __tact_context_sys SETGLOB
+    1 LDI
+    SWAP
+    IFJMP:<{
+      $MarketTon$_load INLINECALLDICT
+      20 s() POP
+      18 s() 19 s() XCHG
+      17 s() 18 s() XCHG
+      16 s() 17 s() XCHG
+      s15 16 s() XCHG
+      15 ROLL
+    }>
+    MYADDR
+    11 PLDU
+    10 PUSHPOW2
+    EQUAL
+    137 THROWIFNOT
+    $MarketTon$init$_load INLINECALLDICT
+    s0 s13 XCHG
+    ENDS
+    12 ROLL
+    $MarketTon$_contract_init INLINECALLDICT
+  }>
+  $MarketTon$_contract_store PROCINLINE:<{
+    NEWC
+    __tact_context_sys GETGLOB
+    SWAP
+    STREF
+    TRUE
+    SWAP
+    1 STI
+    s0 20 s() XCHG
+    s0 19 s() XCHG
+    s0 18 s() XCHG
+    s0 17 s() XCHG
+    s0 16 s() XCHG
+    15 -ROLL
+    $MarketTon$_store INLINECALLDICT
+    ENDC
+    c4 POP
+  }>
+  $global_emptyCell PROCINLINE:<{
+    NEWC
+    ENDC
+  }>
+  $Cell$_fun_asSlice PROCINLINE:<{
+    CTOS
+  }>
+  $global_emptySlice PROCINLINE:<{
+    $global_emptyCell INLINECALLDICT
+    $Cell$_fun_asSlice INLINECALLDICT
+  }>
+  $global_contractAddress PROCINLINE:<{
+    0 PUSHINT
+    -ROT
+    __tact_compute_contract_address INLINECALLDICT
+  }>
+  $global_send PROCREF:<{
+    NEWC
+    1 PUSHINT
+    SWAP
+    2 STI
+    s0 s7 XCHG2
+    __tact_store_bool INLINECALLDICT
+    0 PUSHINT
+    SWAP
+    3 STI
+    s0 s5 XCHG2
+    __tact_store_address INLINECALLDICT
+    s0 s3 XCHG2
+    STGRAMS
+    0 PUSHINT
+    SWAP
+    105 STI
+    s3 PUSH
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+    }>ELSE<{
+      s4 PUSH
+      ISNULL
+      NOT
+    }>
+    IF:<{
+      TRUE
+      __tact_store_bool INLINECALLDICT
+      NEWC
+      FALSE
+      __tact_store_bool INLINECALLDICT
+      FALSE
+      __tact_store_bool INLINECALLDICT
+      s4 PUSH
+      ISNULL
+      NOT
+      IF:<{
+        TRUE
+        __tact_store_bool INLINECALLDICT
+        s0 s4 XCHG
+        __tact_not_null INLINECALLDICT
+        s0 s4 XCHG2
+        STREF
+      }>ELSE<{
+        s4 POP
+        s0 s3 XCHG
+        FALSE
+        __tact_store_bool INLINECALLDICT
+      }>
+      s4 PUSH
+      ISNULL
+      NOT
+      IF:<{
+        TRUE
+        __tact_store_bool INLINECALLDICT
+        s0 s4 XCHG
+        __tact_not_null INLINECALLDICT
+        s0 s4 XCHG2
+        STREF
+      }>ELSE<{
+        s4 POP
+        s0 s3 XCHG
+        FALSE
+        __tact_store_bool INLINECALLDICT
+      }>
+      FALSE
+      __tact_store_bool INLINECALLDICT
+      s0 s2 XCHG
+      TRUE
+      __tact_store_bool INLINECALLDICT
+      s0 s2 XCHG
+      ENDC
+      ROT
+      STREF
+    }>ELSE<{
+      s3 POP
+      s3 POP
+      SWAP
+      FALSE
+      __tact_store_bool INLINECALLDICT
+    }>
+    OVER
+    ISNULL
+    NOT
+    IF:<{
+      TRUE
+      __tact_store_bool INLINECALLDICT
+      SWAP
+      __tact_not_null INLINECALLDICT
+      SWAP
+      STREF
+    }>ELSE<{
+      NIP
+      FALSE
+      __tact_store_bool INLINECALLDICT
+    }>
+    ENDC
+    SWAP
+    SENDRAWMSG
+  }>
+  $global_emit PROCINLINE:<{
+    NEWC
+    15211807202738752817960438464513 PUSHINT
+    SWAP
+    104 STU
+    STREF
+    ENDC
+    0 PUSHINT
+    SENDRAWMSG
+  }>
+  $SendParameters$_constructor_to_value_mode_bounce_body PROCINLINE:<{
+    s1 s4 XCHG
+    s3 s3 s0 XCHG3
+    PUSHNULL
+    PUSHNULL
+  }>
+  $TakeDealAmm$_constructor_dealId_queryId_amount_originalGasTo_oracleAssetData_oracleTokenData PROCINLINE:<{
+    s4 s5 XCHG
+  }>
+  $DealData$_constructor_rate_rateMaker_percent_slippageMaker_collateralAmountMaker_dateOrderCreation_dateOrderExpiration_dateStart_dateStop_buyerTokenId_sellerTokenId_maker_isSeller_status PROCINLINE:<{
+    s0 s13 XCHG
+    11 2 BLKSWAP
+  }>
+  $DealCreatedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker PROCINLINE:<{
+  }>
+  $ContextTakeDealForPriceReceived$_constructor_from_amount_dealId_originalGasTo PROCINLINE:<{
+  }>
+  $ContextTakeDealForDealReceived$_constructor_from_amount_originalGasTo_feedId_price_timestamp_feedId2_price2_timestamp2 PROCINLINE:<{
+  }>
+  $ContextProcessDealForDealReceived$_constructor_from_feedId_price_timestamp_feedId2_price2_timestamp2 PROCINLINE:<{
+  }>
+  $DealAcceptedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker PROCINLINE:<{
+  }>
+  $CancelEvent$_constructor_queryId_dealId_maker_collateralAmountMaker PROCINLINE:<{
+  }>
+  $DealExpiredEvent$_constructor_queryId_dealId_maker_collateralAmountMaker PROCINLINE:<{
+  }>
+  $DealCompletedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker PROCINLINE:<{
+  }>
+  $ContextForGetOwner$_constructor_amount_originalGasTo PROCINLINE:<{
+  }>
+  $SendParameters$_constructor_to_value_mode_bounce_body_code_data PROCINLINE:<{
+    s3 s6 XCHG
+    s3 s5 XCHG
+    s3 s4 XCHG
+  }>
+  $SaveData$_constructor_queryId_originalGasTo_data PROCINLINE:<{
+  }>
+  $DeleteData$_constructor_queryId_originalGasTo PROCINLINE:<{
+  }>
+  $GetData$_constructor_queryId PROCINLINE:<{
+  }>
+  $SendParameters$_constructor_bounce_to_value_mode_body_code_data PROCINLINE:<{
+  }>
+  $SendParameters$_constructor_to_value_bounce_mode_body_code_data PROCINLINE:<{
+    s4 s6 XCHG
+    s4 s5 XCHG
+  }>
+  $Transfer$_constructor_query_id_new_owner_response_destination_custom_payload_forward_amount_forward_payload PROCINLINE:<{
+  }>
+  $SendParameters$_constructor_to_value_bounce_mode_body PROCINLINE:<{
+    s2 s4 XCHG
+    s2 s3 XCHG
+    PUSHNULL
+    PUSHNULL
+  }>
+  $GetOwner$_constructor_query_id PROCINLINE:<{
+  }>
+  $CollectionData$_constructor_next_item_index_collection_content_owner_address PROCINLINE:<{
+  }>
+  $SendParameters$_constructor_to_value_mode_body PROCINLINE:<{
+    TRUE
+    4 -ROLL
+    PUSHNULL
+    PUSHNULL
+  }>
+  $MarketTon$_fun_returnTon PROCREF:<{
+    s2 POP
+    0 PUSHINT
+    7 PUSHPOW2
+    TRUE
+    s0 s4 XCHG
+    NEWC
+    8 STU
+    ENDC
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $MarketTon$_fun_addTonDepositBalance PROCREF:<{
+    37488 PUSHINT
+    OVER
+    0 GTINT
+    THROWANYIFNOT
+    s2 s2 XCPU
+    ADD
+    s0 s2 XCHG
+    0 PUSHINT
+    RAWRESERVE
+  }>
+  $Deal$_init_child PROCREF:<{
+    s0 s2 XCHG
+    CTOS
+    LDDICT
+    DROP
+    NEWDICT
+    SWAP
+    16839 PUSHINT
+    __tact_dict_get_code INLINECALLDICT
+    SWAP
+    16839 PUSHINT
+    s2 PUSH
+    __tact_dict_set_code INLINECALLDICT
+    NEWC
+    SWAP
+    NEWC
+    STDICT
+    ENDC
+    SWAP
+    STREF
+    FALSE
+    SWAP
+    1 STI
+    s0 s0 s3 XCHG3
+    $Deal$init$_store INLINECALLDICT
+    ENDC
+  }>
+  $MarketTon$_fun_saveDeal PROCREF:<{
+    __tact_context_sys GETGLOB
+    MYADDR
+    s1 s2 XCHG
+    s1 17 s() XCHG
+    $Deal$_init_child INLINECALLDICT
+    2DUP
+    $global_contractAddress INLINECALLDICT
+    s10 16 s() XCHG
+    s9 s15 XCHG
+    s8 s14 XCHG
+    s7 s13 XCHG
+    s6 s12 XCHG
+    s5 s11 XCHG
+    s4 16 s() XCHG
+    s3 s15 XCHG
+    s14 s13 s12 XCHG3
+    0 PUSHINT
+    7 PUSHPOW2
+    s0 18 s() XCHG
+    s1 s13 XCHG
+    FALSE
+    s0 18 s() XCHG
+    $DealData$_store_cell INLINECALLDICT
+    s8 s7 s0 XCHG3
+    $SaveData$_constructor_queryId_originalGasTo_data INLINECALLDICT
+    $SaveData$_store_cell INLINECALLDICT
+    -ROT
+    $SendParameters$_constructor_to_value_mode_bounce_body_code_data INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $MarketTon$_fun_handleCreateDeal PROCREF:<{
+    21 s() PUSH
+    s9 s8 PUSH2
+    MUL
+    s8 PUSH
+    MUL
+    s6 PUSH
+    MUL
+    10000000000000000000000000 PUSHINTX
+    DIV
+    s10 s9 PUXC
+    MUL
+    s8 PUSH
+    MUL
+    10000000000000000 PUSHINT
+    DIV
+    s0 s9 XCHG2
+    ADD
+    DUP
+    50000000 PUSHINT
+    ADD
+    s1 s3 XCHG
+    LESS
+    IFJMP:<{
+      9 1 BLKDROP2
+      2 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    19 s() 30 s() XCHG
+    18 s() 29 s() XCHG
+    17 s() 28 s() XCHG
+    16 s() 27 s() XCHG
+    s15 26 s() XCHG
+    s14 25 s() XCHG
+    s13 24 s() XCHG
+    s12 23 s() XCHG
+    s11 22 s() XCHG
+    s10 21 s() XCHG
+    s9 20 s() XCHG
+    s8 30 s() XCHG
+    s7 29 s() XCHG
+    s6 28 s() XCHG
+    s5 27 s() XCHG
+    s4 26 s() XCHG
+    s3 25 s() XCHG
+    s2 24 s() XCHG
+    s1 23 s() XCHG
+    s0 22 s() XCHG
+    23 s() PUSH
+    $MarketTon$_fun_addTonDepositBalance INLINECALLDICT
+    s0 s10 XCHG
+    INC
+    B{b5ee9c72410101010024000043800000000000000000000000000000000000000000000000000000000000000000104aec829d} B>boc <s PUSHSLICE
+    18 s() PUSH
+    __tact_slice_eq_bits INLINECALLDICT
+    NOT
+    IF:<{
+      400000000 PUSHINT
+      0 PUSHINT
+      TRUE
+      s0 28 s() XCHG
+      __tact_not_null INLINECALLDICT
+      s0 27 s() XCHG
+      __tact_not_null INLINECALLDICT
+      32 s() PUSH
+      s0 s2 XCHG
+      25 s() PUSH
+      s0 s2 XCHG
+      28 s() PUSH
+      s0 s2 XCHG
+      28 s() PUSH
+      s0 s2 XCHG
+      s1 31 s() XCHG
+      $TakeDealAmm$_constructor_dealId_queryId_amount_originalGasTo_oracleAssetData_oracleTokenData INLINECALLDICT
+      $TakeDealAmm$_store_cell INLINECALLDICT
+      19 s() PUSH
+      s3 s1 s4 XCHG3
+      s2 27 s() XCHG
+      s0 28 s() XCHG
+      SWAP
+      $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+      $global_send INLINECALLDICT
+    }>ELSE<{
+      24 s() POP
+      24 s() POP
+    }>
+    0 PUSHINT
+    NOW
+    NOW
+    SWAP
+    s0 28 s() XCHG
+    ADD
+    s1 s1 s1 PUSH3
+    DUP
+    s0 24 s() XCHG
+    NOT
+    s5 s10 XCHG
+    s9 34 s() XCHG
+    s8 32 s() XCHG
+    s7 30 s() XCHG
+    1 PUSHINT
+    28 s() PUSH
+    s0 s8 XCHG
+    s7 33 s() XCHG
+    s2 26 s() XCHG
+    28 s() PUSH
+    s0 s2 XCHG
+    s1 27 s() XCHG
+    $DealData$_constructor_rate_rateMaker_percent_slippageMaker_collateralAmountMaker_dateOrderCreation_dateOrderExpiration_dateStart_dateStop_buyerTokenId_sellerTokenId_maker_isSeller_status INLINECALLDICT
+    28 s() PUSH
+    SWAP
+    37 s() PUSH
+    SWAP
+    31 s() PUSH
+    SWAP
+    s0 33 s() XCHG
+    $DealCreatedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker INLINECALLDICT
+    $DealCreatedEvent$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    25 s() 36 s() XCHG
+    24 s() 35 s() XCHG
+    23 s() 34 s() XCHG
+    22 s() 33 s() XCHG
+    21 s() 32 s() XCHG
+    20 s() 31 s() XCHG
+    19 s() 30 s() XCHG
+    18 s() 29 s() XCHG
+    17 s() 28 s() XCHG
+    19 s() 27 s() XCHG
+    s15 26 s() XCHG
+    s14 25 s() XCHG
+    s13 24 s() XCHG
+    22 s() 23 s() XCHG
+    s14 22 s() XCHG
+    s14 21 s() XCHG
+    s14 20 s() XCHG
+    s15 19 s() XCHG
+    s14 18 s() XCHG
+    16 s() 17 s() XCHG
+    s15 16 s() XCHG
+    s13 s15 XCHG
+    2 13 BLKSWAP
+    $MarketTon$_fun_saveDeal INLINECALLDICT
+  }>
+  $MarketTon$_fun_fetchPrice PROCREF:<{
+    SWAP
+    CTOS
+    SWAP
+    CTOS
+    32 LDU
+    NIP
+    NEWC
+    s0 s2 XCHG
+    32 LDU
+    s0 s3 XCHG
+    32 STU
+    s1 s3 XCHG
+    64 STU
+    SWAP
+    STSLICER
+    SWAP
+    STSLICER
+    NEWC
+    ENDC
+    SWAP
+    STREF
+    ENDC
+    0 PUSHINT
+    7 PUSHPOW2
+    s9 PUSH
+    s0 s3 XCHG
+    $SendParameters$_constructor_to_value_mode_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $MarketTon$_fun_fetchPriceWithSaveContext PROCREF:<{
+    3607 PUSHINT
+    s12 PUSH
+    257 PUSHINT
+    s6 PUSH
+    __tact_dict_get_int_cell INLINECALLDICT
+    ISNULL
+    THROWANYIFNOT
+    s1 s11 XCHG
+    257 PUSHINT
+    s4 s1 PUXC
+    __tact_dict_set_int_cell INLINECALLDICT
+    s0 s10 XCHG
+    $MarketTon$_fun_fetchPrice INLINECALLDICT
+  }>
+  $MarketTon$_fun_handleTakeDeal PROCREF:<{
+    NEWC
+    10 PUSHINT
+    SWAP
+    8 STU
+    s3 s6 s6 XCHG3
+    $ContextTakeDealForPriceReceived$_constructor_from_amount_dealId_originalGasTo INLINECALLDICT
+    $ContextTakeDealForPriceReceived$_store_cell INLINECALLDICT
+    s0 s3 XCHG2
+    STREF
+    ENDC
+    s1 s2 XCHG
+    $MarketTon$_fun_fetchPriceWithSaveContext INLINECALLDICT
+  }>
+  $MarketTon$_fun_fetchDeal PROCREF:<{
+    3607 PUSHINT
+    s11 PUSH
+    257 PUSHINT
+    s5 PUSH
+    __tact_dict_get_int_cell INLINECALLDICT
+    ISNULL
+    THROWANYIFNOT
+    s1 s10 XCHG
+    257 PUSHINT
+    s3 s1 PUXC
+    __tact_dict_set_int_cell INLINECALLDICT
+    __tact_context_sys GETGLOB
+    MYADDR
+    s1 s11 s0 XCHG3
+    $Deal$_init_child INLINECALLDICT
+    $global_contractAddress INLINECALLDICT
+    0 PUSHINT
+    7 PUSHPOW2
+    TRUE
+    s0 s4 XCHG
+    $GetData$_constructor_queryId INLINECALLDICT
+    $GetData$_store_cell INLINECALLDICT
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $MarketTon$_fun_takeDealAfterRecievedPrice PROCREF:<{
+    s7 POP
+    s7 POP
+    s7 POP
+    s7 POP
+    s0 s7 XCHG
+    CTOS
+    $ContextTakeDealForPriceReceived$_load_not_mut INLINECALLDICT
+    NEWC
+    20 PUSHINT
+    SWAP
+    8 STU
+    s0 s10 XCHG
+    1000 PUSHINT
+    DIV
+    s0 s7 XCHG
+    1000 PUSHINT
+    DIV
+    s4 s8 XCHG
+    s3 s7 XCHG
+    s1 s6 XCHG
+    s4 s11 XCHG
+    s9 s11 s0 XCHG3
+    $ContextTakeDealForDealReceived$_constructor_from_amount_originalGasTo_feedId_price_timestamp_feedId2_price2_timestamp2 INLINECALLDICT
+    $ContextTakeDealForDealReceived$_store_cell INLINECALLDICT
+    ROT
+    STREF
+    ENDC
+    $MarketTon$_fun_fetchDeal INLINECALLDICT
+  }>
+  $MarketTon$_fun_processDealAfterRecievedPrice PROCREF:<{
+    s7 POP
+    s7 POP
+    s7 POP
+    s7 POP
+    s0 s7 XCHG
+    CTOS
+    $ContextProcessDealForPriceReceived$_load_not_mut INLINECALLDICT
+    NEWC
+    22 PUSHINT
+    SWAP
+    8 STU
+    s0 s8 XCHG
+    1000 PUSHINT
+    DIV
+    s0 s5 XCHG
+    1000 PUSHINT
+    DIV
+    5 2 REVERSE
+    s4 s9 XCHG
+    s7 s7 s0 XCHG3
+    $ContextProcessDealForDealReceived$_constructor_from_feedId_price_timestamp_feedId2_price2_timestamp2 INLINECALLDICT
+    $ContextProcessDealForDealReceived$_store_cell INLINECALLDICT
+    ROT
+    STREF
+    ENDC
+    $MarketTon$_fun_fetchDeal INLINECALLDICT
+  }>
+  $SendParameters$_constructor_to_value_mode_bounce PROCINLINE:<{
+    3 -ROLL
+    PUSHNULL
+    PUSHNULL
+    PUSHNULL
+  }>
+  $NftItem$_init_child PROCREF:<{
+    s0 s2 XCHG
+    CTOS
+    LDDICT
+    DROP
+    NEWDICT
+    SWAP
+    31210 PUSHINT
+    __tact_dict_get_code INLINECALLDICT
+    SWAP
+    31210 PUSHINT
+    s2 PUSH
+    __tact_dict_set_code INLINECALLDICT
+    NEWC
+    SWAP
+    NEWC
+    STDICT
+    ENDC
+    SWAP
+    STREF
+    FALSE
+    SWAP
+    1 STI
+    s0 s0 s3 XCHG3
+    $NftItem$init$_store INLINECALLDICT
+    ENDC
+  }>
+  $MarketTon$_fun_getNftItemInit PROCREF:<{
+    __tact_context_sys GETGLOB
+    MYADDR
+    ROT
+    $NftItem$_init_child INLINECALLDICT
+  }>
+  $MarketTon$_fun_mint PROCREF:<{
+    19 s() 23 s() XCHG
+    18 s() 22 s() XCHG
+    17 s() 21 s() XCHG
+    16 s() 20 s() XCHG
+    s15 23 s() XCHG
+    s14 22 s() XCHG
+    s13 21 s() XCHG
+    s12 20 s() XCHG
+    s11 23 s() XCHG
+    s10 22 s() XCHG
+    21 s() PUSH
+    s0 s10 XCHG
+    s9 21 s() XCHG
+    s8 24 s() XCHG
+    s7 23 s() XCHG
+    s0 s6 XCHG
+    s5 21 s() XCHG
+    s4 24 s() XCHG
+    s3 23 s() XCHG
+    s0 s2 XCHG
+    s1 21 s() XCHG
+    s0 22 s() XCHG
+    $MarketTon$_fun_getNftItemInit INLINECALLDICT
+    2DUP
+    $global_contractAddress INLINECALLDICT
+    TRUE
+    1 PUSHINT
+    0 PUSHINT
+    $global_emptySlice INLINECALLDICT
+    s4 30 s() XCHG
+    s3 29 s() XCHG
+    s2 27 s() XCHG
+    s15 PUSH
+    -ROT
+    $Transfer$_constructor_query_id_new_owner_response_destination_custom_payload_forward_amount_forward_payload INLINECALLDICT
+    $Transfer$_store_cell INLINECALLDICT
+    s6 26 s() XCHG
+    s5 24 s() XCHG
+    s4 25 s() XCHG
+    s3 23 s() XCHG
+    -ROT
+    $SendParameters$_constructor_to_value_bounce_mode_body_code_data INLINECALLDICT
+    $global_send INLINECALLDICT
+    s0 s5 XCHG
+    INC
+    DUP
+    DEC
+    16 s() 20 s() XCHG
+    s15 19 s() XCHG
+    s14 18 s() XCHG
+    s13 17 s() XCHG
+    s12 16 s() XCHG
+    s11 s15 XCHG
+    s10 s14 XCHG
+    s9 s13 XCHG
+    s8 s12 XCHG
+    s7 s11 XCHG
+    s1 s10 XCHG
+    s5 s9 XCHG
+    s4 s8 XCHG
+    s3 s7 XCHG
+    s2 s6 XCHG
+    s5 s3 s0 XCHG3
+    s1 s2 XCHG
+  }>
+  $MarketTon$_fun_takeDealAfterRecievedDeal PROCREF:<{
+    s9 s8 XCHG2
+    6 BLKDROP
+    s4 POP
+    s4 POP
+    s10 POP
+    s13 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    SWAP
+    CTOS
+    $ContextTakeDealForDealReceived$_load_not_mut INLINECALLDICT
+    DROP
+    s7 s9 PUSH2
+    __tact_slice_eq_bits INLINECALLDICT
+    IFJMP:<{
+      7 BLKDROP
+      10 2 BLKDROP2
+      8 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s0 18 s() XCHG
+    1 NEQINT
+    IFJMP:<{
+      6 BLKDROP
+      10 2 BLKDROP2
+      7 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s0 s3 XCHG
+    23 s() PUSH
+    NEQ
+    IF:<{
+      s2 POP
+      TRUE
+    }>ELSE<{
+      s0 s2 XCHG
+      21 s() PUSH
+      NEQ
+    }>
+    IFJMP:<{
+      4 BLKDROP
+      10 2 BLKDROP2
+      6 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    NOW
+    300 PUSHINT
+    SUB
+    s1 s2 XCHG
+    LESS
+    IFJMP:<{
+      3 BLKDROP
+      10 2 BLKDROP2
+      3 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s10 s0 PUSH2
+    MUL
+    s0 s15 XCHG2
+    MUL
+    10000000000000000 PUSHINT
+    DIV
+    s11 s9 PUSH2
+    MUL
+    100000000 PUSHINT
+    DIV
+    s12 s(-1) PUXC
+    SUB
+    s15 s(-1) PUXC
+    LEQ
+    IF:<{
+      s11 s9 PUSH2
+      MUL
+      100000000 PUSHINT
+      DIV
+      s12 s(-1) PUXC
+      ADD
+      s15 s(-1) PUXC
+      GEQ
+    }>ELSE<{
+      FALSE
+    }>
+    IFJMP:<{
+      3 BLKDROP
+      10 2 BLKDROP2
+      4 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s2 s2 XCPU
+    SUB
+    DUP
+    50000000 PUSHINT
+    LESS
+    IFJMP:<{
+      3 BLKDROP
+      10 2 BLKDROP2
+      5 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s8 s2 XCPU
+    SUB
+    DUP
+    0 LESSINT
+    IFJMP:<{
+      3 BLKDROP
+      10 2 BLKDROP2
+      9 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s2 s0 PUSH2
+    SUB
+    20 s() 35 s() XCHG
+    19 s() 34 s() XCHG
+    18 s() 33 s() XCHG
+    17 s() 32 s() XCHG
+    16 s() 31 s() XCHG
+    s15 30 s() XCHG
+    s14 29 s() XCHG
+    s13 28 s() XCHG
+    s12 27 s() XCHG
+    s11 26 s() XCHG
+    s10 25 s() XCHG
+    s9 24 s() XCHG
+    s8 23 s() XCHG
+    s7 22 s() XCHG
+    s6 21 s() XCHG
+    s5 35 s() XCHG
+    s4 34 s() XCHG
+    s3 33 s() XCHG
+    s2 32 s() XCHG
+    s1 31 s() XCHG
+    $MarketTon$_fun_addTonDepositBalance INLINECALLDICT
+    30 s() PUSH
+    0 GTINT
+    IF:<{
+      20 s() PUSH
+      SWAP
+      s0 31 s() XCHG
+      1 PUSHINT
+      TRUE
+      $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+      $global_send INLINECALLDICT
+    }>ELSE<{
+      30 s() POP
+    }>
+    22 s() PUSH
+    0 GTINT
+    IF:<{
+      32 s() PUSH
+      31 s() PUSH
+      __tact_slice_eq_bits INLINECALLDICT
+      NOT
+    }>ELSE<{
+      FALSE
+    }>
+    IF:<{
+      32 s() PUSH
+      SWAP
+      s0 23 s() XCHG
+      1 PUSHINT
+      TRUE
+      $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+      $global_send INLINECALLDICT
+    }>ELSE<{
+      22 s() POP
+    }>
+    NOW
+    NOW
+    s15 PUSH
+    ADD
+    2 PUSHINT
+    29 s() PUSH
+    IF:<{
+      s2 24 s() XCHG
+      s1 31 s() XCHG
+      35 s() PUSH
+      SWAP
+      s0 35 s() XCHG
+      30000000 PUSHINT
+      34 s() PUSH
+      $MarketTon$_fun_mint INLINECALLDICT
+      19 s() 20 s() XCHG
+      18 s() 20 s() XCHG
+      17 s() 20 s() XCHG
+      16 s() 20 s() XCHG
+      s15 20 s() XCHG
+      s14 20 s() XCHG
+      s13 20 s() XCHG
+      s12 20 s() XCHG
+      s11 20 s() XCHG
+      s10 20 s() XCHG
+      s9 20 s() XCHG
+      s0 20 s() XCHG
+      s0 s8 XCHG
+      s0 s7 XCHG
+      s0 s6 XCHG
+      5 -ROLL
+      35 s() PUSH
+      22 s() PUSH
+      30000000 PUSHINT
+      35 s() PUSH
+      $MarketTon$_fun_mint INLINECALLDICT
+    }>ELSE<{
+      s2 24 s() XCHG
+      s1 31 s() XCHG
+      35 s() PUSH
+      SWAP
+      s0 35 s() XCHG
+      30000000 PUSHINT
+      34 s() PUSH
+      $MarketTon$_fun_mint INLINECALLDICT
+      19 s() 20 s() XCHG
+      18 s() 20 s() XCHG
+      17 s() 20 s() XCHG
+      16 s() 20 s() XCHG
+      s15 20 s() XCHG
+      s14 20 s() XCHG
+      s13 20 s() XCHG
+      s12 20 s() XCHG
+      s11 20 s() XCHG
+      s10 20 s() XCHG
+      s9 20 s() XCHG
+      s0 20 s() XCHG
+      s0 s8 XCHG
+      s0 s7 XCHG
+      s0 s6 XCHG
+      5 -ROLL
+      35 s() PUSH
+      22 s() PUSH
+      30000000 PUSHINT
+      35 s() PUSH
+      $MarketTon$_fun_mint INLINECALLDICT
+      s0 21 s() XCHG
+    }>
+    36 s() PUSH
+    30 s() PUSH
+    24 s() PUSH
+    37 s() PUSH
+    $DealAcceptedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker INLINECALLDICT
+    $DealAcceptedEvent$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    20 s() 36 s() XCHG
+    19 s() 35 s() XCHG
+    18 s() 34 s() XCHG
+    17 s() 33 s() XCHG
+    16 s() 32 s() XCHG
+    s15 31 s() XCHG
+    s14 30 s() XCHG
+    s13 29 s() XCHG
+    s12 28 s() XCHG
+    s11 27 s() XCHG
+    s10 26 s() XCHG
+    s9 25 s() XCHG
+    s8 24 s() XCHG
+    s7 23 s() XCHG
+    s6 22 s() XCHG
+    s5 21 s() XCHG
+    s4 20 s() XCHG
+    s3 19 s() XCHG
+    s2 18 s() XCHG
+    s1 17 s() XCHG
+    s4 16 s() XCHG
+    s13 s15 XCHG
+    s3 s14 XCHG
+    s3 s13 XCHG
+    s3 s12 XCHG
+    s3 s11 XCHG
+    s3 s10 XCHG
+    s3 s9 XCHG
+    s2 s8 XCHG
+    s2 s7 XCHG
+    5 2 REVERSE
+    -ROT
+    $MarketTon$_fun_saveDeal INLINECALLDICT
+  }>
+  $MarketTon$_fun_deleteDeal PROCREF:<{
+    __tact_context_sys GETGLOB
+    MYADDR
+    s1 s3 s0 XCHG3
+    $Deal$_init_child INLINECALLDICT
+    2DUP
+    $global_contractAddress INLINECALLDICT
+    0 PUSHINT
+    7 PUSHPOW2
+    s0 s6 XCHG
+    FALSE
+    s0 s6 XCHG
+    $DeleteData$_constructor_queryId_originalGasTo INLINECALLDICT
+    $DeleteData$_store_cell INLINECALLDICT
+    s0 s1 s6 XCHG3
+    s4 s4 XCHG2
+    s0 s5 XCHG
+    s0 s3 XCHG
+    $SendParameters$_constructor_to_value_mode_bounce_body_code_data INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $MarketTon$_fun__cancelDeal PROCREF:<{
+    4 4 BLKDROP2
+    s4 POP
+    s4 POP
+    5 5 BLKDROP2
+    57951 PUSHINT
+    s0 s6 XCHG
+    1 EQINT
+    s1 s6 XCHG
+    THROWANYIFNOT
+    s6 s3 XCPU
+    SUB
+    DUP
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    s6 s3 XCHG2
+    1 PUSHINT
+    TRUE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+    $global_send INLINECALLDICT
+    s4 s2 XCHG2
+    $MarketTon$_fun_deleteDeal INLINECALLDICT
+  }>
+  $MarketTon$_fun_cancelDealAfterRecievedDeal PROCREF:<{
+    4 2 BLKDROP2
+    s0 s2 XCHG
+    CTOS
+    $ContextCancelDealForDealReceived$_load_not_mut INLINECALLDICT
+    s0 s3 PUSH2
+    __tact_slice_eq_bits INLINECALLDICT
+    NOT
+    IFJMP:<{
+      16 s() POP
+      s14 POP
+      13 BLKDROP
+      s3 PUSH
+      100000000 PUSHINT
+      ADD
+      0 PUSHINT
+      RAWRESERVE
+      SWAP
+      8 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s1 s2 s3 PUSH3
+    s13 PUSH
+    $CancelEvent$_constructor_queryId_dealId_maker_collateralAmountMaker INLINECALLDICT
+    $CancelEvent$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    s0 s2 XCHG
+    $MarketTon$_fun__cancelDeal INLINECALLDICT
+  }>
+  $MarketTon$_fun_fetchOwnerByIndex PROCREF:<{
+    20 s() 22 s() XCHG
+    19 s() 21 s() XCHG
+    18 s() 22 s() XCHG
+    17 s() 21 s() XCHG
+    16 s() 22 s() XCHG
+    s15 21 s() XCHG
+    s14 22 s() XCHG
+    s13 21 s() XCHG
+    s12 22 s() XCHG
+    s11 21 s() XCHG
+    s10 22 s() XCHG
+    s9 21 s() XCHG
+    s8 22 s() XCHG
+    s7 21 s() XCHG
+    s6 22 s() XCHG
+    s5 21 s() XCHG
+    s4 22 s() XCHG
+    s3 21 s() XCHG
+    s2 22 s() XCHG
+    s0 21 s() XCHG
+    SWAP
+    $MarketTon$_fun_getNftItemInit INLINECALLDICT
+    $global_contractAddress INLINECALLDICT
+    TRUE
+    0 PUSHINT
+    s0 24 s() XCHG
+    $GetOwner$_constructor_query_id INLINECALLDICT
+    $GetOwner$_store_cell INLINECALLDICT
+    s2 s4 XCHG
+    s3 23 s() XCHG
+    s1 s2 XCHG
+    s1 24 s() XCHG
+    $SendParameters$_constructor_to_value_bounce_mode_body INLINECALLDICT
+    $global_send INLINECALLDICT
+    17 s() 19 s() XCHG
+    16 s() 18 s() XCHG
+    s15 17 s() XCHG
+    s14 16 s() XCHG
+    2 14 BLKSWAP
+  }>
+  $MarketTon$_fun_sendReward PROCREF:<{
+    3607 PUSHINT
+    s12 PUSH
+    257 PUSHINT
+    s4 PUSH
+    __tact_dict_get_int_cell INLINECALLDICT
+    ISNULL
+    THROWANYIFNOT
+    s1 s2 XCHG
+    $ContextForGetOwner$_constructor_amount_originalGasTo INLINECALLDICT
+    SWAP
+    257 PUSHINT
+    s0 s2 XCHG
+    $ContextForGetOwner$_store_cell INLINECALLDICT
+    s2 PUSH
+    s3 s12 XCHG
+    SWAP
+    __tact_dict_set_int_cell INLINECALLDICT
+    s9 s9 XCHG2
+    68000000 PUSHINT
+    $MarketTon$_fun_fetchOwnerByIndex INLINECALLDICT
+  }>
+  $MarketTon$_fun_processDealAfterRecievedDeal PROCREF:<{
+    4 2 BLKDROP2
+    s0 s2 XCHG
+    CTOS
+    $ContextProcessDealForDealReceived$_load_not_mut INLINECALLDICT
+    22 s() PUSH
+    1 EQINT
+    IF:<{
+      s14 PUSH
+      NOW
+      LEQ
+    }>ELSE<{
+      FALSE
+    }>
+    IFJMP:<{
+      6 BLKDROP
+      s1 s2 s3 PUSH3
+      s13 PUSH
+      $DealExpiredEvent$_constructor_queryId_dealId_maker_collateralAmountMaker INLINECALLDICT
+      $DealExpiredEvent$_store_cell INLINECALLDICT
+      $global_emit INLINECALLDICT
+      s0 s2 XCHG
+      $MarketTon$_fun__cancelDeal INLINECALLDICT
+    }>
+    s13 POP
+    s13 POP
+    s13 POP
+    s14 POP
+    s14 POP
+    s14 POP
+    s15 POP
+    17 s() PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    s0 s15 XCHG
+    2 EQINT
+    IF:<{
+      s4 PUSH
+      NOW
+      LEQ
+    }>ELSE<{
+      FALSE
+    }>
+    NOT
+    IFJMP:<{
+      13 BLKDROP
+      7 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s0 s11 XCHG
+    20 s() PUSH
+    NEQ
+    IF:<{
+      s6 POP
+      TRUE
+    }>ELSE<{
+      s0 s6 XCHG
+      18 s() PUSH
+      NEQ
+    }>
+    IFJMP:<{
+      11 BLKDROP
+      6 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s2 PUSH
+    300 PUSHINT
+    SUB
+    s8 s(-1) PUXC
+    LESS
+    IF:<{
+      s7 POP
+      TRUE
+    }>ELSE<{
+      s7 s2 XCPU
+      GREATER
+    }>
+    IFJMP:<{
+      10 BLKDROP
+      3 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    OVER
+    300 PUSHINT
+    SUB
+    s3 s(-1) PUXC
+    LESS
+    IF:<{
+      2 1 BLKDROP2
+      TRUE
+    }>ELSE<{
+      -ROT
+      GREATER
+    }>
+    IFJMP:<{
+      8 BLKDROP
+      10 PUSHINT
+      $MarketTon$_fun_returnTon INLINECALLDICT
+    }>
+    s3 PUSH
+    0 PUSHINT
+    s0 s7 PUXC
+    s1 s10 XCHG
+    SUB
+    s0 s3 XCHG2
+    MUL
+    100000000 PUSHINT
+    DIV
+    DUP
+    ABS
+    s3 PUSH
+    GEQ
+    IF:<{
+      0 GTINT
+      IF:<{
+        s5 POP
+        DUP
+        1 LSHIFT#
+      }>ELSE<{
+        s7 POP
+        DUP
+        1 LSHIFT#
+        s0 s7 XCHG
+        s0 s5 XCHG
+      }>
+    }>ELSE<{
+      s6 POP
+      s7 POP
+      s0 s4 PUSH2
+      ADD
+      s1 s5 PUXC
+      SUB
+      s0 s7 XCHG
+      s0 s5 XCHG
+    }>
+    0 PUSHINT
+    s0 s8 PUSH2
+    0 GTINT
+    IF:<{
+      s9 s3 PUSH2
+      GREATER
+      IF:<{
+        2DROP
+        s7 s1 PUSH2
+        SUB
+        25 s() PUSH
+        MUL
+        1000000000 PUSHINT
+        DIV
+        s8 s2 PUSH2
+        SUB
+        25 s() PUSH
+        MUL
+        1000000000 PUSHINT
+        DIV
+        s9 s1 XCPU
+        SUB
+        s9 PUSH
+        SUB
+        s0 s9 XCHG
+      }>
+      21 s() 31 s() XCHG
+      20 s() 30 s() XCHG
+      19 s() 29 s() XCHG
+      18 s() 28 s() XCHG
+      17 s() 27 s() XCHG
+      16 s() 26 s() XCHG
+      s15 25 s() XCHG
+      s14 24 s() XCHG
+      s13 23 s() XCHG
+      s12 22 s() XCHG
+      s11 31 s() XCHG
+      s10 30 s() XCHG
+      s9 29 s() XCHG
+      s8 28 s() XCHG
+      s7 27 s() XCHG
+      s6 26 s() XCHG
+      s5 25 s() XCHG
+      s4 24 s() XCHG
+      s3 23 s() XCHG
+      s2 22 s() XCHG
+      s1 27 s() XCHG
+      s0 29 s() XCHG
+      31 s() PUSH
+      31 s() PUSH
+      $MarketTon$_fun_sendReward INLINECALLDICT
+      19 s() 29 s() XCHG
+      18 s() 28 s() XCHG
+      17 s() 27 s() XCHG
+      16 s() 26 s() XCHG
+      s15 25 s() XCHG
+      s14 24 s() XCHG
+      s13 23 s() XCHG
+      s12 22 s() XCHG
+      s11 21 s() XCHG
+      s10 20 s() XCHG
+      s9 19 s() XCHG
+      s8 18 s() XCHG
+      s7 17 s() XCHG
+      s6 16 s() XCHG
+      s5 s15 XCHG
+      s4 s14 XCHG
+      s3 s13 XCHG
+      s12 s11 s10 XCHG3
+      s5 s7 XCHG
+    }>ELSE<{
+      s7 POP
+      s8 POP
+    }>
+    DUP
+    0 GTINT
+    IF:<{
+      s0 s1 PUSH2
+      GREATER
+      IF:<{
+        s5 POP
+        s6 POP
+        s3 s5 PUSH2
+        SUB
+        23 s() PUSH
+        MUL
+        1000000000 PUSHINT
+        DIV
+        s4 s6 PUXC
+        SUB
+        22 s() PUSH
+        MUL
+        1000000000 PUSHINT
+        DIV
+        s4 s6 XCPU
+        SUB
+        s4 PUSH
+        SUB
+      }>ELSE<{
+        NIP
+      }>
+      s8 PUSH
+      INC
+      22 s() 29 s() XCHG
+      21 s() 28 s() XCHG
+      20 s() 27 s() XCHG
+      19 s() 26 s() XCHG
+      18 s() 25 s() XCHG
+      17 s() 24 s() XCHG
+      16 s() 23 s() XCHG
+      s15 29 s() XCHG
+      s14 28 s() XCHG
+      s13 27 s() XCHG
+      s12 26 s() XCHG
+      s11 25 s() XCHG
+      s10 24 s() XCHG
+      s9 23 s() XCHG
+      s8 29 s() XCHG
+      s7 28 s() XCHG
+      s6 27 s() XCHG
+      s5 26 s() XCHG
+      s4 25 s() XCHG
+      s3 24 s() XCHG
+      s2 25 s() XCHG
+      29 s() PUSH
+      $MarketTon$_fun_sendReward INLINECALLDICT
+      19 s() 26 s() XCHG
+      18 s() 25 s() XCHG
+      17 s() 24 s() XCHG
+      16 s() 23 s() XCHG
+      s15 22 s() XCHG
+      s14 21 s() XCHG
+      s13 20 s() XCHG
+      s12 19 s() XCHG
+      s11 18 s() XCHG
+      s10 17 s() XCHG
+      s9 16 s() XCHG
+      s8 s15 XCHG
+      s7 s14 XCHG
+      7 7 BLKSWAP
+    }>ELSE<{
+      2DROP
+      s2 POP
+    }>
+    s10 s4 XCHG2
+    ADD
+    s8 s8 XCHG2
+    ADD
+    s4 PUSH
+    s2 s2 s3 PUXC2
+    s1 s10 XCHG
+    $DealCompletedEvent$_constructor_queryId_dealId_maker_collateralAmountMaker INLINECALLDICT
+    $DealCompletedEvent$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    s0 s5 XCHG
+    s6 s6 XCHG2
+    $MarketTon$_fun_deleteDeal INLINECALLDICT
+  }>
+  $MarketTon$_fun_onPriceReceived PROCREF:<{
+    s8 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    __tact_context_get INLINECALLDICT
+    18 s() PUSH
+    257 PUSHINT
+    s12 PUSH
+    __tact_dict_get_int_cell INLINECALLDICT
+    __tact_not_null INLINECALLDICT
+    CTOS
+    s11 s(-1) PUXC
+    s0 20 s() XCHG
+    257 PUSHINT
+    DICTIDEL
+    DROP
+    s0 19 s() XCHG
+    8 LDU
+    OVER
+    10 EQINT
+    IF:<{
+      NIP
+      LDREF
+      DROP
+      s0 s11 XCHG
+      6 5 BLKSWAP
+      $MarketTon$_fun_takeDealAfterRecievedPrice INLINECALLDICT
+    }>ELSE<{
+      SWAP
+      12 EQINT
+      IF:<{
+        LDREF
+        DROP
+        s0 s11 XCHG
+        6 5 BLKSWAP
+        $MarketTon$_fun_processDealAfterRecievedPrice INLINECALLDICT
+      }>ELSE<{
+        12 BLKDROP
+      }>
+    }>
+  }>
+  $MarketTon$_fun_onOracleErrorReceived PROCREF:<{
+    DROP
+    s0 s8 XCHG2
+    257 PUSHINT
+    DICTIDEL
+    DROP
+    s0 s7 XCHG
+  }>
+  $MarketTon$_fun_onBouncedGetOwner PROCREF:<{
+    s0 s8 XCHG2
+    257 PUSHINT
+    DICTIDEL
+    DROP
+    s0 s7 XCHG
+  }>
+  $MarketTon$_fun_id PROCREF:<{
+    19 s() PUSH
+  }>
+  $MarketTon$_fun_amm PROCREF:<{
+    17 s() PUSH
+  }>
+  $MarketTon$_fun_underlyingAssetName PROCREF:<{
+    16 s() PUSH
+  }>
+  $MarketTon$_fun_duration PROCREF:<{
+    s15 PUSH
+  }>
+  $MarketTon$_fun_operatorFee PROCREF:<{
+    s14 PUSH
+  }>
+  $MarketTon$_fun_balance PROCREF:<{
+    __tact_my_balance INLINECALLDICT
+  }>
+  $MarketTon$_fun_serviceFee PROCREF:<{
+    s13 PUSH
+  }>
+  $MarketTon$_fun_countDeal PROCREF:<{
+    s10 PUSH
+  }>
+  $MarketTon$_fun_next_item_index PROCREF:<{
+    s9 PUSH
+  }>
+  $MarketTon$_fun_collection_content PROCREF:<{
+    s8 PUSH
+  }>
+  $MarketTon$_fun_oracle PROCREF:<{
+    s6 PUSH
+  }>
+  $MarketTon$_fun_factory PROCREF:<{
+    s12 PUSH
+  }>
+  $MarketTon$_fun_feedIdAsset PROCREF:<{
+    s5 PUSH
+  }>
+  $MarketTon$_fun_feedIdToken PROCREF:<{
+    s4 PUSH
+  }>
+  $MarketTon$_fun_operatorFeeSum PROCREF:<{
+    s3 PUSH
+  }>
+  $MarketTon$_fun_serviceFeeSum PROCREF:<{
+    s2 PUSH
+  }>
+  $MarketTon$_fun_operatorFeeAddress PROCREF:<{
+    DUP
+  }>
+  $MarketTon$_fun_mapQueriesToContext PROCREF:<{
+    s7 PUSH
+  }>
+  $MarketTon$_fun_tonDepositBalance PROCREF:<{
+    OVER
+  }>
+  $MarketTon$_fun_forward PROCREF:<{
+    PUSHNULL
+    PUSHNULL
+    s2 PUSH
+    ISNULL
+    NOT
+    IF:<{
+      2DROP
+      $StateInit$_not_null INLINECALLDICT
+      SWAP
+    }>ELSE<{
+      s2 POP
+    }>
+    s2 s4 XCHG
+    0 PUSHINT
+    s0 s3 XCHG
+    s0 s4 XCHG
+    66 PUSHINT
+    s2 s3 XCHG2
+    $SendParameters$_constructor_bounce_to_value_mode_body_code_data INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $MarketTon$_fun_reply PROCINLINE:<{
+    __tact_context_get_sender INLINECALLDICT
+    SWAP
+    TRUE
+    PUSHNULL
+    $MarketTon$_fun_forward INLINECALLDICT
+  }>
+  $MarketTon$_fun_requireNotStopped PROCREF:<{
+    40368 PUSHINT
+    s12 PUSH
+    NOT
+    THROWANYIFNOT
+  }>
+  $MarketTon$_fun_requireStopped PROCREF:<{
+    53296 PUSHINT
+    s12 PUSH
+    THROWANYIFNOT
+  }>
+  $MarketTon$_fun_stopped PROCREF:<{
+    s11 PUSH
+  }>
+  $MarketTon$_fun_requireOwner PROCREF:<{
+    __tact_context_get_sender INLINECALLDICT
+    19 s() PUSH
+    SWAP
+    __tact_slice_eq_bits INLINECALLDICT
+    132 THROWIFNOT
+  }>
+  $MarketTon$_fun_owner PROCREF:<{
+    18 s() PUSH
+  }>
+  $MarketTon$_fun_get_collection_data PROCREF:<{
+    __tact_string_builder_start_string INLINECALLDICT
+    s9 PUSH
+    $Cell$_fun_asSlice INLINECALLDICT
+    __tact_string_builder_append INLINECALLDICT
+    B{b5ee9c7241010101000b0000126d6574612e6a736f6ebde57607} B>boc <s PUSHSLICE
+    __tact_string_builder_append INLINECALLDICT
+    __tact_string_builder_end INLINECALLDICT
+    B{b5ee9c72410101010024000043800000000000000000000000000000000000000000000000000000000000000000104aec829d} B>boc <s PUSHSLICE
+    s11 PUSH
+    -ROT
+    $CollectionData$_constructor_next_item_index_collection_content_owner_address INLINECALLDICT
+  }>
+  $MarketTon$_fun_get_nft_address_by_index PROCREF:<{
+    $MarketTon$_fun_getNftItemInit INLINECALLDICT
+    $global_contractAddress INLINECALLDICT
+  }>
+  $MarketTon$_fun_get_nft_content PROCREF:<{
+    NIP
+    __tact_string_builder_start_string INLINECALLDICT
+    SWAP
+    $Cell$_fun_asSlice INLINECALLDICT
+    __tact_string_builder_append INLINECALLDICT
+    __tact_string_builder_end INLINECALLDICT
+  }>
+  $DeployOk$_constructor_queryId PROCINLINE:<{
+  }>
+  $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData PROCINLINE:<{
+  }>
+  $ContextCancelDealForDealReceived$_constructor_from PROCINLINE:<{
+  }>
+  $ContextProcessDealForPriceReceived$_constructor_from_dealId PROCINLINE:<{
+  }>
+  $MarketTon$_internal_binary_InnerDeployMarketTon PROCINLINE:<{
+    s3 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    0 PUSHINT
+    7 PUSHPOW2
+    FALSE
+    s0 s4 XCHG
+    $DeployOk$_constructor_queryId INLINECALLDICT
+    $DeployOk$_store_cell INLINECALLDICT
+    s3 s4 XCHG
+    s1 s3 s0 XCHG3
+    $SendParameters$_constructor_to_value_mode_bounce_body INLINECALLDICT
+    $global_send INLINECALLDICT
+  }>
+  $MarketTon$_internal_binary_WithdrawServiceFee PROCINLINE:<{
+    s2 POP
+    19 s() 21 s() XCHG
+    18 s() 20 s() XCHG
+    17 s() 21 s() XCHG
+    16 s() 20 s() XCHG
+    s15 21 s() XCHG
+    s14 20 s() XCHG
+    s13 21 s() XCHG
+    s12 20 s() XCHG
+    s11 21 s() XCHG
+    s10 20 s() XCHG
+    s9 21 s() XCHG
+    s8 20 s() XCHG
+    s7 21 s() XCHG
+    s6 20 s() XCHG
+    s5 21 s() XCHG
+    s4 20 s() XCHG
+    s3 21 s() XCHG
+    s2 20 s() XCHG
+    s1 21 s() XCHG
+    s0 20 s() XCHG
+    $MarketTon$_fun_requireOwner INLINECALLDICT
+    40476 PUSHINT
+    21 s() PUSH
+    0 GTINT
+    THROWANYIFNOT
+    44278 PUSHINT
+    21 s() PUSH
+    s4 PUSH
+    LEQ
+    THROWANYIFNOT
+    s0 s2 XCHG
+    20 s() PUSH
+    SUB
+    SWAP
+    20 s() PUSH
+    SUB
+    DUP
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    s1 21 s() XCHG
+    s0 20 s() XCHG
+    1 PUSHINT
+    FALSE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+    $global_send INLINECALLDICT
+    __tact_context_get_sender INLINECALLDICT
+    0 PUSHINT
+    7 PUSHPOW2
+    TRUE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+    $global_send INLINECALLDICT
+    17 s() 19 s() XCHG
+    16 s() 18 s() XCHG
+    s15 17 s() XCHG
+    s14 16 s() XCHG
+    s13 s15 XCHG
+    s12 s14 XCHG
+    s11 s13 XCHG
+    s10 s12 XCHG
+    s9 s11 XCHG
+    s8 s10 XCHG
+    s7 s9 XCHG
+    s6 s8 XCHG
+    s5 s7 XCHG
+    s4 s6 XCHG
+    s3 s5 XCHG
+    s4 s3 s0 XCHG3
+    s1 s2 XCHG
+  }>
+  $MarketTon$_internal_binary_WithdrawOperatorFee PROCINLINE:<{
+    s2 POP
+    __tact_context_get INLINECALLDICT
+    s2 s3 XCHG
+    3 BLKDROP
+    s3 PUSH
+    51559 PUSHINT
+    s0 s2 XCHG
+    __tact_slice_eq_bits INLINECALLDICT
+    THROWANYIFNOT
+    40476 PUSHINT
+    OVER
+    0 GTINT
+    THROWANYIFNOT
+    59867 PUSHINT
+    s1 s6 PUSH2
+    LEQ
+    THROWANYIFNOT
+    s5 s5 XCPU
+    SUB
+    s3 s5 XCPU
+    SUB
+    DUP
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    s0 s5 XCHG
+    1 PUSHINT
+    FALSE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+    $global_send INLINECALLDICT
+    __tact_context_get_sender INLINECALLDICT
+    0 PUSHINT
+    7 PUSHPOW2
+    TRUE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+    $global_send INLINECALLDICT
+    s1 s3 XCHG
+  }>
+  $MarketTon$_internal_binary_CreateDealTon PROCINLINE:<{
+    s10 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    __tact_context_get INLINECALLDICT
+    DROP
+    s2 POP
+    16059 PUSHINT
+    B{b5ee9c72410101010024000043800000000000000000000000000000000000000000000000000000000000000000104aec829d} B>boc <s PUSHSLICE
+    30 s() PUSH
+    __tact_slice_eq_bits INLINECALLDICT
+    IF:<{
+      s2 PUSH
+      50000000 PUSHINT
+      GEQ
+    }>ELSE<{
+      FALSE
+    }>
+    IF:<{
+      TRUE
+    }>ELSE<{
+      s2 PUSH
+      150000000 PUSHINT
+      GEQ
+    }>
+    THROWANYIFNOT
+    $MarketTon$_fun_handleCreateDeal INLINECALLDICT
+  }>
+  $MarketTon$_internal_binary_TakeDealTon PROCINLINE:<{
+    s5 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    __tact_context_get INLINECALLDICT
+    DROP
+    s2 POP
+    16059 PUSHINT
+    s2 PUSH
+    100000000 PUSHINT
+    GEQ
+    THROWANYIFNOT
+    DUP
+    $MarketTon$_fun_handleTakeDeal INLINECALLDICT
+  }>
+  $MarketTon$_internal_binary_TakeDealWithOriginalGasToTon PROCINLINE:<{
+    s7 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    __tact_context_get INLINECALLDICT
+    DROP
+    16059 PUSHINT
+    s3 POP
+    100000000 PUSHINT
+    GEQ
+    s1 s2 XCHG
+    THROWANYIFNOT
+    s4 s4 s4 XCHG3
+    $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData INLINECALLDICT
+    3 3 BLKSWAP
+    $MarketTon$_fun_handleTakeDeal INLINECALLDICT
+  }>
+  $MarketTon$_internal_binary_CancelDeal PROCINLINE:<{
+    s3 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    __tact_context_get INLINECALLDICT
+    DROP
+    16059 PUSHINT
+    s3 POP
+    50000000 PUSHINT
+    GEQ
+    s1 s2 XCHG
+    THROWANYIFNOT
+    NEWC
+    21 PUSHINT
+    SWAP
+    8 STU
+    SWAP
+    $ContextCancelDealForDealReceived$_constructor_from INLINECALLDICT
+    $ContextCancelDealForDealReceived$_store_cell INLINECALLDICT
+    SWAP
+    STREF
+    ENDC
+    $MarketTon$_fun_fetchDeal INLINECALLDICT
+  }>
+  $MarketTon$_internal_binary_ProcessDeal PROCINLINE:<{
+    s5 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    __tact_context_get INLINECALLDICT
+    DROP
+    16059 PUSHINT
+    s3 POP
+    100000000 PUSHINT
+    GEQ
+    s1 s2 XCHG
+    THROWANYIFNOT
+    NEWC
+    12 PUSHINT
+    SWAP
+    8 STU
+    s0 s4 XCHG
+    $ContextProcessDealForPriceReceived$_constructor_from_dealId INLINECALLDICT
+    $ContextProcessDealForPriceReceived$_store_cell INLINECALLDICT
+    s0 s3 XCHG2
+    STREF
+    ENDC
+    s1 s2 XCHG
+    $MarketTon$_fun_fetchPriceWithSaveContext INLINECALLDICT
+  }>
+  $MarketTon$_internal_binary_ReportOwner PROCINLINE:<{
+    __tact_context_get INLINECALLDICT
+    s2 s3 XCHG
+    3 BLKDROP
+    __tact_context_sys GETGLOB
+    MYADDR
+    s1 s0 s4 XCHG3
+    $NftItem$_init_child INLINECALLDICT
+    SWAP
+    14154 PUSHINT
+    s0 s2 XCHG
+    $global_contractAddress INLINECALLDICT
+    s0 s3 XCHG2
+    __tact_slice_eq_bits INLINECALLDICT
+    s1 s2 XCHG
+    THROWANYIFNOT
+    s9 PUSH
+    257 PUSHINT
+    s3 PUSH
+    __tact_dict_get_int_cell INLINECALLDICT
+    CTOS
+    $ContextForGetOwner$_load_not_mut INLINECALLDICT
+    s3 s11 XCHG2
+    257 PUSHINT
+    DICTIDEL
+    DROP
+    s4 s2 XCPU
+    SUB
+    DUP
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    s0 s2 XCHG
+    1 PUSHINT
+    TRUE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+    $global_send INLINECALLDICT
+    s0 s8 XCHG
+    0 PUSHINT
+    130 PUSHINT
+    TRUE
+    $SendParameters$_constructor_to_value_mode_bounce INLINECALLDICT
+    $global_send INLINECALLDICT
+    s1 s7 XCHG
+  }>
+  $MarketTon$_internal_binary_ReportData PROCINLINE:<{
+    __tact_context_get INLINECALLDICT
+    __tact_context_sys GETGLOB
+    MYADDR
+    s7 s(-1) PUXC
+    $Deal$_init_child INLINECALLDICT
+    SWAP
+    48542 PUSHINT
+    s0 s2 XCHG
+    $global_contractAddress INLINECALLDICT
+    s4 PUSH
+    __tact_slice_eq_bits INLINECALLDICT
+    THROWANYIFNOT
+    s0 s4 XCHG
+    CTOS
+    $DealData$_load_not_mut INLINECALLDICT
+    27 s() PUSH
+    257 PUSHINT
+    21 s() PUSH
+    __tact_dict_get_int_cell INLINECALLDICT
+    __tact_not_null INLINECALLDICT
+    CTOS
+    20 s() PUSH
+    SWAP
+    s0 29 s() XCHG
+    257 PUSHINT
+    DICTIDEL
+    DROP
+    s0 28 s() XCHG
+    8 LDU
+    OVER
+    20 EQINT
+    IF:<{
+      NIP
+      LDREF
+      DROP
+      s14 20 s() XCHG
+      s13 19 s() XCHG
+      s12 18 s() XCHG
+      s11 17 s() XCHG
+      s10 16 s() XCHG
+      s9 s15 XCHG
+      s8 s14 XCHG
+      s7 s13 XCHG
+      s6 s12 XCHG
+      s5 s11 XCHG
+      s4 s10 XCHG
+      s3 s9 XCHG
+      s8 s1 s6 XCHG3
+      s0 s0 s7 XCHG3
+      $MarketTon$_fun_takeDealAfterRecievedDeal INLINECALLDICT
+    }>ELSE<{
+      OVER
+      21 EQINT
+      IF:<{
+        NIP
+        LDREF
+        DROP
+        s14 20 s() XCHG
+        s13 19 s() XCHG
+        s12 18 s() XCHG
+        s11 17 s() XCHG
+        s10 16 s() XCHG
+        s9 s15 XCHG
+        s8 s14 XCHG
+        s7 s13 XCHG
+        s6 s12 XCHG
+        s5 s11 XCHG
+        s4 s10 XCHG
+        s3 s9 XCHG
+        s8 s1 s6 XCHG3
+        s0 s0 s7 XCHG3
+        $MarketTon$_fun_cancelDealAfterRecievedDeal INLINECALLDICT
+      }>ELSE<{
+        SWAP
+        22 EQINT
+        IF:<{
+          LDREF
+          DROP
+          s14 20 s() XCHG
+          s13 19 s() XCHG
+          s12 18 s() XCHG
+          s11 17 s() XCHG
+          s10 16 s() XCHG
+          s9 s15 XCHG
+          s8 s14 XCHG
+          s7 s13 XCHG
+          s6 s12 XCHG
+          s5 s11 XCHG
+          s4 s10 XCHG
+          s3 s9 XCHG
+          s8 s1 s6 XCHG3
+          s0 s0 s7 XCHG3
+          $MarketTon$_fun_processDealAfterRecievedDeal INLINECALLDICT
+        }>ELSE<{
+          15 BLKDROP
+          6 BLKDROP
+        }>
+      }>
+    }>
+  }>
+  $MarketTon$_receive_binary_bounce_GetData PROCINLINE:<{
+    s0 s8 XCHG2
+    257 PUSHINT
+    DICTIDEL
+    DROP
+    s0 s7 XCHG
+  }>
+  $MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df PROCINLINE:<{
+    $MarketTon$_fun_requireOwner INLINECALLDICT
+    $MarketTon$_fun_requireStopped INLINECALLDICT
+    s11 POP
+    FALSE
+    B{b5ee9c7241010101000d00001600000000526573756d656412d9e98a} B>boc PUSHREF
+    s1 s12 XCHG
+    $MarketTon$_fun_reply INLINECALLDICT
+  }>
+  $MarketTon$_internal_text_bcfaf776907c719cc8d379d8f194aaaa27e8ca2871cd591781721f215a454501 PROCINLINE:<{
+    $MarketTon$_fun_requireOwner INLINECALLDICT
+    $MarketTon$_fun_requireNotStopped INLINECALLDICT
+    s11 POP
+    TRUE
+    B{b5ee9c7241010101000d0000160000000053746f707065646f94ddb2} B>boc PUSHREF
+    s1 s12 XCHG
+    $MarketTon$_fun_reply INLINECALLDICT
+  }>
+  $MarketTon$_receive_binary_bounce_GetOwner PROCINLINE:<{
+    $MarketTon$_fun_onBouncedGetOwner INLINECALLDICT
+  }>
+  $MarketTon$_internal_any PROCINLINE:<{
+    32 LDU
+    SWAP
+    2472520145 PUSHINT
+    EQUAL
+    IF:<{
+      7021 PUSHINT
+      __tact_context_get_sender INLINECALLDICT
+      s9 s(-1) PUXC
+      __tact_slice_eq_bits INLINECALLDICT
+      THROWANYIFNOT
+      64 LDU
+      LDREF
+      SWAP
+      CTOS
+      SWAP
+      LDREF
+      DROP
+      CTOS
+      SWAP
+      256 LDU
+      256 LDU
+      48 LDU
+      DROP
+      s0 s3 XCHG
+      256 LDU
+      256 LDU
+      48 LDU
+      DROP
+      s4 s5 XCHG
+      s3 s4 XCHG
+      $MarketTon$_fun_onPriceReceived INLINECALLDICT
+    }>ELSE<{
+      DROP
+    }>
+  }>
+  $MarketTon$_receive_bounce PROCINLINE:<{
+    32 LDU
+    SWAP
+    64984234 PUSHINT
+    EQUAL
+    IF:<{
+      64 LDU
+      $MarketTon$_fun_onOracleErrorReceived INLINECALLDICT
+    }>ELSE<{
+      DROP
+    }>
+  }>
+  %id PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_id INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %amm PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_amm INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %underlyingAssetName PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_underlyingAssetName INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %duration PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_duration INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %operatorFee PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_operatorFee INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %balance PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_balance INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %serviceFee PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_serviceFee INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %countDeal PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_countDeal INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %next_item_index PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_next_item_index INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %collection_content PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_collection_content INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %oracle PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_oracle INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %factory PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_factory INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %feedIdAsset PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_feedIdAsset INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %feedIdToken PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_feedIdToken INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %operatorFeeSum PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_operatorFeeSum INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %serviceFeeSum PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_serviceFeeSum INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %operatorFeeAddress PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_operatorFeeAddress INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %mapQueriesToContext PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_mapQueriesToContext INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %tonDepositBalance PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_tonDepositBalance INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %stopped PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_stopped INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %owner PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_owner INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %get_collection_data PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    $MarketTon$_fun_get_collection_data INLINECALLDICT
+    15 3 BLKDROP2
+    5 3 BLKDROP2
+    $CollectionData$_to_external INLINECALLDICT
+  }>
+  %get_nft_address_by_index PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    19 s() 20 s() XCHG
+    18 s() 19 s() XCHG
+    17 s() 18 s() XCHG
+    16 s() 17 s() XCHG
+    s15 16 s() XCHG
+    15 ROLL
+    $MarketTon$_fun_get_nft_address_by_index INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  %getNftItemInit PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    19 s() 20 s() XCHG
+    18 s() 19 s() XCHG
+    17 s() 18 s() XCHG
+    16 s() 17 s() XCHG
+    s15 16 s() XCHG
+    15 ROLL
+    $MarketTon$_fun_getNftItemInit INLINECALLDICT
+    18 s() POP
+    16 s() POP
+    15 BLKDROP
+    2 2 BLKDROP2
+    s2 POP
+    $StateInit$_to_external INLINECALLDICT
+  }>
+  %get_nft_content PROC:<{
+    $MarketTon$_contract_load INLINECALLDICT
+    19 s() 21 s() XCHG
+    18 s() 20 s() XCHG
+    17 s() 19 s() XCHG
+    16 s() 18 s() XCHG
+    s15 17 s() XCHG
+    s14 16 s() XCHG
+    2 14 BLKSWAP
+    $MarketTon$_fun_get_nft_content INLINECALLDICT
+    16 s() POP
+    15 BLKDROP
+    4 1 BLKDROP2
+  }>
+  lazy_deployment_completed PROC:<{
+    c4 PUSH
+    CTOS
+    1 LDI
+    SWAP
+  }>
+  $MarketTon$_contract_router_internal PROCREF:<{
+    c2 SAVE
+    SAMEALTSAVE
+    SWAP
+    IFJMP:<{
+      32 PUSHINT
+      SDSKIPFIRST
+      0 PUSHINT
+      OVER
+      SBITS
+      31 GTINT
+      IF:<{
+        DROP
+        DUP
+        32 PLDU
+      }>
+      DUP
+      3858888933 PUSHINT
+      EQUAL
+      IFJMP:<{
+        DROP
+        $GetData$_load INLINECALLDICT
+        NIP
+        $MarketTon$_receive_binary_bounce_GetData INLINECALLDICT
+        TRUE
+      }>
+      3156669640 PUSHINT
+      EQUAL
+      IFJMP:<{
+        $GetOwner$_load INLINECALLDICT
+        NIP
+        $MarketTon$_receive_binary_bounce_GetOwner INLINECALLDICT
+        TRUE
+      }>
+      $MarketTon$_receive_bounce INLINECALLDICT
+      TRUE
+    }>
+    0 PUSHINT
+    OVER
+    SBITS
+    31 GTINT
+    IF:<{
+      DROP
+      DUP
+      32 PLDU
+    }>
+    DUP
+    2696026851 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $InnerDeployMarketTon$_load INLINECALLDICT
+      1 2 BLKDROP2
+      $MarketTon$_internal_binary_InnerDeployMarketTon INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    3909931163 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $WithdrawServiceFee$_load INLINECALLDICT
+      1 3 BLKDROP2
+      $MarketTon$_internal_binary_WithdrawServiceFee INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    3542167315 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $WithdrawOperatorFee$_load INLINECALLDICT
+      1 3 BLKDROP2
+      $MarketTon$_internal_binary_WithdrawOperatorFee INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    4072276050 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $CreateDealTon$_load INLINECALLDICT
+      1 9 BLKDROP2
+      $MarketTon$_internal_binary_CreateDealTon INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    3886765728 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $TakeDealTon$_load INLINECALLDICT
+      1 4 BLKDROP2
+      $MarketTon$_internal_binary_TakeDealTon INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    640326903 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $TakeDealWithOriginalGasToTon$_load INLINECALLDICT
+      1 6 BLKDROP2
+      $MarketTon$_internal_binary_TakeDealWithOriginalGasToTon INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    2166842366 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $CancelDeal$_load INLINECALLDICT
+      1 2 BLKDROP2
+      $MarketTon$_internal_binary_CancelDeal INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    3915542458 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $ProcessDeal$_load INLINECALLDICT
+      1 4 BLKDROP2
+      $MarketTon$_internal_binary_ProcessDeal INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    704662021 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $ReportOwner$_load INLINECALLDICT
+      1 3 BLKDROP2
+      $MarketTon$_internal_binary_ReportOwner INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    3062344471 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $ReportData$_load INLINECALLDICT
+      1 3 BLKDROP2
+      $MarketTon$_internal_binary_ReportData INLINECALLDICT
+      TRUE
+    }>
+    0 EQINT
+    IF:<{
+      DUP
+      HASHSU
+      DUP
+      49102922684337101841979563583256198294100324132395678439113188049283630228447 PUSHINT
+      EQUAL
+      IFJMP:<{
+        2DROP
+        $MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df INLINECALLDICT
+        TRUE
+        RETALT
+      }>
+      85478235227686204299312064008631277118150318603456584517510472216578858763521 PUSHINT
+      EQUAL
+      IFJMP:<{
+        DROP
+        $MarketTon$_internal_text_bcfaf776907c719cc8d379d8f194aaaa27e8ca2871cd591781721f215a454501 INLINECALLDICT
+        TRUE
+        RETALT
+      }>
+    }>
+    $MarketTon$_internal_any INLINECALLDICT
+    TRUE
+  }>
+  recv_internal PROC:<{
+    SWAP
+    CTOS
+    4 LDU
+    SWAP
+    1 PUSHINT
+    AND
+    NEGATE
+    SWAP
+    LDMSGADDR
+    SWAP
+    __tact_verify_address INLINECALLDICT
+    s0 s4 s2 PUXCPU
+    s0 s3 XCHG
+    4 TUPLE
+    __tact_context SETGLOB
+    s0 s2 XCHG
+    __tact_context_sender SETGLOB
+    $MarketTon$_contract_load INLINECALLDICT
+    19 s() 21 s() XCHG
+    18 s() 20 s() XCHG
+    17 s() 19 s() XCHG
+    16 s() 18 s() XCHG
+    s15 17 s() XCHG
+    s14 16 s() XCHG
+    2 14 BLKSWAP
+    $MarketTon$_contract_router_internal INLINECALLDICT
+    130 THROWIFNOT
+    $MarketTon$_contract_store INLINECALLDICT
+  }>
+}END>c
