@@ -1,5 +1,5 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
-import { Address, beginCell, fromNano, toNano, Transaction } from '@ton/core';
+import { Address, beginCell, Cell, fromNano, toNano, Transaction } from '@ton/core';
 import { loadDealCreatedEvent, loadDealData, Market, storeCreateDeal, storeTakeDeal } from '../wrappers/Market';
 import '@ton/test-utils';
 import { MyJetton } from '../wrappers/MyJetton';
@@ -8,6 +8,14 @@ import { OracleMock, storeCheckAndReturnPrice, storeCheckAndReturnPriceForTest }
 import { Deal } from '../wrappers/Deal';
 import { MarketTon } from '../wrappers/MarketTon';
 import { AmmTon } from '../wrappers/AmmTon';
+import { createCellFromParamsProvider, SIGNERS } from './helpers/test_helpers';
+import { ContractParamsProvider } from '@redstone-finance/sdk';
+import { TonSingleFeedManContractDeployer } from '../src/single-feed-man/TonSingleFeedManContractDeployer';
+import { SingleFeedManInitData } from '../src/single-feed-man/SingleFeedManInitData';
+import { createTestNetwork } from './helpers/sandbox_helpers';
+import { TonSingleFeedManContractAdapter } from '../src/single-feed-man/TonSingleFeedManContractAdapter';
+import { compile } from '@ton/blueprint';
+import { hexlify, toUtf8Bytes } from 'ethers/lib/utils';
 
 const DEAL_STATUS_CREATED = 1n;
 const DEAL_STATUS_ACCEPTED = 2n;
@@ -31,9 +39,11 @@ describe('Market ton', () => {
     let factory: SandboxContract<TreasuryContract>;
     let market: SandboxContract<MarketTon>;
     let deal: SandboxContract<Deal>;
+    let singleFeedMan: TonSingleFeedManContractAdapter;
+    let singleFeedManCode: Cell;
     let marketBalance: bigint;
-    const feedIdAsset = 34n;
-    const feedIdToken = 35n;
+    const feedIdAsset = BigInt(hexlify(toUtf8Bytes('USDT')));
+    const feedIdToken = BigInt(hexlify(toUtf8Bytes('USDC')));
     const serviceFee = toNano('0.01'); // 1%
     const operatorFee = toNano('0.01'); // 1%
     const content = beginCell().endCell();
@@ -53,9 +63,18 @@ describe('Market ton', () => {
     function getAmountWithoutSlippage(rateAsset: bigint, rateToken: bigint, percent: bigint): bigint {
         return (rateAsset * rateToken * percent) / COLLATERAL_DENOMINATOR;
     }
-
+    beforeAll(async () => {
+        singleFeedManCode = await compile('single_feed_man', {});
+    });
     beforeEach(async () => {
-        blockchain = await Blockchain.create();
+        const network = await createTestNetwork(Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 5);
+        blockchain = network.getBlockchain();
+
+        singleFeedMan = await new TonSingleFeedManContractDeployer(
+            network,
+            singleFeedManCode,
+            new SingleFeedManInitData('USDT', 2, SIGNERS),
+        ).getAdapter();
         deployer = await blockchain.treasury('deployer');
         owner = await blockchain.treasury('owner');
         operatorFeeAddress = await blockchain.treasury('operatorFeeAddress');
@@ -98,7 +117,7 @@ describe('Market ton', () => {
                 content,
                 operatorFee,
                 serviceFee,
-                oracle.address,
+                singleFeedMan.contract.address,
                 feedIdAsset,
                 feedIdToken,
                 operatorFeeAddress.address,
@@ -168,7 +187,7 @@ describe('Market ton', () => {
         expect(await market.getCollectionContent()).toEqualCell(content);
         expect(await market.getOperatorFee()).toEqual(operatorFee);
         expect(await market.getServiceFee()).toEqual(serviceFee);
-        expect(await market.getOracle()).toEqualAddress(oracle.address);
+        expect(await market.getOracle()).toEqualAddress(singleFeedMan.contract.address);
         expect(await market.getFeedIdAsset()).toEqual(feedIdAsset);
         expect(await market.getFeedIdToken()).toEqual(feedIdToken);
         expect(await market.getOperatorFeeAddress()).toEqualAddress(operatorFeeAddress.address);
@@ -193,7 +212,7 @@ describe('Market ton', () => {
         const createDealResult = await market.send(
             maker.getSender(),
             {
-                value: toNano('0.5') + amount,
+                value: toNano('0.3') + amount,
             },
             {
                 $$type: 'CreateDealTon',
@@ -205,28 +224,22 @@ describe('Market ton', () => {
                     percent: percent,
                     expiration: expiration,
                     slippage: slippage,
-                    oracleAssetData: beginCell()
-                        .store(
-                            storeCheckAndReturnPriceForTest({
-                                $$type: 'CheckAndReturnPriceForTest',
-                                feedId: feedIdAsset,
-                                price: rateAsset,
-                                timestamp: BigInt(blockchain.now! * 1000),
-                                needBounce: false,
-                            }),
-                        )
-                        .endCell(),
-                    oracleTokenData: beginCell()
-                        .store(
-                            storeCheckAndReturnPriceForTest({
-                                $$type: 'CheckAndReturnPriceForTest',
-                                feedId: feedIdToken,
-                                price: rateToken,
-                                timestamp: BigInt(blockchain.now! * 1000),
-                                needBounce: false,
-                            }),
-                        )
-                        .endCell(),
+                    oracleAssetData: await createCellFromParamsProvider(
+                        new ContractParamsProvider({
+                            dataServiceId: 'redstone-avalanche-prod',
+                            uniqueSignersCount: 2,
+                            dataPackagesIds: ['USDT'],
+                            historicalTimestamp: Math.floor((blockchain.now! * 1000) / 10000) * 10000,
+                        }),
+                    ),
+                    oracleTokenData: await createCellFromParamsProvider(
+                        new ContractParamsProvider({
+                            dataServiceId: 'redstone-avalanche-prod',
+                            uniqueSignersCount: 2,
+                            dataPackagesIds: ['USDC'],
+                            historicalTimestamp: Math.floor((blockchain.now! * 1000) / 10000) * 10000,
+                        }),
+                    ),
                 },
                 queryId: 0n,
             },

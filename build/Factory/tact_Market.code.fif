@@ -3054,67 +3054,123 @@ PROGRAM{
     $global_send INLINECALLDICT
   }>
   $Market$_internal_binary_TokenNotification PROCINLINE:<{
-    100000000 PUSHINT
-    0 PUSHINT
-    RAWRESERVE
-    __tact_context_get INLINECALLDICT
-    DROP
-    s2 POP
-    22 s() PUSH
-    45223 PUSHINT
-    s0 s2 XCHG
-    __tact_slice_eq_bits INLINECALLDICT
-    THROWANYIFNOT
-    98000000 PUSHINT
-    LESS
-    IF:<{
+    CONT:<{
+      c2 SAVE
+      SAMEALTSAVE
+      100000000 PUSHINT
+      0 PUSHINT
+      RAWRESERVE
+      __tact_context_get INLINECALLDICT
       DROP
-      1 PUSHINT
-      $Market$_fun_returnTokens INLINECALLDICT
-    }>ELSE<{
-      32 LDU
-      OVER
-      3755427120 PUSHINT
-      EQUAL
+      s2 POP
+      22 s() PUSH
+      45223 PUSHINT
+      s0 s2 XCHG
+      __tact_slice_eq_bits INLINECALLDICT
+      THROWANYIFNOT
+      DUP
+      98000000 PUSHINT
+      LESS
       IF:<{
-        NIP
-        $CreateDealData$_load_not_mut INLINECALLDICT
-        2 8 BLKSWAP
-        $Market$_fun_handleCreateDeal INLINECALLDICT
+        2DROP
+        1 PUSHINT
+        $Market$_fun_returnTokens INLINECALLDICT
       }>ELSE<{
+        SWAP
+        32 LDU
         OVER
-        955300085 PUSHINT
+        3755427120 PUSHINT
         EQUAL
         IF:<{
-          NIP
-          $TakeDealData$_load_not_mut INLINECALLDICT
-          2 3 BLKSWAP
-          DUP
-          $Market$_fun_handleTakeDeal INLINECALLDICT
+          2 1 BLKDROP2
+          $CreateDealData$_load_not_mut INLINECALLDICT
+          21 s() PUSH
+          IFJMP:<{
+            8 BLKDROP
+            11 PUSHINT
+            $Market$_fun_returnTokens INLINECALLDICT
+            RETALT
+          }>
+          2 8 BLKSWAP
+          $Market$_fun_handleCreateDeal INLINECALLDICT
         }>ELSE<{
-          SWAP
-          2027434162 PUSHINT
+          OVER
+          955300085 PUSHINT
           EQUAL
           IF:<{
-            LDREF
-            DROP
-            CTOS
-            $TakeDealDataWithOriginalGasTo$_load_not_mut INLINECALLDICT
-            s2 s3 XCHG
-            $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData INLINECALLDICT
-            3 3 BLKSWAP
+            NIP
+            s15 PUSH
+            IFJMP:<{
+              2DROP
+              11 PUSHINT
+              $Market$_fun_returnTokens INLINECALLDICT
+              RETALT
+            }>
+            SWAP
+            250000000 PUSHINT
+            LESS
+            IFJMP:<{
+              DROP
+              1 PUSHINT
+              $Market$_fun_returnTokens INLINECALLDICT
+              RETALT
+            }>
+            $TakeDealData$_load_not_mut INLINECALLDICT
+            2 3 BLKSWAP
+            DUP
             $Market$_fun_handleTakeDeal INLINECALLDICT
           }>ELSE<{
-            4 BLKDROP
+            s2 POP
+            2027434162 PUSHINT
+            EQUAL
+            IF:<{
+              44687 PUSHINT
+              22 s() PUSH
+              s3 PUSH
+              __tact_slice_eq_bits INLINECALLDICT
+              THROWANYIFNOT
+              LDREF
+              DROP
+              CTOS
+              $TakeDealDataWithOriginalGasTo$_load_not_mut INLINECALLDICT
+              s2 s3 XCHG
+              $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData INLINECALLDICT
+              3 3 BLKSWAP
+              $Market$_fun_handleTakeDeal INLINECALLDICT
+            }>ELSE<{
+              4 BLKDROP
+            }>
           }>
         }>
       }>
     }>
+    EXECUTE
   }>
   $Market$_internal_binary_CancelDeal PROCINLINE:<{
     100000000 PUSHINT
     0 PUSHINT
     RAWRESERVE
+    19 s() 21 s() XCHG
+    18 s() 20 s() XCHG
+    17 s() 21 s() XCHG
+    16 s() 20 s() XCHG
+    s15 21 s() XCHG
+    s14 20 s() XCHG
+    s13 21 s() XCHG
+    s12 20 s() XCHG
+    s11 21 s() XCHG
+    s10 20 s() XCHG
+    s9 21 s() XCHG
+    s8 20 s() XCHG
+    s7 21 s() XCHG
+    s6 20 s() XCHG
+    s5 21 s() XCHG
+    s4 20 s() XCHG
+    s3 21 s() XCHG
+    s2 20 s() XCHG
+    s1 21 s() XCHG
+    s0 20 s() XCHG
+    $Market$_fun_requireNotStopped INLINECALLDICT
     __tact_context_get INLINECALLDICT
     DROP
     16059 PUSHINT
@@ -3133,17 +3189,57 @@ PROGRAM{
     SWAP
     STREF
     ENDC
+    20 s() 22 s() XCHG
+    19 s() 21 s() XCHG
+    18 s() 20 s() XCHG
+    17 s() 19 s() XCHG
+    16 s() 18 s() XCHG
+    s15 17 s() XCHG
+    s14 16 s() XCHG
+    s13 s15 XCHG
+    s12 s14 XCHG
+    s11 s13 XCHG
+    s10 s12 XCHG
+    s9 s11 XCHG
+    s8 s10 XCHG
+    s7 s9 XCHG
+    s6 s8 XCHG
+    s5 s7 XCHG
+    s4 s6 XCHG
+    s3 s5 XCHG
+    s4 s3 s0 XCHG3
     $Market$_fun_fetchDeal INLINECALLDICT
   }>
   $Market$_internal_binary_ProcessDeal PROCINLINE:<{
     100000000 PUSHINT
     0 PUSHINT
     RAWRESERVE
+    19 s() 23 s() XCHG
+    18 s() 22 s() XCHG
+    17 s() 21 s() XCHG
+    16 s() 20 s() XCHG
+    s15 23 s() XCHG
+    s14 22 s() XCHG
+    s13 21 s() XCHG
+    s12 20 s() XCHG
+    s11 23 s() XCHG
+    s10 22 s() XCHG
+    s9 21 s() XCHG
+    s8 20 s() XCHG
+    s7 23 s() XCHG
+    s6 22 s() XCHG
+    s5 21 s() XCHG
+    s4 20 s() XCHG
+    s3 23 s() XCHG
+    s2 22 s() XCHG
+    s1 21 s() XCHG
+    s0 20 s() XCHG
+    $Market$_fun_requireNotStopped INLINECALLDICT
     __tact_context_get INLINECALLDICT
     DROP
     16059 PUSHINT
     s3 POP
-    98000000 PUSHINT
+    250000000 PUSHINT
     GEQ
     s1 s2 XCHG
     THROWANYIFNOT
@@ -3151,13 +3247,32 @@ PROGRAM{
     12 PUSHINT
     SWAP
     8 STU
-    s0 s4 XCHG
+    s0 24 s() XCHG
     $ContextProcessDealForPriceReceived$_constructor_from_dealId INLINECALLDICT
     $ContextProcessDealForPriceReceived$_store_cell INLINECALLDICT
-    s0 s3 XCHG2
+    SWAP
+    s0 23 s() XCHG
     STREF
     ENDC
-    s1 s2 XCHG
+    19 s() 23 s() XCHG
+    18 s() 22 s() XCHG
+    17 s() 21 s() XCHG
+    16 s() 20 s() XCHG
+    s15 19 s() XCHG
+    s14 18 s() XCHG
+    s13 17 s() XCHG
+    s12 16 s() XCHG
+    s11 s15 XCHG
+    s10 s14 XCHG
+    s9 s13 XCHG
+    s8 s12 XCHG
+    s7 s11 XCHG
+    s6 s10 XCHG
+    s5 s9 XCHG
+    s4 s8 XCHG
+    s3 s7 XCHG
+    s6 s5 s0 XCHG3
+    s1 s4 s0 XCHG3
     $Market$_fun_fetchPriceWithSaveContext INLINECALLDICT
   }>
   $Market$_internal_binary_ReportOwner PROCINLINE:<{

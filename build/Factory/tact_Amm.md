@@ -386,6 +386,7 @@ Total Get Methods: 4
 40476: Amount must be greater than 0
 40828: Only factory can call this function
 44278: Insufficient service fee
+44687: Sender is not amm
 45223: Transfer jetton must be from jetton wallet
 48542: ReportData must be from Deal contract
 49280: not owner

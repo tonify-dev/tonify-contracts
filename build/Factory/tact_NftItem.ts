@@ -5987,6 +5987,7 @@ const NftItem_errors: { [key: number]: { message: string } } = {
     40476: { message: `Amount must be greater than 0` },
     40828: { message: `Only factory can call this function` },
     44278: { message: `Insufficient service fee` },
+    44687: { message: `Sender is not amm` },
     45223: { message: `Transfer jetton must be from jetton wallet` },
     48542: { message: `ReportData must be from Deal contract` },
     49280: { message: `not owner` },

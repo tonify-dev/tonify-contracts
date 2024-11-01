@@ -134,11 +134,24 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
         if(opcode == OP_CODE_CREATE_DEAL) {
             let deal: CreateDealData = CreateDealData.fromSlice(msg.forward_payload);
+            if (self.stopped) {
+                self.returnTokens(msg.query_id, msg.amount, msg.from, MARKET_STOPPED);
+                return;
+            }
             self.handleCreateDeal(msg.query_id, deal, msg.amount, msg.from);
         } else if (opcode == OP_CODE_TAKE_DEAL) {
+            if (self.stopped) {
+                self.returnTokens(msg.query_id, msg.amount, msg.from, MARKET_STOPPED);
+                return;
+            }
+            if(ctx.value < GAS_MIN_VALUE_TAKE_DEAL) {
+                self.returnTokens(msg.query_id, msg.amount, msg.from, SMALL_VALUE);
+                return;
+            }
             let deal: TakeDealData = TakeDealData.fromSlice(msg.forward_payload);
             self.handleTakeDeal(msg.query_id, deal, msg.amount, msg.from, msg.from);
         } else if (opcode == OP_CODE_TAKE_DEAL_WITH_ORIGINAL_GAS_TO) {
+            require(msg.from == self.amm, "Sender is not amm");
             let deal: TakeDealDataWithOriginalGasTo = TakeDealDataWithOriginalGasTo.fromSlice(msg.forward_payload.loadRef().beginParse());
             self.handleTakeDeal(msg.query_id, TakeDealData{
                 dealId: deal.dealId,
@@ -150,6 +163,7 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     receive(msg: CancelDeal) {
         nativeReserve(STORAGE_INIT_VALUE, 0);
+        self.requireNotStopped();
         let ctx: Context = context();
         require(ctx.value >= GAS_MIN_VALUE, "Invalid value");
 
@@ -159,8 +173,9 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     receive(msg: ProcessDeal) {
         nativeReserve(STORAGE_INIT_VALUE, 0);
+        self.requireNotStopped();
         let ctx: Context = context();
-        require(ctx.value >= GAS_MIN_VALUE, "Invalid value");
+        require(ctx.value >= GAS_MIN_VALUE_PROCESS_DEAL, "Invalid value");
 
         let contextProcessDeal: Cell = beginCell()
             .storeUint(INNER_OP_CODE_PROCESS_DEAL_AFTER_PRICE_RECEIVED, 8)

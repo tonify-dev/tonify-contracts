@@ -120,6 +120,7 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     receive(msg: CreateDealTon) {
         nativeReserve(self.tonDepositBalance + STORAGE_INIT_VALUE, 0);
+        self.requireNotStopped();
         let ctx: Context = context();
         require(self.amm == ZERO_ADDRESS && ctx.value >= GAS_MIN_VALUE_CREATE_DEAL || ctx.value >= GAS_MIN_VALUE_CREATE_DEAL_WITH_AMM, "Invalid value");
         self.handleCreateDeal(msg.queryId, msg.deal, ctx.value, ctx.sender);    
@@ -127,6 +128,7 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     receive(msg: TakeDealTon) {
         nativeReserve(self.tonDepositBalance + STORAGE_INIT_VALUE, 0);
+        self.requireNotStopped();
         let ctx: Context = context();
         require(ctx.value >= GAS_MIN_VALUE_TAKE_DEAL, "Invalid value");
         self.handleTakeDeal(msg.queryId, msg.deal, ctx.value, ctx.sender, ctx.sender);
@@ -135,6 +137,7 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
     receive(msg: TakeDealWithOriginalGasToTon) {
         nativeReserve(self.tonDepositBalance + STORAGE_INIT_VALUE, 0);
         let ctx: Context = context();
+        require(ctx.sender == self.amm, "Sender is not amm");
         require(ctx.value >= GAS_MIN_VALUE_TAKE_DEAL, "Invalid value");
         self.handleTakeDeal(
             msg.queryId, 
@@ -151,6 +154,7 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     receive(msg: CancelDeal) {
         nativeReserve(self.tonDepositBalance + STORAGE_INIT_VALUE, 0);
+        self.requireNotStopped();
         let ctx: Context = context();
         require(ctx.value >= GAS_MIN_VALUE_CANCEL_DEAL, "Invalid value");
 
@@ -160,6 +164,7 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
 
     receive(msg: ProcessDeal) {
         nativeReserve(self.tonDepositBalance + STORAGE_INIT_VALUE, 0);
+        self.requireNotStopped();
         let ctx: Context = context();
         require(ctx.value >= GAS_MIN_VALUE_PROCESS_DEAL, "Invalid value");
 
@@ -187,7 +192,7 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
         if (self.amm != ZERO_ADDRESS) {
             send(SendParameters{
                 to: self.amm,
-                value: TO_TAKE_AMM,
+                value: TO_TAKE_AMM_TON,
                 mode: 0,
                 bounce: true,
                 body: TakeDealAmm{
