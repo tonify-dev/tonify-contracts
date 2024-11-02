@@ -13,7 +13,7 @@ export async function run(provider: NetworkProvider) {
         {
             $$type: 'Mint',
             amount: toNano('1000'),
-            receiver: Address.parse('EQBRABVvQJ15DNZ3QokMeoeUSlqQycQHPm0mOGz3g-PPyTnE'),
+            receiver: Address.parse('EQCwwUBBHi45kTs2J7Bn2Br2ctcR6ZNewrd5cwIBYa2GJwrD'),
         }
     );
 
