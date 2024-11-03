@@ -1,6 +1,6 @@
-
-
 # NFT Transfer
+
+https://docs.ton.org/develop/dapps/tutorials/collection-minting
 
 ## Overview of TON NFTs
 
@@ -32,6 +32,6 @@ const transferResult = await nftItem.send(
         custom_payload: null,
         forward_amount: 0n,
         forward_payload: beginCell().endCell().asSlice(),
-    }
+    },
 );
 ```

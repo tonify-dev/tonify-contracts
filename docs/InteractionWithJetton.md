@@ -1,12 +1,12 @@
 ## Example of sending a Jetton (Token)
 
+https://docs.ton.org/develop/dapps/asset-processing/jettons
 Each Jetton has its own wallet address, which is calculated from the Jetton master address, the owner's address and jetton wallet code.
 For interaction with Jetton, you need to use the your Jetton wallet address. And send internal messages to this address.
 
 ```typescript
 jettonWallet = await JettonDefaultWallet.fromInit(market.address, jettonMaster.address);
 // If jetton has other wallet your need to calculate address using other code of jetton wallet.
-
 
 const transferPayload = beginCell()
     .store({

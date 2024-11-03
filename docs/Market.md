@@ -17,6 +17,17 @@ For example, let's say 1 TON = $10 and 1 ETH = $2000:
    Maker's loss would be $2050 - $2000 = $50 = 2.5 TON
    Since maker bet 11.39 TON, they lose 2.5 TON.
 
+Market can be classified into two criteria: by the presence of AMM (automatic market maker) and by the type of supported assets (TON or other tokens). This division creates four types of markets:
+
+1. Market without amm and TON
+2. Market without amm and other tokens
+3. Market with amm and TON
+4. Market with amm and other tokens
+
+The difference in the presence of AMM is that when there is AMM, the deal is automatically taken by AMM, when there is no AMM(our contract), the deal must be taken by taker(other users).
+
+The difference in the type of supported assets is that TON is a native asset and other tokens are other tokens.
+
 # Description token market without amm
 
 Token market has 4 functions:
@@ -27,6 +38,16 @@ Token market has 4 functions:
 4. Cancel deal
 
 ## Create deal
+
+There are two types of markets:
+
+1. Market without amm
+When market is without amm, you don't need to pass oracleAssetData and oracleTokenData, you should specify null.
+2. Market with amm
+When market is with amm, you need to pass oracleAssetData and oracleTokenData. After creating a deal automatically takes a deal. Please fetch rateAsset and rateToken from redstone.
+
+
+### Token market
 
 1. Fetch price about asset and token from oracle(redstone)
 2. Send token to market with message `CreateDeal`
@@ -53,7 +74,7 @@ message(0xdfd74530) CreateDeal {
 -   `oracleAssetData` - oracle data for asset (optional need if use amm)
 -   `oracleTokenData` - oracle data for token (optional need if use amm)
 
-Example:
+Example for token market without amm:
 
 ```ts
 const createDealData = beginCell()
@@ -104,6 +125,160 @@ if (balanceBefore >= amount) {
 }
 ```
 
+Example for token market with amm:
+
+```ts
+const createDealData = beginCell()
+    .store(
+        storeCreateDeal({
+            $$type: 'CreateDeal',
+            makerPosition: true,
+            rateAsset: rateAsset,
+            rateToken: rateToken,
+            percent: percent,
+            expiration: expiration,
+            slippage: slippage,
+            oracleAssetData: await createCellFromParamsProvider(
+                new ContractParamsProvider({
+                    dataServiceId: 'redstone-avalanche-prod',
+                    uniqueSignersCount: 2,
+                    dataPackagesIds: ['ETH'],
+                }),
+            ),
+            oracleTokenData: await createCellFromParamsProvider(
+                new ContractParamsProvider({
+                    dataServiceId: 'redstone-avalanche-prod',
+                    uniqueSignersCount: 2,
+                    dataPackagesIds: ['USDT'],
+                }),
+            ),
+        }),
+    )
+    .asSlice();
+
+const amount = getAmount(rateAsset, rateToken, percent, slippage);
+const balanceBefore = (await walletOwner.getGetWalletData()).balance;
+console.log('Amount:', amount);
+console.log('User balance:', balanceBefore);
+if (balanceBefore >= amount) {
+    await walletOwner.send(
+        provider.sender(),
+        {
+            value: toNano('0.3'),
+        },
+        {
+            $$type: 'TokenTransfer',
+            amount: amount,
+            query_id: 0n,
+            recipient: market.address,
+            response_destination: owner,
+            custom_payload: null,
+            forward_ton_amount: toNano('0.25'),
+            forward_payload: createDealData,
+        },
+    );
+}
+```
+
+### Ton market
+
+1. Fetch price about asset from oracle(redstone)
+2. Send ton to market with message `CreateDealTon`
+
+```ts
+message CreateDealTon {
+    queryId: Int as uint64;
+    deal: CreateDealData;
+}
+struct CreateDealData {
+    makerPosition: Bool;
+    rateAsset: Int as coins;
+    rateToken: Int as coins;
+    percent: Int as coins;
+    expiration: Int as uint32;
+    slippage: Int as coins;
+    oracleAssetData: Cell?;
+    oracleTokenData: Cell?;
+}
+```
+-   `queryId` - some random number (set by frontend)
+-   `makerPosition` - true if maker want to buy asset, false if maker want to sell asset (set by user)
+-   `rateAsset` - price of asset in coins (set by frontend)
+-   `rateToken` - price of token in coins (set by frontend)
+-   `percent` - percent of price change (set by user)
+-   `expiration` - expiration time in seconds (set by user)
+-   `slippage` - slippage in percents (set by user)
+-   `oracleAssetData` - oracle data for asset (set by frontend)
+-   `oracleTokenData` - oracle data for token (set by frontend)
+
+Example for ton market without amm:
+
+```ts
+const amount = getAmount(rateAsset, rateToken, percent, slippage);
+
+await market.send(
+    provider.sender(),
+    {
+        value: toNano('0.3') + amount,
+    },
+    {
+        $$type: 'CreateDealTon',
+        deal: {
+            $$type: 'CreateDealData',
+            makerPosition: true,
+            rateAsset: rateAsset,
+            rateToken: rateToken,
+            percent: percent,
+            expiration: expiration,
+            slippage: slippage,
+            oracleAssetData: null,
+            oracleTokenData: null,
+        },
+        queryId: 0n,
+    },
+);
+```
+
+Example for ton market with amm:
+
+```ts
+const amount = getAmount(rateAsset, rateToken, percent, slippage);
+
+await market.send(
+    provider.sender(),
+    {
+        value: toNano('0.3') + amount,
+    },
+    {
+        $$type: 'CreateDealTon',
+        deal: {
+            $$type: 'CreateDealData',
+            makerPosition: true,
+            rateAsset: rateAsset,
+            rateToken: rateToken,
+            percent: percent,
+            expiration: expiration,
+            slippage: slippage,
+            oracleAssetData: await createCellFromParamsProvider(
+                new ContractParamsProvider({
+                    dataServiceId: 'redstone-avalanche-prod',
+                    uniqueSignersCount: 2,
+                    dataPackagesIds: ['ETH'],
+                }),
+            ),
+            oracleTokenData: await createCellFromParamsProvider(
+                new ContractParamsProvider({
+                    dataServiceId: 'redstone-avalanche-prod',
+                    uniqueSignersCount: 2,
+                    dataPackagesIds: ['USDT'],
+                }),
+            ),
+        },
+        queryId: 0n,
+    },
+);
+``` 
+
 ## Take deal
 
 User send token to market to take deal. After that deal status will be `DEAL_STATUS_ACCEPTED` and maker and taker get nft(ownership of deal).
@@ -115,6 +290,8 @@ User send token to market to take deal. After that deal status will be `DEAL_STA
 3. Send token to market with message `TakeDeal`
    You have data about asset and token from oracle, so you can calculate exactly amount of token to send to market.
 
+### Token market
+
 ```ts
 message(0x38f0b8f5) TakeDeal {
     dealId: Int as uint32;
@@ -123,9 +300,9 @@ message(0x38f0b8f5) TakeDeal {
 }
 ```
 
--   `dealId` - id of deal
--   `oracleAssetData` - oracle data for asset
--   `oracleTokenData` - oracle data for token
+-   `dealId` - id of deal (user find deal)
+-   `oracleAssetData` - oracle data for asset (set by frontend)
+-   `oracleTokenData` - oracle data for token (set by frontend)
 
 Example:
 
@@ -177,9 +354,58 @@ const takeDealResult = await jettonWalletTaker.send(
 );
 ```
 
+### Ton market
+
+```ts
+message TakeDealTon {
+    queryId: Int as uint64;
+    deal: TakeDealData;
+}
+struct TakeDealData {
+    dealId: Int as uint32;
+    oracleAssetData: Cell;
+    oracleTokenData: Cell;
+}
+```
+
+Example:
+
+```ts
+    const amount = getAmount(rateAsset, rateToken, percent, slippage);
+
+    await market.send(
+        provider.sender(),
+        {
+            value: toNano('0.3') + amount,
+        },
+        {
+            $$type: 'TakeDealTon',  
+            deal: {
+                $$type: 'TakeDealData',
+                dealId: 0n,
+                oracleAssetData:  await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['ETH'],
+                    }),
+                ),
+                oracleTokenData: await createCellFromParamsProvider(
+                    new ContractParamsProvider({
+                        dataServiceId: 'redstone-avalanche-prod',
+                        uniqueSignersCount: 2,
+                        dataPackagesIds: ['USDT'],
+                    }),
+                ),
+            },
+            queryId: 0n,
+        },
+    );
+```
+
 ## Process deal
 
-You can process deal if deal status is `DEAL_STATUS_ACCEPTED` and time is over or status is `DEAL_STATUS_CREATED` and deal is expired.
+You can process deal if deal status is `DEAL_STATUS_ACCEPTED` and time is over or status is `DEAL_STATUS_CREATED` and deal is expired. Probably this should be done by backend periodically.
 
 1. Check deal data [Deal.md](./Deal.md).
    If status is `DEAL_STATUS_ACCEPTED` then `dateStop` < `now()`
