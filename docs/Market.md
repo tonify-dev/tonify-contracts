@@ -28,6 +28,39 @@ The difference in the presence of AMM is that when there is AMM, the deal is aut
 
 The difference in the type of supported assets is that TON is a native asset and other tokens are other tokens.
 
+# Checking contract call execution results
+
+If the contract call is successful, the market contract will create events: `CreateDealEvent` for `CreateDeal`, `TakeDealEvent` for `TakeDeal`, `ProcessDealEvent` for `ProcessDeal`, `CancelDealEvent` for `CancelDeal`.
+The event body is also a message, meaning it contains an opcode and arguments.
+
+Events can be retrieved from transaction requests to the market contract address by filtering by event opcode and query_id, or from the results of the sent message execution (depends on the client).
+
+Example of event decoding:
+
+```ts
+import { loadDealCreatedEvent } from '../wrappers/Market';
+
+const createDealResult = await jettonWalletMaker.send(
+    maker.getSender(),
+    {
+        value: toNano('0.9'),
+    },
+    {
+        $$type: 'TokenTransfer',
+        amount: getAmount(rateAsset, rateToken, percent, slippage),
+        query_id: 0n,
+        recipient: market.address,
+        response_destination: maker.address,
+        custom_payload: null,
+        forward_ton_amount: toNano('0.8'),
+        forward_payload: createDealData,
+    },
+);
+
+const dealCreatedEvent = loadDealCreatedEvent(createDealResult.externals[0].body.beginParse()); // argument can be another Slice containing the event
+console.log(dealCreatedEvent);
+```
+
 # Description token market without amm
 
 Token market has 4 functions:
@@ -39,13 +72,15 @@ Token market has 4 functions:
 
 ## Create deal
 
+You need to add 0.15 TON to the message for gas, remain amount of ton will be returned to sender.
+
+
 There are two types of markets:
 
 1. Market without amm
-When market is without amm, you don't need to pass oracleAssetData and oracleTokenData, you should specify null.
+   When market is without amm, you don't need to pass oracleAssetData and oracleTokenData, you should specify null.
 2. Market with amm
-When market is with amm, you need to pass oracleAssetData and oracleTokenData. After creating a deal automatically takes a deal. Please fetch rateAsset and rateToken from redstone.
-
+   When market is with amm, you need to pass oracleAssetData and oracleTokenData. After creating a deal automatically takes a deal. Please fetch rateAsset and rateToken from redstone.
 
 ### Token market
 
@@ -201,6 +236,7 @@ struct CreateDealData {
     oracleTokenData: Cell?;
 }
 ```
+
 -   `queryId` - some random number (set by frontend)
 -   `makerPosition` - true if maker want to buy asset, false if maker want to sell asset (set by user)
 -   `rateAsset` - price of asset in coins (set by frontend)
@@ -277,9 +313,11 @@ await market.send(
         queryId: 0n,
     },
 );
-``` 
+```
 
 ## Take deal
+
+You need to add 0.3 TON to the message for gas, remain amount of ton will be returned to sender.
 
 User send token to market to take deal. After that deal status will be `DEAL_STATUS_ACCEPTED` and maker and taker get nft(ownership of deal).
 
@@ -371,41 +409,42 @@ struct TakeDealData {
 Example:
 
 ```ts
-    const amount = getAmount(rateAsset, rateToken, percent, slippage);
+const amount = getAmount(rateAsset, rateToken, percent, slippage);
 
-    await market.send(
-        provider.sender(),
-        {
-            value: toNano('0.3') + amount,
+await market.send(
+    provider.sender(),
+    {
+        value: toNano('0.3') + amount,
+    },
+    {
+        $$type: 'TakeDealTon',
+        deal: {
+            $$type: 'TakeDealData',
+            dealId: 0n,
+            oracleAssetData: await createCellFromParamsProvider(
+                new ContractParamsProvider({
+                    dataServiceId: 'redstone-avalanche-prod',
+                    uniqueSignersCount: 2,
+                    dataPackagesIds: ['ETH'],
+                }),
+            ),
+            oracleTokenData: await createCellFromParamsProvider(
+                new ContractParamsProvider({
+                    dataServiceId: 'redstone-avalanche-prod',
+                    uniqueSignersCount: 2,
+                    dataPackagesIds: ['USDT'],
+                }),
+            ),
         },
-        {
-            $$type: 'TakeDealTon',  
-            deal: {
-                $$type: 'TakeDealData',
-                dealId: 0n,
-                oracleAssetData:  await createCellFromParamsProvider(
-                    new ContractParamsProvider({
-                        dataServiceId: 'redstone-avalanche-prod',
-                        uniqueSignersCount: 2,
-                        dataPackagesIds: ['ETH'],
-                    }),
-                ),
-                oracleTokenData: await createCellFromParamsProvider(
-                    new ContractParamsProvider({
-                        dataServiceId: 'redstone-avalanche-prod',
-                        uniqueSignersCount: 2,
-                        dataPackagesIds: ['USDT'],
-                    }),
-                ),
-            },
-            queryId: 0n,
-        },
-    );
+        queryId: 0n,
+    },
+);
 ```
 
 ## Process deal
 
 You can process deal if deal status is `DEAL_STATUS_ACCEPTED` and time is over or status is `DEAL_STATUS_CREATED` and deal is expired. Probably this should be done by backend periodically.
+You need to add 0.5 TON to the message for gas, remain amount of ton will be returned to sender.
 
 1. Check deal data [Deal.md](./Deal.md).
    If status is `DEAL_STATUS_ACCEPTED` then `dateStop` < `now()`
@@ -461,6 +500,8 @@ const proceedDealResult = await market.send(
 ## Cancel deal
 
 Maker can cancel deal if deal status is `DEAL_STATUS_CREATED`.
+
+You need to add 0.1 TON to the message for gas, remain amount of ton will be returned to sender.
 
 1. Check deal data [Deal.md](./Deal.md).
 2. Send token to market with message `CancelDeal`
