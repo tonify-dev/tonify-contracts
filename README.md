@@ -1,4 +1,4 @@
-# go-derivatives-ton
+# tonify-contracts
 
 ## Project structure
 
