@@ -625,6 +625,43 @@ cell $TakeDealAmm$_store_cell((int, int, int, slice, cell, cell) v) inline {
 }
 
 ;;
+;; Type: UpdateFees
+;; Header: 0x22ffbeb7
+;; TLB: update_fees#22ffbeb7 queryId:uint64 operatorFee:uint32 serviceFee:uint32 = UpdateFees
+;;
+
+(slice, ((int, int, int))) $UpdateFees$_load(slice sc_0) inline {
+    throw_unless(129, sc_0~load_uint(32) == 587185847);
+    var v'queryId = sc_0~load_uint(64);
+    var v'operatorFee = sc_0~load_uint(32);
+    var v'serviceFee = sc_0~load_uint(32);
+    return (sc_0, (v'queryId, v'operatorFee, v'serviceFee));
+}
+
+;;
+;; Type: FeesUpdatedEvent
+;; Header: 0xacb2b89a
+;; TLB: fees_updated_event#acb2b89a queryId:uint64 operatorFee:uint32 serviceFee:uint32 = FeesUpdatedEvent
+;;
+
+builder $FeesUpdatedEvent$_store(builder build_0, (int, int, int) v) inline {
+    var (v'queryId, v'operatorFee, v'serviceFee) = v;
+    build_0 = store_uint(build_0, 2897393818, 32);
+    build_0 = build_0.store_uint(v'queryId, 64);
+    build_0 = build_0.store_uint(v'operatorFee, 32);
+    build_0 = build_0.store_uint(v'serviceFee, 32);
+    return build_0;
+}
+
+cell $FeesUpdatedEvent$_store_cell((int, int, int) v) inline {
+    return $FeesUpdatedEvent$_store(begin_cell(), v).end_cell();
+}
+
+((int, int, int)) $FeesUpdatedEvent$_constructor_queryId_operatorFee_serviceFee(int $queryId, int $operatorFee, int $serviceFee) inline {
+    return ($queryId, $operatorFee, $serviceFee);
+}
+
+;;
 ;; Type: TokenTransfer
 ;; Header: 0x0f8a7ea5
 ;; TLB: token_transfer#0f8a7ea5 query_id:uint64 amount:coins recipient:address response_destination:Maybe address custom_payload:Maybe ^cell forward_ton_amount:coins forward_payload:remainder<slice> = TokenTransfer

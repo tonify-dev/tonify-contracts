@@ -2901,6 +2901,124 @@ function dictValueParserTakeDealAmm(): DictionaryValue<TakeDealAmm> {
     }
 }
 
+export type UpdateFees = {
+    $$type: 'UpdateFees';
+    queryId: bigint;
+    operatorFee: bigint;
+    serviceFee: bigint;
+}
+
+export function storeUpdateFees(src: UpdateFees) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(587185847, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeUint(src.operatorFee, 32);
+        b_0.storeUint(src.serviceFee, 32);
+    };
+}
+
+export function loadUpdateFees(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 587185847) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _operatorFee = sc_0.loadUintBig(32);
+    let _serviceFee = sc_0.loadUintBig(32);
+    return { $$type: 'UpdateFees' as const, queryId: _queryId, operatorFee: _operatorFee, serviceFee: _serviceFee };
+}
+
+function loadTupleUpdateFees(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    return { $$type: 'UpdateFees' as const, queryId: _queryId, operatorFee: _operatorFee, serviceFee: _serviceFee };
+}
+
+function loadGetterTupleUpdateFees(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    return { $$type: 'UpdateFees' as const, queryId: _queryId, operatorFee: _operatorFee, serviceFee: _serviceFee };
+}
+
+function storeTupleUpdateFees(source: UpdateFees) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeNumber(source.operatorFee);
+    builder.writeNumber(source.serviceFee);
+    return builder.build();
+}
+
+function dictValueParserUpdateFees(): DictionaryValue<UpdateFees> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeUpdateFees(src)).endCell());
+        },
+        parse: (src) => {
+            return loadUpdateFees(src.loadRef().beginParse());
+        }
+    }
+}
+
+export type FeesUpdatedEvent = {
+    $$type: 'FeesUpdatedEvent';
+    queryId: bigint;
+    operatorFee: bigint;
+    serviceFee: bigint;
+}
+
+export function storeFeesUpdatedEvent(src: FeesUpdatedEvent) {
+    return (builder: Builder) => {
+        let b_0 = builder;
+        b_0.storeUint(2897393818, 32);
+        b_0.storeUint(src.queryId, 64);
+        b_0.storeUint(src.operatorFee, 32);
+        b_0.storeUint(src.serviceFee, 32);
+    };
+}
+
+export function loadFeesUpdatedEvent(slice: Slice) {
+    let sc_0 = slice;
+    if (sc_0.loadUint(32) !== 2897393818) { throw Error('Invalid prefix'); }
+    let _queryId = sc_0.loadUintBig(64);
+    let _operatorFee = sc_0.loadUintBig(32);
+    let _serviceFee = sc_0.loadUintBig(32);
+    return { $$type: 'FeesUpdatedEvent' as const, queryId: _queryId, operatorFee: _operatorFee, serviceFee: _serviceFee };
+}
+
+function loadTupleFeesUpdatedEvent(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    return { $$type: 'FeesUpdatedEvent' as const, queryId: _queryId, operatorFee: _operatorFee, serviceFee: _serviceFee };
+}
+
+function loadGetterTupleFeesUpdatedEvent(source: TupleReader) {
+    let _queryId = source.readBigNumber();
+    let _operatorFee = source.readBigNumber();
+    let _serviceFee = source.readBigNumber();
+    return { $$type: 'FeesUpdatedEvent' as const, queryId: _queryId, operatorFee: _operatorFee, serviceFee: _serviceFee };
+}
+
+function storeTupleFeesUpdatedEvent(source: FeesUpdatedEvent) {
+    let builder = new TupleBuilder();
+    builder.writeNumber(source.queryId);
+    builder.writeNumber(source.operatorFee);
+    builder.writeNumber(source.serviceFee);
+    return builder.build();
+}
+
+function dictValueParserFeesUpdatedEvent(): DictionaryValue<FeesUpdatedEvent> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeRef(beginCell().store(storeFeesUpdatedEvent(src)).endCell());
+        },
+        parse: (src) => {
+            return loadFeesUpdatedEvent(src.loadRef().beginParse());
+        }
+    }
+}
+
 export type JettonData = {
     $$type: 'JettonData';
     total_supply: bigint;
@@ -5981,6 +6099,8 @@ const AmmTon_errors: { [key: number]: { message: string } } = {
     7021: { message: `only oracle can send this message` },
     14154: { message: `ReportOwner must be from nft contract` },
     16059: { message: `Invalid value` },
+    18356: { message: `Service fee must be less than denominator` },
+    21517: { message: `Operator fee must be less than denominator` },
     24843: { message: `Only market can call this function` },
     27499: { message: `initialized tx need from collection` },
     29863: { message: `Market already set` },
@@ -6044,6 +6164,8 @@ const AmmTon_types: ABIType[] = [
     {"name":"ContextProcessDealForPriceReceived","header":null,"fields":[{"name":"from","type":{"kind":"simple","type":"address","optional":false}},{"name":"dealId","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
     {"name":"ContextForGetOwner","header":null,"fields":[{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}}]},
     {"name":"TakeDealAmm","header":1895074275,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"dealId","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"originalGasTo","type":{"kind":"simple","type":"address","optional":false}},{"name":"oracleAssetData","type":{"kind":"simple","type":"cell","optional":false}},{"name":"oracleTokenData","type":{"kind":"simple","type":"cell","optional":false}}]},
+    {"name":"UpdateFees","header":587185847,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
+    {"name":"FeesUpdatedEvent","header":2897393818,"fields":[{"name":"queryId","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"operatorFee","type":{"kind":"simple","type":"uint","optional":false,"format":32}},{"name":"serviceFee","type":{"kind":"simple","type":"uint","optional":false,"format":32}}]},
     {"name":"JettonData","header":null,"fields":[{"name":"total_supply","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"mintable","type":{"kind":"simple","type":"bool","optional":false}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"content","type":{"kind":"simple","type":"cell","optional":false}},{"name":"wallet_code","type":{"kind":"simple","type":"cell","optional":false}}]},
     {"name":"JettonWalletData","header":null,"fields":[{"name":"balance","type":{"kind":"simple","type":"int","optional":false,"format":257}},{"name":"owner","type":{"kind":"simple","type":"address","optional":false}},{"name":"master","type":{"kind":"simple","type":"address","optional":false}},{"name":"code","type":{"kind":"simple","type":"cell","optional":false}}]},
     {"name":"TokenTransfer","header":260734629,"fields":[{"name":"query_id","type":{"kind":"simple","type":"uint","optional":false,"format":64}},{"name":"amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"recipient","type":{"kind":"simple","type":"address","optional":false}},{"name":"response_destination","type":{"kind":"simple","type":"address","optional":true}},{"name":"custom_payload","type":{"kind":"simple","type":"cell","optional":true}},{"name":"forward_ton_amount","type":{"kind":"simple","type":"uint","optional":false,"format":"coins"}},{"name":"forward_payload","type":{"kind":"simple","type":"slice","optional":false,"format":"remainder"}}]},

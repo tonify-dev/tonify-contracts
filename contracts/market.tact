@@ -654,6 +654,23 @@ contract Market with Resumable, NftCollection, RedstoneOracleConsumerBase {
         });
     }
     
+    receive(msg: UpdateFees) {
+        nativeReserve(STORAGE_INIT_VALUE, 0);
+        self.requireOwner();
+        
+        require(msg.operatorFee <= FEE_DENOMINATOR, "Operator fee must be less than denominator");
+        require(msg.serviceFee <= FEE_DENOMINATOR, "Service fee must be less than denominator");
+        
+        self.operatorFee = msg.operatorFee;
+        self.serviceFee = msg.serviceFee;
+        
+        emit(FeesUpdatedEvent{
+            queryId: msg.queryId,
+            operatorFee: self.operatorFee,
+            serviceFee: self.serviceFee
+        }.toCell());
+    }
+
     override fun onOracleErrorReceived(queryId: Int, error: Slice) {
         self.mapQueriesToContext.del(queryId);
     }

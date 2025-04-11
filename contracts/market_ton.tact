@@ -637,6 +637,23 @@ contract MarketTon with Resumable, NftCollection, RedstoneOracleConsumerBase {
         self.mapQueriesToContext.del(msg.queryId);
     }
 
+    receive(msg: UpdateFees) {
+        nativeReserve(self.tonDepositBalance + STORAGE_INIT_VALUE, 0);
+        self.requireOwner();
+        
+        require(msg.operatorFee <= FEE_DENOMINATOR, "Operator fee must be less than denominator");
+        require(msg.serviceFee <= FEE_DENOMINATOR, "Service fee must be less than denominator");
+        
+        self.operatorFee = msg.operatorFee;
+        self.serviceFee = msg.serviceFee;
+        
+        emit(FeesUpdatedEvent{
+            queryId: msg.queryId,
+            operatorFee: self.operatorFee,
+            serviceFee: self.serviceFee
+        }.toCell());
+    }
+
     get fun id(): Int {
         return self.id;
     }

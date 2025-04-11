@@ -181,3 +181,15 @@ message TakeDealAmm {
     oracleAssetData: Cell;
     oracleTokenData: Cell;
 }
+
+message UpdateFees {
+    queryId: Int as uint64;
+    operatorFee: Int as uint32;
+    serviceFee: Int as uint32;
+}
+
+message FeesUpdatedEvent {
+    queryId: Int as uint64;
+    operatorFee: Int as uint32;
+    serviceFee: Int as uint32;
+}

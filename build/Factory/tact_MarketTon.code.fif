@@ -72,6 +72,9 @@ PROGRAM{
   DECLPROC $ContextForGetOwner$_load_not_mut
   DECLPROC $TakeDealAmm$_store
   DECLPROC $TakeDealAmm$_store_cell
+  DECLPROC $UpdateFees$_load
+  DECLPROC $FeesUpdatedEvent$_store
+  DECLPROC $FeesUpdatedEvent$_store_cell
   DECLPROC $GetData$_store
   DECLPROC $GetData$_store_cell
   DECLPROC $GetData$_load
@@ -184,6 +187,7 @@ PROGRAM{
   DECLPROC $TakeDealData$_constructor_dealId_oracleAssetData_oracleTokenData
   DECLPROC $ContextCancelDealForDealReceived$_constructor_from
   DECLPROC $ContextProcessDealForPriceReceived$_constructor_from_dealId
+  DECLPROC $FeesUpdatedEvent$_constructor_queryId_operatorFee_serviceFee
   DECLPROC $MarketTon$_internal_binary_InnerDeployMarketTon
   DECLPROC $MarketTon$_internal_binary_WithdrawServiceFee
   DECLPROC $MarketTon$_internal_binary_WithdrawOperatorFee
@@ -195,6 +199,7 @@ PROGRAM{
   DECLPROC $MarketTon$_internal_binary_ReportOwner
   DECLPROC $MarketTon$_internal_binary_ReportData
   DECLPROC $MarketTon$_receive_binary_bounce_GetData
+  DECLPROC $MarketTon$_internal_binary_UpdateFees
   DECLPROC $MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df
   DECLPROC $MarketTon$_internal_text_bcfaf776907c719cc8d379d8f194aaaa27e8ca2871cd591781721f215a454501
   DECLPROC $MarketTon$_receive_binary_bounce_GetOwner
@@ -959,6 +964,32 @@ PROGRAM{
     NEWC
     6 -ROLL
     $TakeDealAmm$_store INLINECALLDICT
+    ENDC
+  }>
+  $UpdateFees$_load PROCINLINE:<{
+    32 LDU
+    SWAP
+    587185847 PUSHINT
+    EQUAL
+    129 THROWIFNOT
+    64 LDU
+    32 LDU
+    32 LDU
+    3 -ROLL
+  }>
+  $FeesUpdatedEvent$_store PROCINLINE:<{
+    2897393818 PUSHINT
+    s0 s4 XCHG2
+    32 STU
+    s1 s2 XCHG
+    64 STU
+    32 STU
+    32 STU
+  }>
+  $FeesUpdatedEvent$_store_cell PROCINLINE:<{
+    NEWC
+    3 -ROLL
+    $FeesUpdatedEvent$_store INLINECALLDICT
     ENDC
   }>
   $GetData$_store PROCINLINE:<{
@@ -2928,6 +2959,8 @@ PROGRAM{
   }>
   $ContextProcessDealForPriceReceived$_constructor_from_dealId PROCINLINE:<{
   }>
+  $FeesUpdatedEvent$_constructor_queryId_operatorFee_serviceFee PROCINLINE:<{
+  }>
   $MarketTon$_internal_binary_InnerDeployMarketTon PROCINLINE:<{
     s3 PUSH
     100000000 PUSHINT
@@ -3499,6 +3532,59 @@ PROGRAM{
     DROP
     s0 s7 XCHG
   }>
+  $MarketTon$_internal_binary_UpdateFees PROCINLINE:<{
+    s4 PUSH
+    100000000 PUSHINT
+    ADD
+    0 PUSHINT
+    RAWRESERVE
+    19 s() 22 s() XCHG
+    18 s() 21 s() XCHG
+    17 s() 20 s() XCHG
+    16 s() 22 s() XCHG
+    s15 21 s() XCHG
+    s14 20 s() XCHG
+    s13 22 s() XCHG
+    s12 21 s() XCHG
+    s11 20 s() XCHG
+    s10 22 s() XCHG
+    s9 21 s() XCHG
+    s8 20 s() XCHG
+    s7 22 s() XCHG
+    s6 21 s() XCHG
+    s5 20 s() XCHG
+    s4 22 s() XCHG
+    s3 21 s() XCHG
+    s2 20 s() XCHG
+    s1 22 s() XCHG
+    s0 21 s() XCHG
+    $MarketTon$_fun_requireOwner INLINECALLDICT
+    s13 POP
+    s13 POP
+    21517 PUSHINT
+    21 s() PUSH
+    1000000000 PUSHINT
+    LEQ
+    THROWANYIFNOT
+    18356 PUSHINT
+    20 s() PUSH
+    1000000000 PUSHINT
+    LEQ
+    THROWANYIFNOT
+    s0 18 s() XCHG
+    20 s() PUSH
+    20 s() PUSH
+    $FeesUpdatedEvent$_constructor_queryId_operatorFee_serviceFee INLINECALLDICT
+    $FeesUpdatedEvent$_store_cell INLINECALLDICT
+    $global_emit INLINECALLDICT
+    16 s() 19 s() XCHG
+    s15 18 s() XCHG
+    s14 17 s() XCHG
+    s13 16 s() XCHG
+    4 12 REVERSE
+    s12 s13 XCHG
+    3 10 BLKSWAP
+  }>
   $MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df PROCINLINE:<{
     $MarketTon$_fun_requireOwner INLINECALLDICT
     $MarketTon$_fun_requireStopped INLINECALLDICT
@@ -3915,6 +4001,16 @@ PROGRAM{
       $ReportData$_load INLINECALLDICT
       1 3 BLKDROP2
       $MarketTon$_internal_binary_ReportData INLINECALLDICT
+      TRUE
+    }>
+    DUP
+    587185847 PUSHINT
+    EQUAL
+    IFJMP:<{
+      DROP
+      $UpdateFees$_load INLINECALLDICT
+      1 3 BLKDROP2
+      $MarketTon$_internal_binary_UpdateFees INLINECALLDICT
       TRUE
     }>
     0 EQINT

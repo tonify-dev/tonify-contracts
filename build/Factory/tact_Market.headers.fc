@@ -222,6 +222,15 @@ builder $TakeDealAmm$_store(builder build_0, (int, int, int, slice, cell, cell) 
 ;; $TakeDealAmm$_store_cell
 cell $TakeDealAmm$_store_cell((int, int, int, slice, cell, cell) v) inline;
 
+;; $UpdateFees$_load
+(slice, ((int, int, int))) $UpdateFees$_load(slice sc_0) inline;
+
+;; $FeesUpdatedEvent$_store
+builder $FeesUpdatedEvent$_store(builder build_0, (int, int, int) v) inline;
+
+;; $FeesUpdatedEvent$_store_cell
+cell $FeesUpdatedEvent$_store_cell((int, int, int) v) inline;
+
 ;; $TokenTransfer$_store
 builder $TokenTransfer$_store(builder build_0, (int, int, slice, slice, cell, int, slice) v) inline_ref;
 
@@ -569,3 +578,6 @@ slice $Builder$_fun_asSlice(builder $self) impure inline;
 
 ;; $ContextProcessDealForPriceReceived$_constructor_from_dealId
 ((slice, int)) $ContextProcessDealForPriceReceived$_constructor_from_dealId(slice $from, int $dealId) inline;
+
+;; $FeesUpdatedEvent$_constructor_queryId_operatorFee_serviceFee
+((int, int, int)) $FeesUpdatedEvent$_constructor_queryId_operatorFee_serviceFee(int $queryId, int $operatorFee, int $serviceFee) inline;

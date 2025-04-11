@@ -3,7 +3,7 @@ Contract: Amm
 BOC Size: 1777 bytes
 
 # Types
-Total Types: 83
+Total Types: 85
 
 ## StateInit
 TLB: `_ code:^cell data:^cell = StateInit`
@@ -172,6 +172,14 @@ Signature: `ContextForGetOwner{amount:coins,originalGasTo:address}`
 ## TakeDealAmm
 TLB: `take_deal_amm#70f489e3 queryId:uint64 dealId:uint32 amount:coins originalGasTo:address oracleAssetData:^cell oracleTokenData:^cell = TakeDealAmm`
 Signature: `TakeDealAmm{queryId:uint64,dealId:uint32,amount:coins,originalGasTo:address,oracleAssetData:^cell,oracleTokenData:^cell}`
+
+## UpdateFees
+TLB: `update_fees#22ffbeb7 queryId:uint64 operatorFee:uint32 serviceFee:uint32 = UpdateFees`
+Signature: `UpdateFees{queryId:uint64,operatorFee:uint32,serviceFee:uint32}`
+
+## FeesUpdatedEvent
+TLB: `fees_updated_event#acb2b89a queryId:uint64 operatorFee:uint32 serviceFee:uint32 = FeesUpdatedEvent`
+Signature: `FeesUpdatedEvent{queryId:uint64,operatorFee:uint32,serviceFee:uint32}`
 
 ## JettonData
 TLB: `_ total_supply:int257 mintable:bool owner:address content:^cell wallet_code:^cell = JettonData`
@@ -378,6 +386,8 @@ Total Get Methods: 4
 7021: only oracle can send this message
 14154: ReportOwner must be from nft contract
 16059: Invalid value
+18356: Service fee must be less than denominator
+21517: Operator fee must be less than denominator
 24843: Only market can call this function
 27499: initialized tx need from collection
 29863: Market already set

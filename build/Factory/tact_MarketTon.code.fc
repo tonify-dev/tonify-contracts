@@ -628,6 +628,19 @@
     return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
 }
 
+(((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice)), ()) $MarketTon$_internal_binary_UpdateFees((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self, (int, int, int) $msg) impure inline {
+    var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
+    var ($msg'queryId, $msg'operatorFee, $msg'serviceFee) = $msg;
+    raw_reserve(($self'tonDepositBalance + 100000000), 0);
+    ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_requireOwner();
+    throw_unless(21517, ($msg'operatorFee <= 1000000000));
+    throw_unless(18356, ($msg'serviceFee <= 1000000000));
+    $self'operatorFee = $msg'operatorFee;
+    $self'serviceFee = $msg'serviceFee;
+    $global_emit($FeesUpdatedEvent$_store_cell($FeesUpdatedEvent$_constructor_queryId_operatorFee_serviceFee($msg'queryId, $self'operatorFee, $self'serviceFee)));
+    return (($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress), ());
+}
+
 ((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice), ()) $MarketTon$_internal_text_6c8f44f45fedb4cdfed4de8db14aa5b13ad55d430f759d0669210b74c48fe3df((int, slice, slice, slice, int, int, int, slice, int, int, int, cell, cell, slice, int, int, int, int, int, slice) $self) impure inline {
     var ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress) = $self;
     ($self'id, $self'owner, $self'amm, $self'underlyingAssetName, $self'duration, $self'operatorFee, $self'serviceFee, $self'factory, $self'stopped, $self'countDeal, $self'next_item_index, $self'collection_content, $self'mapQueriesToContext, $self'oracle, $self'feedIdAsset, $self'feedIdToken, $self'operatorFeeSum, $self'serviceFeeSum, $self'tonDepositBalance, $self'operatorFeeAddress)~$MarketTon$_fun_requireOwner();
@@ -949,6 +962,13 @@ _ lazy_deployment_completed() method_id {
     if (op == 3062344471) {
         var msg = in_msg~$ReportData$_load();
         self~$MarketTon$_internal_binary_ReportData(msg);
+        return (self, true);
+    }
+    
+    ;; Receive UpdateFees message
+    if (op == 587185847) {
+        var msg = in_msg~$UpdateFees$_load();
+        self~$MarketTon$_internal_binary_UpdateFees(msg);
         return (self, true);
     }
     
